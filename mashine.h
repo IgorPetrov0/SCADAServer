@@ -30,6 +30,7 @@ public:
     void addTimePoint(minutePoint point, QTime time);
     dayGraph *getCurrentGraph();
     void readPacket(unsigned char *array,QTime time);
+    void memoryNotCleared();//вызывается, если небыло ответа на запрос стирания памяти
 
 protected:
     QColor lineColor;
@@ -37,6 +38,7 @@ protected:
     QString pathForStatistics;
     dayGraph *currentDayGraph;
     QTime lastRequestTime;
+    bool notCleared;
 
 };
 

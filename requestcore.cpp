@@ -10,11 +10,9 @@ requestCore::requestCore(QObject *parent):
     waitTimer = new QTimer(this);
     waitTimer->setSingleShot(true);
     pass=true;
+    reCounter=0;
     inputBytesCounter=0;
-<<<<<<< HEAD
     currentRequest=REQUEST_EMPTY;
-=======
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
     connect(requestTimer,SIGNAL(timeout()),this,SLOT(requestTime()));
     connect(waitTimer,SIGNAL(timeout()),this,SLOT(waitTime()));
 }
@@ -237,23 +235,15 @@ void requestCore::setStatisticCorePointer(statisticCore *pointer){
     currentObject=NULL;
 }
 ///////////////////////////////////////////////////////////////////////////////////
-<<<<<<< HEAD
 void requestCore::requestCurrentObject(){
     if(currentRequest==REQUEST_EMPTY){
         return;
     }
-=======
-void requestCore::requestCurrentObject(requestType request){
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
     inputBytesCounter=0;
     currentPort->clear();
     switch(currentObject->getType()){
         case(objectMashine):{
-<<<<<<< HEAD
             requestMashine(currentRequest);
-=======
-            requestMashine(request);
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
             break;
         }
         default:{
@@ -263,6 +253,14 @@ void requestCore::requestCurrentObject(requestType request){
     }
     waitTimer->start(WAIT_TIME);
     emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
+}
+/////////////////////////////////////////////////////////////////////////////////
+void requestCore::reRequestCurrentObject(){
+    reCounter++;
+    if(reCounter==MAX_RE_REQUEST){
+        nextDevice();
+    }
+    requestCurrentObject();
 }
 //////////////////////////////////////////////////////////////////////////////
 void requestCore::requestMashine(requestType request){
@@ -329,12 +327,8 @@ void requestCore::nextDevice(){
     currentPort->clear();
     currentObject=statCorePointer->getObjectForIndex(counter);//пробуем получить объект
     if(currentObject!=NULL){//если объект не нулевой
-<<<<<<< HEAD
         currentRequest=REQUEST_GET_DATA;
         requestCurrentObject();//то делаем запрос в штатном режиме
-=======
-        requestCurrentObject(REQUEST_GET_DATA);//то делаем запрос в штатном режиме
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
         counter++;//инкремент счетчика
     }
     else if((currentObject==NULL)&&(counter==0)){//если объект нулевой по нулевому индексу
@@ -383,13 +377,10 @@ void requestCore::requestTime(){
 ///////////////////////////////////////////////////////////////////////////////
 void requestCore::waitTime(){
     //сюда попадаем, если время ожидания ответа от устройства превысило WAIT_TIME
-    switch(currentObject->getType()){
+
+switch(currentObject->getType()){
         case(objectMashine):{
-            mashine *tmpMashine=static_cast<mashine*>(currentObject);
-            minutePoint point;
-            point.event=EVENT_NO_RESPONCE;
-            point.value=0;
-            tmpMashine->addTimePoint(point,QTime::currentTime());
+            waitTimeMashine();
             break;
         }
     }
@@ -397,10 +388,7 @@ void requestCore::waitTime(){
     if(inputBytesCounter!=0){//если на момент превышения времени ожидания во входном массиве есть данные
 
     }  
-<<<<<<< HEAD
     currentRequest=REQUEST_EMPTY;
-=======
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
     nextDevice();//переходим к следующему устройству
     emit consoleMessage(tr("Превышено время ожидания ответа от ")+currentObject->getName()+tr(". Адрес ")+
                         QString::number(currentObject->getAddress())+tr(". Порт ")+currentPort->portName());
@@ -416,50 +404,33 @@ void requestCore::port1DataReadyRead(){
                 switch(inputArray[1]){//читаем ответ объекта
                     case(ANSWER_OK):{//если все в порядке читаем пакет
                         readPacket();
-<<<<<<< HEAD
-                        currentRequest=REQUEST_CLEAR;
+                        currentRequest=REQUEST_CLEAR;//и приказываем устройству очистить память
                         requestCurrentObject();
                         break;
                     }
                     case(ANSWER_ERROR):{//если ошибка CRC, повторно отправляем запрос
                         currentRequest=REQUEST_GET_DATA;
-                        requestCurrentObject();
-=======
+                        reRequestCurrentObject();
                         requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                        break;
-                    }
-                    case(ANSWER_ERROR):{//если ошибка CRC, повторно отправляем запрос
-                        requestCurrentObject(REQUEST_GET_DATA);
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
                         break;
                     }
                     case(ANSWER_NO_DATA):{//если данных нет
                         requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
                         break;
                     }
-<<<<<<< HEAD
                     case(ANSWER_CLEARED):{//если память очищена
+                        readPacket();
                         requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
                     }
                 } 
             }
             else{//если СRC Не соответствуют
-                requestCurrentObject();//повторный запрос
-=======
-                } 
-            }
-            else{//если СRC Не соответствуют
-                requestCurrentObject(REQUEST_GET_DATA);//повторный запрос
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
+                reRequestCurrentObject();//повторный запрос
             }
         }
     }
     else{//если данных больше, чем 2000 байт, то это ошибка
-<<<<<<< HEAD
-        requestCurrentObject();//повторяем запрос
-=======
-        requestCurrentObject(REQUEST_GET_DATA);//повторяем запрос
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
+        reRequestCurrentObject();//повторяем запрос
     }
     currentObject->setOnline(true);
 }
@@ -513,11 +484,21 @@ unsigned char *requestCore::generateArray(){
    unsigned char *array = new unsigned char[size];
    array[1]=(unsigned char)size;
    array[0]=(unsigned char)size>>8;
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
+}
+/////////////////////////////////////////////////////////////////////////////////////
+void requestCore::waitTimeMashine(){
+    mashine *tmpMashine=static_cast<mashine*>(currentObject);
+    switch(currentRequest){//смотрим, после какого запроса сюда попали
+        case(REQUEST_CLEAR):{//если запрашивали стирание памяти, то
+            tmpMashine->memoryNotCleared();
+            break;
+        }
+        case(REQUEST_GET_DATA):{//если запрашивали получение данных
+            minutePoint point;
+            point.event=EVENT_NO_RESPONCE;
+            point.value=0;
+            tmpMashine->addTimePoint(point,QTime::currentTime());
+        }
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////

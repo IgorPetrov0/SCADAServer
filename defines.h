@@ -21,12 +21,8 @@ enum requestType{
 enum answerType{
     ANSWER_OK=0,
     ANSWER_ERROR,
-<<<<<<< HEAD
     ANSWER_NO_DATA,
-    ANSWER_CLEARED
-=======
-    ANSWER_NO_DATA
->>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
+    ANSWER_CLEARED   
 };
 
 struct minutePoint{

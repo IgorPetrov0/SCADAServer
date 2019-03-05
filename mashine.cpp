@@ -7,6 +7,7 @@ mashine::mashine(){
     currentDayGraph->name=name;
     currentDayGraph->date=QDate::currentDate();
     currentDayGraph->minutesArray = new minutePoint[1440];
+    notCleared=false;
     for(int n=0;n!=1440;n++){
         minutePoint point;
         point.event=EVENT_NOT_READY;
@@ -135,28 +136,40 @@ void mashine::readPacket(unsigned char *array, QTime time){
     int currentTimeInMinutes=time.msecsSinceStartOfDay()/60000;
     int period=(currentTimeInMinutes-lastTimeInMinutes);//период со времени последнего запроса в минутах
     int packetSize=(int)array[0];//размер пакета в байтах
-    int packetSizeInMinutes=(int)array[2];//кол-во минут в пакете
-
-    minutePoint tmpPoint;
-
-    if(packetSizeInMinutes*3!=packetSize-4){//если размер в байтах не соответствует размеру в минутах, то ошибка контроллера
-        //и все данные в пакете недостоверны
-        //отправляя пакет контроллер уже удалил свои данные и повторный запрос бесполезен
-        for(int n=0;n!=period;n++){
-            tmpPoint.event=EVENT_CONTROLLER_FAULT;
-            tmpPoint.value=0;
-            currentDayGraph->minutesArray[lastTimeInMinutes]=tmpPoint;
+    switch(array[1]){
+        case(ANSWER_OK):{
+            int packetSizeInMinutes=(int)array[2];//кол-во минут в пакете
+            minutePoint tmpPoint;
+            if((packetSizeInMinutes*3!=packetSize-4) || notCleared){//если размер в байтах не соответствует размеру
+                //в минутах, или контроллер не ответил на запрос стирания памяти то ошибка контроллера
+                //и все данные в пакете недостоверны
+                //контроллер уже удалил свои данные и повторный запрос бесполезен
+                for(int n=0;n!=period;n++){
+                    tmpPoint.event=EVENT_CONTROLLER_FAULT;
+                    tmpPoint.value=0;
+                    currentDayGraph->minutesArray[lastTimeInMinutes]=tmpPoint;
+                }
+                notCleared=false;
+                return;
+            }
+            for(int n=0;n!=packetSizeInMinutes;n++){
+                int offset=packetSize-n*3;
+                int t=array[offset-3]<<8;
+                tmpPoint.value=(int)array[offset-4]+t;
+                tmpPoint.event=array[offset-2];
+                currentDayGraph->minutesArray[currentTimeInMinutes-n]=tmpPoint;
+            }
+            break;
         }
-        return;
+        case(ANSWER_CLEARED):{
+            lastRequestTime=time;
+            break;
+        }
     }
-    for(int n=0;n!=packetSizeInMinutes;n++){
-        int offset=packetSize-n*3;
-        int t=array[offset-3]<<8;
-        tmpPoint.value=(int)array[offset-4]+t;
-        tmpPoint.event=array[offset-2];
-        currentDayGraph->minutesArray[currentTimeInMinutes-n]=tmpPoint;
-    }
-    lastRequestTime=time;
+}
+///////////////////////////////////////////////////////////////////////////////////
+void mashine::memoryNotCleared(){
+    notCleared=true;
 }
 //////////////////////////////////////////////////////////////////////////////////
 
