@@ -39,7 +39,11 @@ protected:
     object *currentObject;
     bool pass;//два прохода для кольцевого опроса линии
     //QVector<unsigned char>inputArray;
+<<<<<<< HEAD
     void requestCurrentObject();
+=======
+    void requestCurrentObject(requestType request);
+>>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
     void requestMashine(requestType request);
     unsigned char CRC8(unsigned char *block, unsigned char len);
     unsigned char CRC16(unsigned char *pcBlock, unsigned short len);
@@ -48,7 +52,10 @@ protected:
     unsigned char *generateArray();//для отладки. Массив уничтожает вызывающий
     unsigned char inputArray[1000];//1000 quint16  - это 2000 байт
     QSerialPort *currentPort;
+<<<<<<< HEAD
     requestType currentRequest;//текущий запрос
+=======
+>>>>>>> de2868e7a12fa258fd14d30318343e2c3ec14a08
 
 
 protected slots:
