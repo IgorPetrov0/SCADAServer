@@ -130,6 +130,11 @@ void graphWidget::contextMenuEvent(QContextMenuEvent *event){
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void graphWidget::resizeEvent(QResizeEvent *event){
     graphZero=this->height()-40;
+    QRect thisRect=this->geometry();
+    QRect rect;
+    rect.setX();
+
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 void graphWidget::mousePressEvent(QMouseEvent *event){

@@ -156,6 +156,9 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 int offset=packetSize-n*3;
                 int t=array[offset-3]<<8;
                 tmpPoint.value=(int)array[offset-4]+t;
+                if(tmpPoint.value==0){
+                    int t=0;
+                }
                 tmpPoint.event=array[offset-2];
                 currentDayGraph->minutesArray[currentTimeInMinutes-n]=tmpPoint;
             }

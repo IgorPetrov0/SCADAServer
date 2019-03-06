@@ -8,7 +8,7 @@ consoleTextWidget::consoleTextWidget(QWidget *parent):
 //////////////////////////////////////////////////////////////////////////////
 void consoleTextWidget::addString(QString string){
     if(list.size()>=maxSize){//храним не более определенного количества строк
-        list.removeLast();
+        list.removeFirst();
     }
     list.append(string);
     updateContent();
