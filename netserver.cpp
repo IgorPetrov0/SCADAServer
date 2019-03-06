@@ -23,6 +23,8 @@ void netServer::setNetPort(int port){
 void netServer::incomingConnection(qintptr socketDescriptor){
     if(socketsArray.size()!=MAX_TCP_CONNECTIONS){
         clientSocket *socket = new clientSocket(this);
+        socket->setIndex(socketsArray.size());
+        socketsArray.append(socket);
         socket->setSocketDescriptor(socketDescriptor);
         connect(socket,SIGNAL(socketDisconnected(int)),this,SLOT(deleteSlot(int)));
     }
