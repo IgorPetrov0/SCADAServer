@@ -35,7 +35,9 @@ protected:
     int mousePosX,mousePosY;
     dayGraph *graphArray;
     float yFactor;
-    float xFactor;
+    float xFactor;//меняется при whileEvent и ипользуется дл отрисовки
+    int xOffset;//смещение слайдером по горизонтали
+    float resizeXFactor;//меняется при resizeEvent
     int graphZero;
     int posY;
     QString visibleValue;
@@ -44,6 +46,7 @@ protected:
 
 protected slots:
     void slotCalcAll();
+    void sliderMovedSlot(int value);
 
 
 

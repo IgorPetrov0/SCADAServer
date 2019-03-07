@@ -10,8 +10,11 @@ graphWidget::graphWidget(QWidget *parent) :
     graphArray=NULL;
     posY=0;
     xFactor=2;
+    resizeXFactor=2;
     yFactor=1;
     contextMenu = createContextMenu();
+    xOffset=0;
+    connect(ui->horizontalScrollBar,SIGNAL(sliderMoved(int)),this,SLOT(sliderMovedSlot(int)));
 }
 /////////////////////////////////////////////////////////////////////////////////////
 graphWidget::~graphWidget()
@@ -42,7 +45,8 @@ void graphWidget::visualiseGraph(dayGraph *array){
     }
 
     //рассчитываем xFactor так, чтобы уместить сутки на графике
-    xFactor=((float)this->width()-30)/1440;
+    resizeXFactor=((float)this->width()-30)/1440;
+    xFactor=resizeXFactor;
     graphArray=array;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,9 +71,8 @@ void graphWidget::paintEvent(QPaintEvent *event){
 
     //прямоугольник окна и координатные линии
     painter.setPen(QPen(Qt::black,2,Qt::SolidLine));
-    painter.drawRect(0,0,this->width()-1,this->height()-1);
-    painter.drawLine(30,0,30,this->height()-30);
-    painter.drawLine(30,this->height()-30,this->width(),this->height()-30);
+    //painter.drawLine(0,0,0,this->height()-30);
+    //painter.drawLine(0,this->height()-30,this->width(),this->height()-30);
 
     if(graphArray!=NULL){
         for(int n=0;n!=1440;n++){
@@ -81,21 +84,19 @@ void graphWidget::paintEvent(QPaintEvent *event){
                     break;
                 }
             }
+            int xPos=xFactor+30+xOffset;
             if(n==0){
-                painter.drawPoint(n*xFactor+30,graphValue);
+                painter.drawPoint(n*xPos,graphValue);
             }
             else{
                 int prevValue=graphZero-graphArray->minutesArray[n-1].value*yFactor;
-                painter.drawLine((n-1)*xFactor+30,prevValue,n*xFactor+30,graphValue);
+                painter.drawLine((n-1)*xPos,prevValue,n*xPos,graphValue);
             }
         }
         //направляющие
         painter.setPen(QPen(Qt::black,1,Qt::SolidLine));
-        painter.drawLine(28,posY,this->width(),posY);
-        painter.drawLine(mousePosX,0,mousePosX,this->height()-28);
-
-        painter.drawText(10,posY,visibleValue);//по горизонтали
-        painter.drawText(mousePosX,this->height()-15,visibleDateTime);//по вертикали
+        painter.drawLine(0,posY,this->width(),posY);
+        painter.drawLine(mousePosX,0,mousePosX,this->height()-0);
     }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,7 +109,7 @@ void graphWidget::mouseMoveEvent(QMouseEvent *event){
     }
     mousePosY=event->y();
     if(graphArray!=NULL){
-        calculateRails((mousePosX-30)/xFactor);//позиция в массиве зависит от позиции мыши на экране);
+        calculateRails(mousePosX/xFactor);//позиция в массиве зависит от позиции мыши на экране);
     }
     update();
 }
@@ -121,6 +122,13 @@ void graphWidget::wheelEvent(QWheelEvent *event){
     else{
         xFactor-=0.1f;
     }
+    if(xFactor>=resizeXFactor){
+        ui->horizontalScrollBar->setVisible(true);
+    }
+    else{
+        ui->horizontalScrollBar->setVisible(false);
+        xFactor=resizeXFactor;
+    }
     updateContent();
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,11 +138,14 @@ void graphWidget::contextMenuEvent(QContextMenuEvent *event){
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void graphWidget::resizeEvent(QResizeEvent *event){
     graphZero=this->height()-40;
-    QRect thisRect=this->geometry();
     QRect rect;
-    rect.setX();
-
-
+    rect.setX(0);
+    rect.setY(this->height()-20);
+    rect.setWidth(this->width());
+    rect.setHeight(20);
+    ui->horizontalScrollBar->setGeometry(rect);
+    resizeXFactor=((float)this->width()-30)/1440;
+    xFactor=resizeXFactor;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 void graphWidget::mousePressEvent(QMouseEvent *event){
@@ -167,6 +178,10 @@ void graphWidget::calculateRails(int posInArray){
 //////////////////////////////////////////////////////////////////
 void graphWidget::slotCalcAll(){
 
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+void graphWidget::sliderMovedSlot(int value){
+    xOffset=-value;
 }
 
 
