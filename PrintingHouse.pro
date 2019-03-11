@@ -55,7 +55,8 @@ SOURCES += \
     netserver.cpp \
     serviceClasses/netdialog.cpp \
     clientsocket.cpp \
-    widgets/consoletextwidget.cpp
+    widgets/consoletextwidget.cpp \
+    widgets/graphviewwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -86,7 +87,8 @@ HEADERS += \
     netserver.h \
     serviceClasses/netdialog.h \
     clientsocket.h \
-    widgets/consoletextwidget.h
+    widgets/consoletextwidget.h \
+    widgets/graphviewwidget.h
 
 FORMS += \
         mainwindow.ui \
