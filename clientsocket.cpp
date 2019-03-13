@@ -4,7 +4,7 @@ clientSocket::clientSocket(QObject *parent):
     QTcpSocket(parent)
 {
     connect(this,SIGNAL(disconnected()),this,SLOT(disconnectedSlot()));
-    connect(this,SIGNAL(readyRead()),this,SLOT(readClient()));
+    connect(this,SIGNAL(readyRead()),this,SLOT(readClientSlot()));
 }
 ////////////////////////////////////////////////////////////////////////////////
 void clientSocket::setIndex(int index){
@@ -15,6 +15,6 @@ void clientSocket::disconnectedSlot(){
     emit socketDisconnected(socketIndex);
 }
 ////////////////////////////////////////////////////////////////////////////
-void clientSocket::readClient(){
-
+void clientSocket::readClientSlot(){
+    emit dataReady(socketIndex);
 }

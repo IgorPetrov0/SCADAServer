@@ -14,14 +14,16 @@ public:
 
 protected:
     int socketIndex;
+    QByteArray data;
 
 
 protected slots:
     void disconnectedSlot();
-    void readClient();
+    void readClientSlot();
 
 signals:
     void socketDisconnected(int index);
+    void dataReady(int index);
 
 
 

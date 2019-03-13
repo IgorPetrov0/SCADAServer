@@ -6,6 +6,7 @@
 #define STAT_PATH "/statistics"
 #define CONFIG_FILE_NAME "config.cfg"
 #define SP_CONFIG_FILE_NAME "spConfig.cfg"
+#define NET_CONFIG_FILE_NAME "netConfig.cfg"
 #define SIGNATURE "phConfig"
 #define SPSIGNATURE "spConfig"
 #define CUR_VERSION 0.0f
@@ -39,6 +40,11 @@ struct dayGraph{
 struct shift{
     QTime startTime;
     QTime stopTime;
+};
+
+enum serverCommand{
+    SERVERCOMMAND_NO_COMMAND=0,
+    SERVERCOMMAND_GET_STATISTIC
 };
 
 enum reportType{
