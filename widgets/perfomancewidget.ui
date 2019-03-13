@@ -103,10 +103,10 @@
   <widget class="baseGraphWidget" name="graphicWidget" native="true">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>200</x>
      <y>20</y>
-     <width>181</width>
-     <height>271</height>
+     <width>191</width>
+     <height>241</height>
     </rect>
    </property>
   </widget>

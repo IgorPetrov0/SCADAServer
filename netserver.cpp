@@ -26,7 +26,7 @@ void netServer::incomingConnection(qintptr socketDescriptor){
         socket->setIndex(socketsArray.size());
         socketsArray.append(socket);
         socket->setSocketDescriptor(socketDescriptor);
-        connect(socket,SIGNAL(socketDisconnected(int)),this,SLOT(deleteSlot(int)));
+          connect(socket,SIGNAL(socketDisconnected(int)),this,SLOT(deleteSlot(int)));
     }
 }
 /////////////////////////////////////////////////////////////////////////

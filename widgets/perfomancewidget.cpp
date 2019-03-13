@@ -74,16 +74,16 @@ void perfomanceWidget::resizeEvent(QResizeEvent *event){
     rect.setWidth(tabWidth);
     rect.setHeight(tabHeigth);//-35(незнаю откуда) и -кнопка снизу (высота 20 + по 5 сверху и снизу
     ui->tableWidget->setGeometry(rect);
-    int x1=ui->tableWidget->geometry().x()+ui->tableWidget->geometry().width()+40;//ширина кнопки 30 + по 5 с каждой стороны
-    rect.setX(x1);
+    int x1=ui->tableWidget->geometry().x()+ui->tableWidget->geometry().width()+10;//ширина кнопки 30 + по 5 с каждой стороны
+    rect.setX(x1+40);//
     rect.setY(5);
     rect.setWidth(this->width()-x1);
-    rect.setHeight(widgetGeometry.height()-45);//график по высоте больше таблицы на высоту кнопок
+    rect.setHeight(widgetGeometry.height()-65);//график по высоте больше таблицы на высоту кнопок
     ui->graphicWidget->setGeometry(rect);
 
     //кнопки справа от таблицы
     //кнопка вверх
-    rect.setX(x1-5-30);//х-координата графика - кнопка и расстояние слева и справа от кнопки
+    rect.setX(x1-5);//х-координата графика - кнопка и расстояние слева и справа от кнопки
     rect.setY(tabHeigth/3);//треть высоты таблицы
     rect.setHeight(20);
     rect.setWidth(30);

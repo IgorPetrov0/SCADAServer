@@ -252,15 +252,16 @@ void requestCore::requestCurrentObject(){
         }
     }
     waitTimer->start(WAIT_TIME);
-    emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
 }
 /////////////////////////////////////////////////////////////////////////////////
 void requestCore::reRequestCurrentObject(){
     reCounter++;
     if(reCounter==MAX_RE_REQUEST){
+        reCounter=0;
         nextDevice();
     }
     requestCurrentObject();
+    emit consoleMessage(tr("Повторный запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
 }
 //////////////////////////////////////////////////////////////////////////////
 void requestCore::requestMashine(requestType request){
@@ -328,7 +329,9 @@ void requestCore::nextDevice(){
     currentObject=statCorePointer->getObjectForIndex(counter);//пробуем получить объект
     if(currentObject!=NULL){//если объект не нулевой
         currentRequest=REQUEST_GET_DATA;
+        int add=currentObject->getAddress();
         requestCurrentObject();//то делаем запрос в штатном режиме
+        emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
         counter++;//инкремент счетчика
     }
     else if((currentObject==NULL)&&(counter==0)){//если объект нулевой по нулевому индексу
@@ -378,7 +381,7 @@ void requestCore::requestTime(){
 void requestCore::waitTime(){
     //сюда попадаем, если время ожидания ответа от устройства превысило WAIT_TIME
 
-switch(currentObject->getType()){
+    switch(currentObject->getType()){
         case(objectMashine):{
             waitTimeMashine();
             break;
@@ -389,9 +392,9 @@ switch(currentObject->getType()){
 
     }  
     currentRequest=REQUEST_EMPTY;
-    nextDevice();//переходим к следующему устройству
     emit consoleMessage(tr("Превышено время ожидания ответа от ")+currentObject->getName()+tr(". Адрес ")+
                         QString::number(currentObject->getAddress())+tr(". Порт ")+currentPort->portName());
+    nextDevice();//переходим к следующему устройству
 }
 /////////////////////////////////////////////////////////////////////////
 void requestCore::port1DataReadyRead(){
