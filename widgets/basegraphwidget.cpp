@@ -33,7 +33,8 @@ void baseGraphWidget::visualizeGraphNewTab(dayGraph *array){
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 void baseGraphWidget::updateContent(){
-    graphWidgetsArray.at(0)->updateContent();
+    int currentTab=ui->tabWidget->currentIndex();
+    graphWidgetsArray.at(currentTab)->updateContent();
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 void baseGraphWidget::resizeEvent(QResizeEvent *event){
