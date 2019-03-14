@@ -166,7 +166,9 @@ void MainWindow::serialPortsSlot(){
         if(!rCore.setPort(dialog.getPortName(2),2)){
             errorMessage(rCore.getLastError());
         }
-        rCore.writeConfiguration(appPath);
+        if(!rCore.writeConfiguration(appPath)){
+            errorMessage(rCore.getLastError());
+        }
     }
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -196,6 +198,7 @@ void MainWindow::saveTimeSlot(){
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::netSettingSlot(){
     netDialog dialog;
+    dialog.setPort(tcpCore.serverPort());
     if(dialog.exec()==QDialog::Accepted){
         QMessageBox box;
         box.addButton(QMessageBox::Yes);
@@ -206,6 +209,9 @@ void MainWindow::netSettingSlot(){
                        "Вы готовы продолжить?"));
         if(box.exec()==QMessageBox::Yes){
             tcpCore.setNetPort(dialog.getPort());
+            if(!tcpCore.writeConfiguration(appPath)){
+                errorMessage(tcpCore.getLastError());
+            }
         }
     }
 }
@@ -236,6 +242,9 @@ void MainWindow::initialise(){
     }
     if(!rCore.readConfiguration(appPath)){
         errorMessage(rCore.getLastError());
+    }
+    if(!tcpCore.readConfiguration(appPath)){
+        errorMessage(tcpCore.getLastError());
     }
     ui->mainTab->updateContent();
 }

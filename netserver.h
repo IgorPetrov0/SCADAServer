@@ -3,6 +3,8 @@
 
 
 #include <QTcpServer>
+#include <QFile>
+#include <QDataStream>
 #include "clientsocket.h"
 #include "defines.h"
 #include "errorprocessor.h"
@@ -16,6 +18,8 @@ public:
     netServer();
     ~netServer();
     void setNetPort(int port);
+    bool writeConfiguration(QString workingDir);
+    bool readConfiguration(QString workingDir);
 
 protected:
     QTcpServer *server;
@@ -24,6 +28,7 @@ protected:
 
 protected slots:
     void deleteSlot(int index);
+    void dataReadySlot(int index);
 
 signals:
     void consoleMessage(QString string);

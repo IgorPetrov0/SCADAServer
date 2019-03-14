@@ -8,6 +8,7 @@ netDialog::netDialog(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->okButton,SIGNAL(clicked(bool)),this,SLOT(accept()));
     connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
+    setWindowTitle(tr("Настройка сети"));
 }
 /////////////////////////////////////////////////////////////////
 netDialog::~netDialog()
