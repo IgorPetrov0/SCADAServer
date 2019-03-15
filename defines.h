@@ -54,7 +54,7 @@ enum reportType{
 };
 
 enum eventType{
-    EVENT_CONTROLLER_FAULT,
+    EVENT_CONTROLLER_FAULT=0,
     EVENT_NO_TYPE,
     EVENT_NOT_READY,
     EVENT_NO_RESPONCE,

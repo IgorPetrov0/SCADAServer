@@ -51,11 +51,30 @@
      <x>50</x>
      <y>-1</y>
      <width>471</width>
-     <height>271</height>
+     <height>241</height>
     </rect>
    </property>
   </widget>
   <widget class="QLabel" name="timeLabel">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>250</y>
+     <width>101</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string>1000</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="eventLabel">
    <property name="geometry">
     <rect>
      <x>50</x>

@@ -26,7 +26,6 @@ public:
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
     void resizeEvent(QResizeEvent *event);
-    void mousePressEvent(QMouseEvent *event);
     QMenu *createContextMenu();
     QMenu *contextMenu;
     int viewWidgetBottom;

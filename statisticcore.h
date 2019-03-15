@@ -33,11 +33,9 @@ public:
     bool mashineDown(int index);
     //строит отчет по заданным датам
     reportClass *createReport(reportType type, QDate startDate, QDate stopDate, int mashineIndex);//за удаление отчета отвечает вызывающий
-
     void deleteObject(object *ob, bool objectOnly=false);
     dayGraph *readGraphFile(QString fullPath);//при использовании не забывать удалять полученные данные
     bool writeGraphsInFiles();//записывает графики всех активных машин в файлы
-
 
 protected:
     QVector<mashine*> mashinesArray;

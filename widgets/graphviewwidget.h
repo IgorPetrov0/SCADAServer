@@ -17,6 +17,7 @@ public:
     void setScrollBarPointer(QScrollBar *pointer);
     QString getCurrentValue();
     QString getCurrentTime();
+    QString getCurrentEvent();
 
 protected:
     dayGraph *graphArray;
@@ -29,8 +30,10 @@ protected:
     int xOffset;//смещение слайдером по горизонтали
     QString visibleValue;
     QString visibleDateTime;
+    QString visibleEvent;
     QScrollBar *scrollBarPointer;
     void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
     void calculateRails(int posInArray);
     void wheelEvent(QWheelEvent *event);
