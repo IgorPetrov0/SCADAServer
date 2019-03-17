@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->saveTimer,SIGNAL(timeout()),this,SLOT(saveTimeSlot()));
     connect(&statCore,SIGNAL(consoleMessage(QString)),this,SLOT(writeConsoleSlot(QString)));
     connect(&rCore,SIGNAL(consoleMessage(QString)),this,SLOT(writeConsoleSlot(QString)));
-    connect(&tcpCore,SIGNAL(consoleMessage(QString)),this,SLOT(writeConsoleSlot(QString)));
+    connect(&netCore,SIGNAL(consoleMessage(QString)),this,SLOT(writeConsoleSlot(QString)));
     appPath=QApplication::applicationDirPath();
     rCore.setStatisticCorePointer(&statCore);
     saveTime=300000;
@@ -198,7 +198,7 @@ void MainWindow::saveTimeSlot(){
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::netSettingSlot(){
     netDialog dialog;
-    dialog.setPort(tcpCore.serverPort());
+    dialog.setPort(netCore.serverPort());
     if(dialog.exec()==QDialog::Accepted){
         QMessageBox box;
         box.addButton(QMessageBox::Yes);
@@ -208,9 +208,9 @@ void MainWindow::netSettingSlot(){
                        "и потребуется перенастройка номера порта на клиентских терминалах.\n"
                        "Вы готовы продолжить?"));
         if(box.exec()==QMessageBox::Yes){
-            tcpCore.setNetPort(dialog.getPort());
-            if(!tcpCore.writeConfiguration(appPath)){
-                errorMessage(tcpCore.getLastError());
+            netCore.setNetPort(dialog.getPort());
+            if(!netCore.writeConfiguration(appPath)){
+                errorMessage(netCore.getLastError());
             }
         }
     }
@@ -243,9 +243,10 @@ void MainWindow::initialise(){
     if(!rCore.readConfiguration(appPath)){
         errorMessage(rCore.getLastError());
     }
-    if(!tcpCore.readConfiguration(appPath)){
-        errorMessage(tcpCore.getLastError());
+    if(!netCore.readConfiguration(appPath)){
+        errorMessage(netCore.getLastError());
     }
+    netCore.setStatisticCorePointer(&statCore);
     ui->mainTab->updateContent();
 }
 ///////////////////////////////////////////////////////////////////////////////////

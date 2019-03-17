@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< .merge_file_a03892
 <!-- Written by QtCreator 4.6.1, 2019-03-17T08:59:32. -->
+=======
+<!-- Written by QtCreator 4.6.1, 2019-03-17T08:55:14. -->
+>>>>>>> .merge_file_a06168
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>

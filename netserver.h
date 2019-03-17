@@ -8,6 +8,7 @@
 #include "clientsocket.h"
 #include "defines.h"
 #include "errorprocessor.h"
+#include "statisticcore.h"
 
 
 class netServer : public QTcpServer, public errorProcessor
@@ -18,13 +19,17 @@ public:
     netServer();
     ~netServer();
     void setNetPort(int port);
+    void setStatisticCorePointer(statisticCore *pointer);
     bool writeConfiguration(QString workingDir);
     bool readConfiguration(QString workingDir);
 
 protected:
-    QTcpServer *server;
+    statisticCore *statCorePointer;
+    QByteArray incomingBuffer;
     virtual void incomingConnection(qintptr socketDescriptor);
     QVector<clientSocket*>socketsArray;
+    void sendStatistic(int index);
+    void decodeCommand(QDataStream *str, int index);
 
 protected slots:
     void deleteSlot(int index);

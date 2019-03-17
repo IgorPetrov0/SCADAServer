@@ -35,7 +35,7 @@ public:
 protected:
     statisticCore statCore;
     requestCore rCore;
-    netServer tcpCore;
+    netServer netCore;
     int saveTime;
 
     QString appPath;

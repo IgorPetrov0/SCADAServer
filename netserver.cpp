@@ -2,7 +2,7 @@
 
 netServer::netServer()
 {
-
+    statCorePointer=nullptr;
 }
 /////////////////////////////////////////////////////////////
 netServer::~netServer(){
@@ -18,6 +18,10 @@ void netServer::setNetPort(int port){
     if(port!=0){
         this->listen(QHostAddress::Any,port);
     }
+}
+////////////////////////////////////////////////////////////////////////
+void netServer::setStatisticCorePointer(statisticCore *pointer){
+    statCorePointer=pointer;
 }
 ///////////////////////////////////////////////////////////////////////
 bool netServer::writeConfiguration(QString workingDir){
@@ -74,6 +78,42 @@ void netServer::incomingConnection(qintptr socketDescriptor){
           connect(socket,SIGNAL(dataReady(int)),this,SLOT(dataReadySlot(int)));
     }
 }
+//////////////////////////////////////////////////////////////////////////////////////////
+void netServer::sendStatistic(int index){
+    if(statCorePointer!=nullptr){
+        QByteArray array;
+        QDataStream str(&array,QIODevice::WriteOnly);
+        str<<qint64(0);//место для размера
+        str<<(uchar)TCP_PACKET_STATISTIC;
+        int mashinesArraySize=statCorePointer->getMashinsCount();
+        str<<mashinesArraySize;
+        for(int n=0;n!=mashinesArraySize;n++){
+            statCorePointer->getMashine(n)->netSerialise(&str);
+        }
+        str.device()->seek(0);
+        str<<qint64(array.size());
+        socketsArray.at(index)->write(array);
+    }
+    else{
+        qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+void netServer::decodeCommand(QDataStream *str, int index){
+    uchar command=SERVERCOMMAND_NO_COMMAND;
+    *str>>command;
+    switch(command){
+        case(SERVERCOMMAND_NO_COMMAND):{
+            incomingBuffer.clear();
+            return;
+        }
+        case(SERVERCOMMAND_GET_STATISTIC):{
+            sendStatistic(index);
+            incomingBuffer.clear();
+            break;
+        }
+    }
+}
 /////////////////////////////////////////////////////////////////////////
 void netServer::deleteSlot(int index){
     delete socketsArray.at(index);
@@ -82,25 +122,24 @@ void netServer::deleteSlot(int index){
 //////////////////////////////////////////////////////////////////////////////////////
 void netServer::dataReadySlot(int index){
     clientSocket *tmpSocket=socketsArray.at(index);
-    qint64 size;
-    size=tmpSocket->bytesAvailable();
-    QByteArray array=tmpSocket->read(sizeof(qint64));
-    QDataStream str(array);
+    qint64 packetSize=0;
+    incomingBuffer.append(tmpSocket->readAll());
+    QDataStream str(incomingBuffer);
 
-    str>>size;
-    if(size==tmpSocket->bytesAvailable()){
-        array.clear();
-        array=tmpSocket->readAll();
-        uchar command=SERVERCOMMAND_NO_COMMAND;
-        str>>command;
-        switch(command){
-            case(SERVERCOMMAND_NO_COMMAND):{
-                return;
-            }
-            case(SERVERCOMMAND_GET_STATISTIC):{
-
+    str>>packetSize;
+    if(packetSize==incomingBuffer.size()){
+        uchar type;
+        str>>type;
+        switch(type){
+            case(TCP_PACKET_COMMAND):{
+                decodeCommand(&str,index);
                 break;
             }
         }
+        incomingBuffer.clear();
+    }
+    else if(packetSize<incomingBuffer.size()){
+        consoleMessage(tr("Неверный формат пакета от клиента ")+tmpSocket->peerAddress().toString());
+        incomingBuffer.clear();
     }
 }
