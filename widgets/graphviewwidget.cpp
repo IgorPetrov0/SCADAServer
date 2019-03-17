@@ -49,6 +49,18 @@ void graphViewWidget::mouseMoveEvent(QMouseEvent *event){
     emit mouseMoveSignal(mousePosX,posY);
     update();
 }
+///////////////////////////////////////////////////////////////////////////
+void graphViewWidget::mousePressEvent(QMouseEvent *event){
+    if(event->button()==Qt::LeftButton){
+        if(this->hasMouseTracking()){
+            setMouseTracking(false);
+            updateContent();
+        }
+        else{
+            setMouseTracking(true);
+        }
+    }
+}
 /////////////////////////////////////////////////////////////////////////////////
 void graphViewWidget::paintEvent(QPaintEvent *event){
     QPainter painter(this);
@@ -92,6 +104,29 @@ void graphViewWidget::calculateRails(int posInArray){
         visibleValue=QString::number(graphArray->minutesArray[posInArray].value);//отображаемое значение
         QTime time=QTime::fromMSecsSinceStartOfDay(posInArray*60000);
         visibleDateTime=graphArray->date.toString("dd_MM_yyyy ")+time.toString("hh:mm");
+        switch(graphArray->minutesArray[posInArray].event){
+            case(EVENT_OK):{
+                visibleEvent=tr("ОК");
+                break;
+            }
+            case(EVENT_NO_TYPE):{
+                visibleEvent=tr("Неопределенное");
+                break;
+            }
+            case(EVENT_NO_RESPONCE):{
+                visibleEvent=tr("Нет ответа");
+                break;
+            }
+            case(EVENT_NOT_READY):{
+                visibleEvent=tr("Нет данных");
+                break;
+            }
+            case(EVENT_CONTROLLER_FAULT):{
+                visibleEvent=tr("Ошибка");
+                break;
+            }
+        }
+
         posY=this->height()-graphArray->minutesArray[posInArray].value*yFactor-40;
     }
 }
@@ -130,6 +165,7 @@ void graphViewWidget::updateContent(){
         int posInArray=QTime::currentTime().msecsSinceStartOfDay()/60000;
         calculateRails(posInArray);
         mousePosX=posInArray*xFactor+30;
+        emit mouseMoveSignal(mousePosX,posY);
     }
     update();
 }
@@ -145,5 +181,9 @@ QString graphViewWidget::getCurrentValue(){
 ////////////////////////////////////////////////////////////////////////
 QString graphViewWidget::getCurrentTime(){
     return visibleDateTime;
+}
+/////////////////////////////////////////////////////////////////////////
+QString graphViewWidget::getCurrentEvent(){
+    return visibleEvent;
 }
 ///////////////////////////////////////////////////////////////////////////////

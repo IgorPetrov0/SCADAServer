@@ -31,6 +31,7 @@ public:
     void addShift(shift newShift);
     void addTimePoint(minutePoint point, QTime time);
     dayGraph *getCurrentGraph();
+    void setCurrentGraph(dayGraph *newCurrentGraph);
     void readPacket(unsigned char *array,QTime time);
     void memoryNotCleared();//вызывается, если небыло ответа на запрос стирания памяти
 

@@ -162,6 +162,12 @@ void mashine::addTimePoint(minutePoint point, QTime time){
 dayGraph *mashine::getCurrentGraph(){
     return currentDayGraph;
 }
+////////////////////////////////////////////////////////////////////////////
+void mashine::setCurrentGraph(dayGraph *newCurrentGraph){
+    delete[] currentDayGraph->minutesArray;
+    delete currentDayGraph;
+    currentDayGraph=newCurrentGraph;
+}
 /////////////////////////////////////////////////////////////////////////////////
 void mashine::readPacket(unsigned char *array, QTime time){
     int lastTimeInMinutes=lastRequestTime.msecsSinceStartOfDay()/60000;

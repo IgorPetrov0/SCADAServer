@@ -48,7 +48,7 @@ void graphWidget::resizeEvent(QResizeEvent *event){
     rect.setX(valueLabelWidth+5);
     rect.setY(0);
     rect.setWidth(this->width()-(valueLabelWidth+5));
-    rect.setHeight(this->height()-ui->horizontalScrollBar->height()-20);
+    rect.setHeight(this->height()-ui->horizontalScrollBar->height()-40);
     ui->viewWidget->setGeometry(rect);
     //поле значения
     rect.setX(0);
@@ -62,23 +62,18 @@ void graphWidget::resizeEvent(QResizeEvent *event){
     rect.setWidth(timeLabelWidth);
     rect.setHeight(16);
     ui->timeLabel->setGeometry(rect);
+    //поле события
+    rect.setX(0);
+    rect.setY(ui->viewWidget->height()+ui->timeLabel->height());
+    rect.setWidth(timeLabelWidth);
+    rect.setHeight(16);
+    ui->eventLabel->setGeometry(rect);
+
 
     viewWidgetBottom=ui->viewWidget->geometry().y()+ui->viewWidget->geometry().height();
     bottomPos=viewWidgetBottom-rect.height();
     viewWidgetLeft=ui->viewWidget->width()-ui->viewWidget->geometry().y();
     leftPos=viewWidgetLeft-ui->timeLabel->width();
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-void graphWidget::mousePressEvent(QMouseEvent *event){
-    if(event->button()==Qt::LeftButton){
-        if(this->hasMouseTracking()){
-            setMouseTracking(false);
-            updateContent();
-        }
-        else{
-            setMouseTracking(true);
-        }
-    }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 QMenu *graphWidget::createContextMenu(){
@@ -115,8 +110,19 @@ void graphWidget::mouseMoveSlot(int x, int y){
     rect.setWidth(ui->timeLabel->width());
     ui->timeLabel->setGeometry(rect);
 
+    rect=ui->eventLabel->geometry();
+    if(x>leftPos){
+        rect.setX(leftPos);
+    }
+    else{
+        rect.setX(x);
+    }
+    rect.setWidth(ui->eventLabel->width());
+    ui->eventLabel->setGeometry(rect);
+
     ui->valueLabel->setText(ui->viewWidget->getCurrentValue());
     ui->timeLabel->setText(ui->viewWidget->getCurrentTime());
+    ui->eventLabel->setText(ui->viewWidget->getCurrentEvent());
 }
 
 

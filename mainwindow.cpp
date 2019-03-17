@@ -24,8 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&netCore,SIGNAL(consoleMessage(QString)),this,SLOT(writeConsoleSlot(QString)));
     appPath=QApplication::applicationDirPath();
     rCore.setStatisticCorePointer(&statCore);
-    saveTime=300000;
+    saveTime=180000;
     saveTimer->setSingleShot(true);
+    saveTimer->start(saveTime);
     updateTimer->start(WINDOW_UPDATE_TIME);
 }
 ////////////////////////////////////////////////////////////////

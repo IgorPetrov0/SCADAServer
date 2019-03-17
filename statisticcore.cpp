@@ -51,6 +51,24 @@ bool statisticCore::readConfiguration(QString workingDir){
     }
     file.close();
     emit consoleMessage(tr("Конфигурация статистики прочитана из файла ")+workingDir+"/"+CONFIG_FILE_NAME);
+
+    //проверяем наличие сегодняшних файлов и если есть загружаем
+    int size=mashinesArray.size();
+    QString currentDate=QDate::currentDate().toString("_dd_MM_yyyy")+".stat";
+    for(int n=0;n!=size;n++){
+        mashine *tmpMashine=mashinesArray.at(n);
+        QString fileName=tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"/"+tmpMashine->getName()+currentDate;
+        file.setFileName(fileName);
+        if(file.exists()){
+            dayGraph *todayGraph=readGraphFile(fileName);
+            if(todayGraph!=NULL){
+                tmpMashine->setCurrentGraph(todayGraph);
+            }
+            else{
+                return false;
+            }
+        }
+    }
     return true;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -295,6 +313,7 @@ bool statisticCore::writeGraphsInFiles(){
             }
         }
     }
+    return true;
 }
 ////////////////////////////////////////////////////////////////////////////
 void statisticCore::generateTestGraph(mashine *m){
