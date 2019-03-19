@@ -79,8 +79,8 @@ void graphViewWidget::paintEvent(QPaintEvent *event){
         }
         //направляющие
         painter.setPen(QPen(Qt::black,1,Qt::SolidLine));
-        painter.drawLine(0,posY,this->width(),posY);
-        painter.drawLine(mousePosX,0,mousePosX,this->height()-0);
+        painter.drawLine(0,posY,this->width(),posY);//горизонтальная
+        painter.drawLine(mousePosX,0,mousePosX,this->height()-0);//вертикальная
 
         //для отладки
         painter.drawText(10,10,"xFactor="+QString::number(xFactor));
@@ -124,10 +124,10 @@ void graphViewWidget::calculateRails(int posInArray){
 void graphViewWidget::wheelEvent(QWheelEvent *event){
     QPoint angle=event->angleDelta();
     if(angle.y()>0){
-        xFactor+=1.0f;
+        xFactor+=1;
     }
     else{
-        xFactor-=1.0f;
+        xFactor-=1;
     }
     if(xFactor>=resizeXFactor){
         scrollBarPointer->setVisible(true);
@@ -136,6 +136,8 @@ void graphViewWidget::wheelEvent(QWheelEvent *event){
         scrollBarPointer->setVisible(false);
         xFactor=resizeXFactor;
     }
+
+    emit wheelSignal(xFactor);
     updateContent();
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +161,10 @@ void graphViewWidget::calcFactors(){
     }
 
     //рассчитываем xFactor так, чтобы уместить сутки на графике
-    resizeXFactor=(float)this->width()/1440;
+    resizeXFactor=this->width()/1440;
+    if(resizeXFactor==0){
+        resizeXFactor=1;
+    }
     xFactor=resizeXFactor;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +177,7 @@ void graphViewWidget::updateContent(){
     if(!this->hasMouseTracking()){
         int posInArray=QTime::currentTime().msecsSinceStartOfDay()/60000;
         calculateRails(posInArray);
-        mousePosX=posInArray*xFactor+30;
+        mousePosX=posInArray*xFactor-xOffset;
         emit mouseMoveSignal(mousePosX,posY);
     }
     update();

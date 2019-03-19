@@ -25,8 +25,8 @@ protected:
     int mousePosX,mousePosY;
     int posY;
     float yFactor;
-    float xFactor;//меняется при whileEvent и ипользуется дл отрисовки
-    float resizeXFactor;//меняется при resizeEvent
+    int xFactor;//меняется при whileEvent и ипользуется дл отрисовки
+    int resizeXFactor;//меняется при resizeEvent
     int xOffset;//смещение слайдером по горизонтали
     QString visibleValue;
     QString visibleDateTime;
@@ -43,6 +43,7 @@ protected:
 
 signals:
     void mouseMoveSignal(int x,int y);
+    void wheelSignal(int xFactor);
 
 
 public slots:
