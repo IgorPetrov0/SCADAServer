@@ -10,6 +10,7 @@ baseGraphWidget::baseGraphWidget(QWidget *parent) :
     graphWidgetsArray.append(gWidget);
     ui->tabWidget->addTab(gWidget,tr("Текущая"));
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(tabCloseSlot(int)));
+    connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(changedSlot(int)));
 }
 ////////////////////////////////////////////////////////////////////
 baseGraphWidget::~baseGraphWidget()
@@ -52,5 +53,10 @@ void baseGraphWidget::tabCloseSlot(int index){
         graphWidgetsArray.remove(index);
         ui->tabWidget->removeTab(index);
     }
+}
+//////////////////////////////////////////////////////////////////////////////////////
+void baseGraphWidget::changedSlot(int index){
+    int t=ui->tabWidget->currentIndex();
+    t=0;
 }
 ////////////////////////////////////////////////////////////////////////////

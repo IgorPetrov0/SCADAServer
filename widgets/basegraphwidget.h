@@ -26,6 +26,7 @@ protected:
 
 protected slots:
     void tabCloseSlot(int index);
+    void changedSlot(int index);
 
 private:
     Ui::baseGraphWidget *ui;

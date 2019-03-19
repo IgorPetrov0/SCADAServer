@@ -32,13 +32,14 @@ protected:
     QString visibleDateTime;
     QString visibleEvent;
     QScrollBar *scrollBarPointer;
+    int maxValue;
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
     void calculateRails(int posInArray);
     void wheelEvent(QWheelEvent *event);
     void resizeEvent(QResizeEvent *event);
-
+    void calcFactors();
 
 signals:
     void mouseMoveSignal(int x,int y);
