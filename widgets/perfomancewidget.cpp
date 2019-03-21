@@ -55,6 +55,9 @@ void perfomanceWidget::updateContent(){
             ui->tableWidget->setCurrentCell(0,0);
         }
     }
+    else{
+        ui->tableWidget->setCurrentCell(0,0);
+    }
     ui->graphicWidget->updateContent();
 }
 ///////////////////////////////////////////////////////////////////////////////////////
