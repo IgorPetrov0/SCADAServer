@@ -40,6 +40,7 @@ protected:
     object *currentObject;
     int reCounter;
     bool pass;//два прохода для кольцевого опроса линии
+    QTime lastRequestTime;
     //QVector<unsigned char>inputArray;
     void requestCurrentObject();
     void reRequestCurrentObject();

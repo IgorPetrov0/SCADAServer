@@ -195,9 +195,6 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 int t=array[offset-3]<<8;
                 tmpPoint.value=(int)array[offset-4]+t;
                 tmpPoint.event=array[offset-2];
-                if(currentTimeInMinutes-lastTimeInMinutes>1){//для отладки
-                    int t=0;
-                }
                 currentDayGraph->minutesArray[currentTimeInMinutes-n]=tmpPoint;
             }
             break;
