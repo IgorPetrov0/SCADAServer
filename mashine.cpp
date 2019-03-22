@@ -194,10 +194,10 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 int offset=packetSize-n*3;
                 int t=array[offset-3]<<8;
                 tmpPoint.value=(int)array[offset-4]+t;
-                if(tmpPoint.value==0){
+                tmpPoint.event=array[offset-2];
+                if(currentTimeInMinutes-lastTimeInMinutes>1){//для отладки
                     int t=0;
                 }
-                tmpPoint.event=array[offset-2];
                 currentDayGraph->minutesArray[currentTimeInMinutes-n]=tmpPoint;
             }
             break;
@@ -205,6 +205,9 @@ void mashine::readPacket(unsigned char *array, QTime time){
         case(ANSWER_CLEARED):{
             lastRequestTime=time;
             break;
+        }
+        default:{
+            int t=0;
         }
     }
 }

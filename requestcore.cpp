@@ -319,6 +319,9 @@ void requestCore::readPacket(){
             tmpMashine->readPacket(inputArray,QTime::currentTime());
             break;
         }
+        default:{
+            int t=0;
+        }
     }
 }
 ////////////////////////////////////////////////////////////////////////////
