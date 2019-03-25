@@ -174,6 +174,7 @@ void mashine::readPacket(unsigned char *array, QTime time){
     int currentTimeInMinutes=time.msecsSinceStartOfDay()/60000;
     int period=(currentTimeInMinutes-lastTimeInMinutes);//период со времени последнего запроса в минутах
     int packetSize=(int)array[0];//размер пакета в байтах
+    int seconds=time.second();
     switch(array[1]){
         case(ANSWER_OK):{
             int packetSizeInMinutes=(int)array[2];//кол-во минут в пакете
@@ -193,9 +194,17 @@ void mashine::readPacket(unsigned char *array, QTime time){
             for(int n=0;n!=packetSizeInMinutes;n++){
                 int offset=packetSize-n*3;
                 int t=array[offset-3]<<8;
-                tmpPoint.value=(int)array[offset-4]+t;
+                int index=currentTimeInMinutes-n;
+                if(index<0){//индек может быть <0 в начале суток
+                    break;//тогда просто отбрасываем все, что <0
+                }
+                int value=(int)array[offset-4]+t;
+
+                tmpPoint.value=value;
                 tmpPoint.event=array[offset-2];
-                currentDayGraph->minutesArray[currentTimeInMinutes-n]=tmpPoint;
+
+
+                currentDayGraph->minutesArray[index]=tmpPoint;
             }
             break;
         }
