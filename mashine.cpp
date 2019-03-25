@@ -198,13 +198,20 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 if(index<0){//индек может быть <0 в начале суток
                     break;//тогда просто отбрасываем все, что <0
                 }
+                //делим значение между текущей минутой и предыдущей
                 int value=(int)array[offset-4]+t;
+                double tmp=(double)value/60*(double)seconds;
+                int currentMinuteValue=round(tmp);
+                int prevMinuteValue=value-currentMinuteValue;
 
-                tmpPoint.value=value;
+                tmpPoint.value=currentMinuteValue;
                 tmpPoint.event=array[offset-2];
-
-
                 currentDayGraph->minutesArray[index]=tmpPoint;
+                int prevIndex=index-1;
+                if(prevIndex<0){
+                    break;
+                }
+                currentDayGraph->minutesArray[prevIndex].value=currentDayGraph->minutesArray[prevIndex].value+prevMinuteValue;
             }
             break;
         }

@@ -68,7 +68,6 @@ void graphViewWidget::paintEvent(QPaintEvent *event){
                     break;
                 }
             }
-            int xPos=xFactor+xOffset;
             if(n==0){
                 painter.drawPoint(n*xFactor-xOffset,graphValue);
             }
@@ -138,6 +137,8 @@ void graphViewWidget::wheelEvent(QWheelEvent *event){
     }
 
     emit wheelSignal(xFactor);
+    xOffset=(mousePosX-this->width()/2)*xFactor;
+    mousePosX=this->width()/2;
     updateContent();
 }
 //////////////////////////////////////////////////////////////////////////////////////////
