@@ -316,7 +316,7 @@ void requestCore::readPacket(){
     switch(currentObject->getType()){
         case(objectMashine):{
             mashine *tmpMashine=static_cast<mashine*>(currentObject);
-            tmpMashine->readPacket(inputArray,QTime::currentTime());
+            tmpMashine->readPacket(inputArray,lastRequestTime);
             break;
         }
         default:{
@@ -349,7 +349,7 @@ void requestCore::nextDevice(){
 }
 //////////////////////////////////////////////////////////////////////////
 void requestCore::requestTime(){ 
-
+    lastRequestTime=QTime::currentTime();
     currentPort=NULL;
     if(pass){//если первый проход
         if(sPort1!=NULL){//в идеале работаем через первый порт
