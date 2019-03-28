@@ -80,8 +80,6 @@ void MainWindow::editObjectSlot(objectType type, int index){
     master.loadObject(tmp);
     master.setStatCorePointer(&statCore);
     if(master.exec()==QDialog::Accepted){
-        QByteArray arr=master.getObjectData();
-        QDataStream str(&arr,QIODevice::ReadOnly);
         ui->mainTab->updateContent();
         statCore.writeConfiguration(appPath);
     }
