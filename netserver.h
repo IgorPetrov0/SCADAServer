@@ -29,6 +29,7 @@ protected:
     virtual void incomingConnection(qintptr socketDescriptor);
     QVector<clientSocket*>socketsArray;
     void sendStatistic(int index);
+    void editObject(QDataStream *str, int index);
     void decodeCommand(QDataStream *str, int index);
 
 protected slots:
