@@ -36,7 +36,7 @@ protected:
 protected slots:
     void slotCalcAll();
     void mouseMoveSlot(int x, int y);
-    void wheelSlot(int xFactor);
+    void wheelSlot(double xFactor);
 
 
 private:

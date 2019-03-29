@@ -17,7 +17,7 @@ graphWidget::graphWidget(QWidget *parent) :
     ui->horizontalScrollBar->setPageStep(1);
     connect(ui->viewWidget,SIGNAL(mouseMoveSignal(int,int)),this,SLOT(mouseMoveSlot(int,int)));
     connect(ui->horizontalScrollBar,SIGNAL(valueChanged(int)),ui->viewWidget,SLOT(sliderMovedSlot(int)));
-    connect(ui->viewWidget,SIGNAL(wheelSignal(int)),this,SLOT(wheelSlot(int)));
+    connect(ui->viewWidget,SIGNAL(wheelSignal(double)),this,SLOT(wheelSlot(double)));
 }
 /////////////////////////////////////////////////////////////////////////////////////
 graphWidget::~graphWidget()
@@ -128,9 +128,9 @@ void graphWidget::mouseMoveSlot(int x, int y){
     ui->eventLabel->setText(ui->viewWidget->getCurrentEvent());
 }
 /////////////////////////////////////////////////////////////////////////////
-void graphWidget::wheelSlot(int xFactor){
-    ui->horizontalScrollBar->setPageStep(1440/xFactor);
-    ui->horizontalScrollBar->setMaximum(1440*xFactor);
+void graphWidget::wheelSlot(double xFactor){
+    ui->horizontalScrollBar->setPageStep((int)round(1440/xFactor));
+    ui->horizontalScrollBar->setMaximum((int)round(1440*xFactor));
 }
 
 
