@@ -93,6 +93,47 @@ void netServer::sendStatistic(int index){
         str.device()->seek(0);
         str<<qint64(array.size());
         socketsArray.at(index)->write(array);
+        socketsArray.at(index)->flush();
+    }
+    else{
+        qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////
+void netServer::editObject(QDataStream *str, int index){
+    QByteArray array;
+    QDataStream tmpStr(&array,QIODevice::WriteOnly);
+    object tmp;
+    tmp.deserialisation(str);
+
+    if(statCorePointer!=nullptr){
+        object *objectPointer=statCorePointer->getObjectForName(tmp.getName());
+        if(objectPointer==nullptr){//если такого объекта в базе не существует
+            tmpStr<<qint64(0);//место для размера
+            tmpStr<<(uchar)TCP_PACKET_ERROR;
+            tmpStr<<tr("Объекта с именем <")+tmp.getName()+tr("> не существует. \n Изменения не сохранены.");
+            tmpStr.device()->seek(0);
+            tmpStr<<qint64(array.size());
+            socketsArray.at(index)->write(array);
+            socketsArray.at(index)->flush();
+            return;
+        }
+        objectPointer->setDescription(tmp.getDescription());//переписываем только разрешенные для редактирования параметры
+        objectPointer->setAddress(tmp.getAddress());
+        switch(objectPointer->getType()){
+            case(objectMashine):{
+                mashine *tmpMashine=static_cast<mashine*>(objectPointer);
+                tmpMashine->deserialisationContinue(str);
+                break;
+            }
+        }
+        tmpStr<<qint64(0);//место для размера
+        tmpStr<<(uchar)TCP_PACKET_ANSWER;
+        tmpStr<<tr("Объект <")+tmp.getName()+tr("> успешно изменен.");
+        tmpStr.device()->seek(0);
+        tmpStr<<qint64(array.size());
+        socketsArray.at(index)->write(array);
+        socketsArray.at(index)->flush();
     }
     else{
         qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
@@ -103,16 +144,16 @@ void netServer::decodeCommand(QDataStream *str, int index){
     uchar command=SERVERCOMMAND_NO_COMMAND;
     *str>>command;
     switch(command){
-        case(SERVERCOMMAND_NO_COMMAND):{
-            incomingBuffer.clear();
-            return;
-        }
         case(SERVERCOMMAND_GET_STATISTIC):{
             sendStatistic(index);
-            incomingBuffer.clear();
+            break;
+        }
+        case(SERVERCOMMAND_EDIT_OBJECT):{
+            editObject(str,index);
             break;
         }
     }
+    incomingBuffer.clear();
 }
 /////////////////////////////////////////////////////////////////////////
 void netServer::deleteSlot(int index){

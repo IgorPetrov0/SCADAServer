@@ -104,7 +104,20 @@ object *statisticCore::getObjectForIndex(int index){
         return mashinesArray.at(index);
     }
     //в дальнейшем проверяем на mashinesArray.size+anythingElse.size
-    return NULL;
+    return nullptr;
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+object *statisticCore::getObjectForName(QString name){
+    int size=mashinesArray.size();//проверяем по массиву машин
+    for(int n=0;n!=size;n++){
+        object *tmp=mashinesArray.at(n);
+        if(mashinesArray.at(n)->getName()==name){
+            return tmp;
+        }
+    }
+    //todo проверяем по остальным массивам объектов
+
+    return nullptr;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 bool statisticCore::createObject(QDataStream *str){

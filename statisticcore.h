@@ -23,6 +23,7 @@ public:
     bool writeConfiguration(QString workingDir);
     int getObjectsCount();
     object *getObjectForIndex(int index);
+    object *getObjectForName(QString name);
     bool createObject(QDataStream *str);
     int getMashinsCount();
     mashine *getMashine(int index);

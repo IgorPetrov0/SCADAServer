@@ -75,13 +75,12 @@ void MainWindow::editObjectSlot(objectType type, int index){
         }
     }
     if(tmp==NULL){
-        errorMessage(statCore.getLastError());
+        errorMessage(tr("Внутренняя ошибка. Указанного объекта не существует."));
+        return;
     }
     master.loadObject(tmp);
     master.setStatCorePointer(&statCore);
     if(master.exec()==QDialog::Accepted){
-        QByteArray arr=master.getObjectData();
-        QDataStream str(&arr,QIODevice::ReadOnly);
         ui->mainTab->updateContent();
         statCore.writeConfiguration(appPath);
     }
