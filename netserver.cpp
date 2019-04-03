@@ -80,6 +80,7 @@ void netServer::incomingConnection(qintptr socketDescriptor){
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void netServer::sendStatistic(int index){
+    clientSocket *socket=socketsArray.at(index);
     if(statCorePointer!=nullptr){
         QByteArray array;
         QDataStream str(&array,QIODevice::WriteOnly);
@@ -92,30 +93,50 @@ void netServer::sendStatistic(int index){
         }
         str.device()->seek(0);
         str<<qint64(array.size());
-        socketsArray.at(index)->write(array);
-        socketsArray.at(index)->flush();
+        socket->write(array);
+        socket->flush();
     }
     else{
         qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
     }
 }
-//////////////////////////////////////////////////////////////////////////////////////
-void netServer::editObject(QDataStream *str, int index){
+////////////////////////////////////////////////////////////////////////////////////////
+void netServer::sendAnswer(QString answer, int index){
+    clientSocket *socket=socketsArray.at(index);
     QByteArray array;
     QDataStream tmpStr(&array,QIODevice::WriteOnly);
+    tmpStr<<qint64(0);//место для размера
+    tmpStr<<(uchar)TCP_PACKET_ANSWER;
+    tmpStr<<answer;
+    tmpStr.device()->seek(0);
+    tmpStr<<qint64(array.size());
+    socket->write(array);
+    socket->flush();
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void netServer::sendError(QString error, int index){
+    clientSocket *socket=socketsArray.at(index);
+    QByteArray array;
+    QDataStream tmpStr(&array,QIODevice::WriteOnly);
+    tmpStr<<qint64(0);//место для размера
+    tmpStr<<(uchar)TCP_PACKET_ERROR;
+    tmpStr<<error;
+    tmpStr.device()->seek(0);
+    tmpStr<<qint64(array.size());
+    socket->write(array);
+    socket->flush();
+}
+//////////////////////////////////////////////////////////////////////////////////////
+void netServer::editObject(QDataStream *str, int index){
+    clientSocket *socket=socketsArray.at(index);
     object tmp;
     tmp.deserialisation(str);
 
     if(statCorePointer!=nullptr){
         object *objectPointer=statCorePointer->getObjectForName(tmp.getName());
         if(objectPointer==nullptr){//если такого объекта в базе не существует
-            tmpStr<<qint64(0);//место для размера
-            tmpStr<<(uchar)TCP_PACKET_ERROR;
-            tmpStr<<tr("Объекта с именем <")+tmp.getName()+tr("> не существует. \n Изменения не сохранены.");
-            tmpStr.device()->seek(0);
-            tmpStr<<qint64(array.size());
-            socketsArray.at(index)->write(array);
-            socketsArray.at(index)->flush();
+            sendError(tr("Объекта с именем <")+tmp.getName()+tr("> не существует. \n Изменения не сохранены."),index);
+            emit consoleMessage(tr("Клиент <")+socket->peerAddress().toString()+tr("запросил изменение несуществующего объекта ")+tmp.getName());
             return;
         }
         objectPointer->setDescription(tmp.getDescription());//переписываем только разрешенные для редактирования параметры
@@ -127,13 +148,21 @@ void netServer::editObject(QDataStream *str, int index){
                 break;
             }
         }
-        tmpStr<<qint64(0);//место для размера
-        tmpStr<<(uchar)TCP_PACKET_ANSWER;
-        tmpStr<<tr("Объект <")+tmp.getName()+tr("> успешно изменен.");
-        tmpStr.device()->seek(0);
-        tmpStr<<qint64(array.size());
-        socketsArray.at(index)->write(array);
-        socketsArray.at(index)->flush();
+        sendAnswer(tr("Объект <")+tmp.getName()+tr("> успешно изменен."),index);
+        emit consoleMessage(tr("Объект <")+tmp.getName()+tr("> изменен клиентом ")+socket->peerAddress().toString());
+    }
+    else{
+        qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void netServer::createObject(QDataStream *str, int index){
+    clientSocket *socket=socketsArray.at(index);
+
+    if(statCorePointer!=nullptr){
+        statCorePointer->createObject(str);
+        sendAnswer(tr("Объект создан"),index);
+        emit consoleMessage(tr("Создан новый объект по запросу клиента ")+socket->peerAddress().toString());
     }
     else{
         qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
@@ -150,6 +179,10 @@ void netServer::decodeCommand(QDataStream *str, int index){
         }
         case(SERVERCOMMAND_EDIT_OBJECT):{
             editObject(str,index);
+            break;
+        }
+        case(SERVERCOMMAND_CREATE_OBJECT):{
+            createObject(str,index);
             break;
         }
     }

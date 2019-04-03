@@ -56,6 +56,7 @@ protected slots:
     void netSettingSlot();
     void writeConsoleSlot(QString string);
 
+
 private:
     Ui::MainWindow *ui;
 
