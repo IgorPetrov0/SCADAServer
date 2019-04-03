@@ -403,7 +403,7 @@ void requestCore::waitTime(){
 void requestCore::port1DataReadyRead(){
     inputBytesCounter+=sPort1->read((char*)&inputArray[inputBytesCounter],2000);//размер пакета ограничен 2000 байт
     if(inputBytesCounter<2000){//хотя функция QIODevice::read() и не даст забить в массив более 2000 байт, заполнение может происходить за несколько раз
-        if(inputArray[0]==(quint16)inputBytesCounter){//сравниваем размер пакета с его заголовком
+        if(inputArray[0]==(quint8)inputBytesCounter){//сравниваем размер пакета с его заголовком
             waitTimer->stop();//если пакет полностью получен, то сбрасываем таймер ожидания
             unsigned char crc=CRC16(inputArray,inputBytesCounter-1);//считаем CRC для всего пакета, кроме последнего байта
             if(crc==(unsigned char)inputArray[inputBytesCounter-1]){
