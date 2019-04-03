@@ -133,9 +133,11 @@ bool statisticCore::createObject(QDataStream *str){
             if(!dir.exists()){//если папка машины не существует, то создаем
                 QString path=dir.absolutePath();
                 if(!dir.mkdir(path)){
-                    setLastError(tr("Не удалось создать папку для машины ")+
-                                 tmpMashine->getName()+tr("\n по адресу ")+
-                                 tmpMashine->getPathForStatistics());
+                    QString error=tr("Не удалось создать папку для машины ")+
+                            tmpMashine->getName()+tr("\n по адресу ")+
+                            tmpMashine->getPathForStatistics();
+                    setLastError(error);
+                    emit consoleMessage(error);
                     ok=false;//ошибка не критичная. машина создается, даже если не удалось создать папку
                 }
             }
