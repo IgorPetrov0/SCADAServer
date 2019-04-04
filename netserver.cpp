@@ -160,7 +160,24 @@ void netServer::createObject(QDataStream *str, int index){
     clientSocket *socket=socketsArray.at(index);
 
     if(statCorePointer!=nullptr){
-        statCorePointer->createObject(str);
+        QByteArray array;
+        *str>>array;
+        QDataStream objectStr(&array,QIODevice::ReadOnly);
+
+        //дополнительно проверяем на наличие такого объекта в базе
+        object tmpObject;
+        tmpObject.deserialisation(&objectStr);
+        if(statCorePointer->getObjectForName(tmpObject.getName())!=nullptr){
+            sendAnswer(tr("Объект с именем ")+tmpObject.getName()+tr(" уже существует."),index);
+            return;
+        }
+        if(statCorePointer->getObjectForAddress(tmpObject.getAddress())!=nullptr){
+            sendAnswer(tr("Объект с адресом ")+tmpObject.getAddress()+tr(" уже существует."),index);
+            return;
+        }
+        objectStr.device()->seek(0);
+
+        statCorePointer->createObject(&objectStr,true);
         sendAnswer(tr("Объект создан"),index);
         emit consoleMessage(tr("Создан новый объект по запросу клиента ")+socket->peerAddress().toString());
     }

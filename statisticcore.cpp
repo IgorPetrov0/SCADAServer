@@ -120,7 +120,7 @@ object *statisticCore::getObjectForName(QString name){
     return nullptr;
 }
 /////////////////////////////////////////////////////////////////////////////////////
-bool statisticCore::createObject(QDataStream *str){
+bool statisticCore::createObject(QDataStream *str, bool remout){
     object tmpObject;
     bool ok=true;
     tmpObject.deserialisation(str);//object десериализовали здесь. Дальше десериализуем потомков
@@ -129,6 +129,9 @@ bool statisticCore::createObject(QDataStream *str){
             mashine *tmpMashine = new mashine;
             *tmpMashine=tmpObject;
             tmpMashine->deserialisationContinue(str);//здесь десериализуем только mashine
+            if(remout){//если машина создается удаленно, то прописываем локальный путь для статистики
+                tmpMashine->setPathForStatistics(QApplication::applicationDirPath()+STAT_PATH);
+            }
             QDir dir(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName());
             if(!dir.exists()){//если папка машины не существует, то создаем
                 QString path=dir.absolutePath();
@@ -156,7 +159,7 @@ int statisticCore::getMashinsCount(){
 mashine *statisticCore::getMashine(int index){
     if((index>=mashinesArray.size())||(index<0)){
         qDebug("statisticCore::getMashine : index out of range");
-        return NULL;
+        return nullptr;
     }
     return mashinesArray.at(index);
 }
@@ -176,7 +179,7 @@ bool statisticCore::isNameExist(QString name, object *ob){
 ////////////////////////////////////////////////////////////////////////////////////////
 object *statisticCore::getObjectForAddress(int address, object *ob){
     int size=mashinesArray.size();
-    object *tmp=NULL;
+    object *tmp=nullptr;
     for(int n=0;n!=size;n++){
         tmp=mashinesArray.at(n);
         if(tmp!=ob){//не проверяем указанный объект. Во первых нет смысла, во вторых для возможности редактировать
@@ -185,7 +188,7 @@ object *statisticCore::getObjectForAddress(int address, object *ob){
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 //////////////////////////////////////////////////////////////////
 bool statisticCore::mashineUp(int index){
