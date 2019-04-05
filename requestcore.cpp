@@ -274,6 +274,7 @@ void requestCore::requestMashine(requestType request){
         str<<(unsigned char)currentObject->getAddress();//адрес сетевого объекта
         str<<(unsigned char)request;//команда
         str<<(unsigned char)CRC16((unsigned char*)array.data(),array.size());//контрольная сумма
+
         currentPort->write(array);
     }
 }
