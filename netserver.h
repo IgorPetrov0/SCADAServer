@@ -33,6 +33,7 @@ protected:
     void sendError(QString error, int index);
     void editObject(QDataStream *str, int index);
     void createObject(QDataStream *str, int index);
+    void deleteObject(QDataStream *str, int index);
     void decodeCommand(QDataStream *str, int index);
 
 protected slots:

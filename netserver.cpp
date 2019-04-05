@@ -144,7 +144,9 @@ void netServer::editObject(QDataStream *str, int index){
         switch(objectPointer->getType()){
             case(objectMashine):{
                 mashine *tmpMashine=static_cast<mashine*>(objectPointer);
+                QString path=tmpMashine->getPathForStatistics();//сделано для того, чтобы не давать клиенту путь на диске сервера
                 tmpMashine->deserialisationContinue(str);
+                tmpMashine->setPathForStatistics(path);
                 break;
             }
         }
@@ -160,9 +162,60 @@ void netServer::createObject(QDataStream *str, int index){
     clientSocket *socket=socketsArray.at(index);
 
     if(statCorePointer!=nullptr){
-        statCorePointer->createObject(str);
+        QByteArray array;
+        *str>>array;
+        QDataStream objectStr(&array,QIODevice::ReadOnly);
+
+        //дополнительно проверяем на наличие такого объекта в базе
+        object tmpObject;
+        tmpObject.deserialisation(&objectStr);
+        if(statCorePointer->getObjectForName(tmpObject.getName())!=nullptr){
+            sendAnswer(tr("Объект с именем ")+tmpObject.getName()+tr(" уже существует."),index);
+            return;
+        }
+        if(statCorePointer->getObjectForAddress(tmpObject.getAddress())!=nullptr){
+            sendAnswer(tr("Объект с адресом ")+tmpObject.getAddress()+tr(" уже существует."),index);
+            return;
+        }
+        objectStr.device()->seek(0);
+
+        statCorePointer->createObject(&objectStr,true);
         sendAnswer(tr("Объект создан"),index);
         emit consoleMessage(tr("Создан новый объект по запросу клиента ")+socket->peerAddress().toString());
+    }
+    else{
+        qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+void netServer::deleteObject(QDataStream *str, int index){
+    clientSocket *socket=socketsArray.at(index);
+
+    if(statCorePointer!=nullptr){
+        QByteArray array;
+        *str>>array;
+        QDataStream objectStr(&array,QIODevice::ReadOnly);
+
+        //дополнительно проверяем на наличие такого объекта в базе
+        object tmpObject;
+        tmpObject.deserialisation(&objectStr);
+        qint8 all=0;
+        *str>>all;//признак удаление всей информации
+        object *existObject=statCorePointer->getObjectForName(tmpObject.getName());
+        if(existObject==nullptr){
+            sendAnswer(tr("Объект с именем ")+tmpObject.getName()+tr(" не существует."),index);
+            return;
+        }
+        if(all==0){
+            statCorePointer->deleteObject(existObject,false);
+            sendAnswer(tr("Объект удален"),index);
+            emit consoleMessage(tr("Объект удален по запросу клиента ")+socket->peerAddress().toString());
+        }
+        else{
+            statCorePointer->deleteObject(existObject,true);
+            sendAnswer(tr("Объект и все его данные удалены"),index);
+            emit consoleMessage(tr("Объект и все его данные удалены по запросу клиента ")+socket->peerAddress().toString());
+        }
     }
     else{
         qDebug("netServer::sendStatistic()  statistic core pointer is NULL");
@@ -183,6 +236,10 @@ void netServer::decodeCommand(QDataStream *str, int index){
         }
         case(SERVERCOMMAND_CREATE_OBJECT):{
             createObject(str,index);
+            break;
+        }
+        case(SERVERCOMMAND_DELETE_OBJECT):{
+            deleteObject(str,index);
             break;
         }
     }
