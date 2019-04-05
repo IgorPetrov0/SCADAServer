@@ -266,7 +266,7 @@ reportClass *statisticCore::createReport(reportType type, QDate startDate, QDate
     return NULL;
 }
 ///////////////////////////////////////////////////////////////////
-void statisticCore::deleteObject(object *ob, bool objectOnly){
+bool statisticCore::deleteObject(object *ob, bool objectOnly){
     switch(ob->getType()){
         case(objectMashine):{
             mashine *m=static_cast<mashine*>(ob);
@@ -274,6 +274,11 @@ void statisticCore::deleteObject(object *ob, bool objectOnly){
             for(int n=0;n!=size;n++){
                 mashine *tmp=mashinesArray.at(n);
                 if(tmp==m){
+                    if(!objectOnly){
+
+                    }
+
+
                     delete tmp;
                     mashinesArray.remove(n);
                     break;
@@ -342,11 +347,24 @@ void statisticCore::generateTestGraph(mashine *m){
         str<<m->getName();
         str<<QDate::currentDate();
         for(int n=0;n!=1440;n++){
-            int r=qrand() % ((1000 + 1) - 600) + 600;
+            int r=qrand()%((1000+1)-600)+600;
             str<<r;
             str<<(int)EVENT_OK;
         }
         file.close();
     }
+}
+///////////////////////////////////////////////////////////////////////////////////////
+bool statisticCore::removeDirRecursively(QString dirPath){
+    QDir dir(dirPath);
+    if(!dir.exists()){
+        setLastError(tr("Папка ")+dir.dirName()+tr(" не найдена"));
+        return false;
+    }
+    uint count=dir.count();
+    for(uint n=0;n!=count;n++){
+
+    }
+
 }
 //////////////////////////////////////////////////////////////////////////////
