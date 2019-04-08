@@ -275,10 +275,8 @@ bool statisticCore::deleteObject(object *ob, bool objectOnly){
                 mashine *tmp=mashinesArray.at(n);
                 if(tmp==m){
                     if(!objectOnly){
-
+                        removeDirRecursively(tmp->getPathForStatistics());
                     }
-
-
                     delete tmp;
                     mashinesArray.remove(n);
                     break;
@@ -361,10 +359,24 @@ bool statisticCore::removeDirRecursively(QString dirPath){
         setLastError(tr("Папка ")+dir.dirName()+tr(" не найдена"));
         return false;
     }
-    uint count=dir.count();
-    for(uint n=0;n!=count;n++){
 
+    QFileInfoList list=dir.entryInfoList(QDir::NoDotAndDotDot|QDir::Dirs|QDir::Files);
+    int count=list.size();
+    for(int n=0;n!=count;n++){
+        QFileInfo info=list.at(n);
+        if(info.isDir()){
+            if(!removeDirRecursively(info.absoluteFilePath())){
+                return false;
+            }
+        }
+        else{
+            if(!dir.remove(info.fileName())){
+                setLastError(tr("Невозможно удалить файл ")+info.fileName()+tr("\n Прервано."));
+                return false;
+            }
+        }
     }
-
+    dir.rmdir(dirPath);
+    return true;
 }
 //////////////////////////////////////////////////////////////////////////////
