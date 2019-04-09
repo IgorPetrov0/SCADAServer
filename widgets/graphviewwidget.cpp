@@ -15,10 +15,12 @@ graphViewWidget::graphViewWidget(QWidget *parent)
 }
 //////////////////////////////////////////////////////////////////////////////////
 void graphViewWidget::visualiseGraph(dayGraph *array){
-    maxValue=array->minutesArray[0].value;
-    for(int n=1;n!=1440;n++){
-        if(maxValue<array->minutesArray[n].value){
-            maxValue=array->minutesArray[n].value;
+    if(array!=nullptr){
+        maxValue=array->minutesArray[0].value;
+        for(int n=1;n!=1440;n++){
+            if(maxValue<array->minutesArray[n].value){
+                maxValue=array->minutesArray[n].value;
+            }
         }
     }
     graphArray=array;
