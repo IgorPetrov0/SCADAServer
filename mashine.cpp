@@ -135,7 +135,7 @@ QString mashine::getPathForStatistics() const{
 }
 //////////////////////////////////////////////////////////////////////////
 void mashine::setPathForStatistics(const QString &value){
-    pathForStatistics = value;
+    pathForStatistics = value+"/"+name;
 }
 //////////////////////////////////////////////////////////////////////////
 void mashine::addShift(shift newShift){

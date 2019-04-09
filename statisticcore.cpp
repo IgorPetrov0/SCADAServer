@@ -57,7 +57,7 @@ bool statisticCore::readConfiguration(QString workingDir){
     QString currentDate=QDate::currentDate().toString("_dd_MM_yyyy")+".stat";
     for(int n=0;n!=size;n++){
         mashine *tmpMashine=mashinesArray.at(n);
-        QString fileName=tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"/"+tmpMashine->getName()+currentDate;
+        QString fileName=tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+currentDate;
         file.setFileName(fileName);
         if(file.exists()){
             dayGraph *todayGraph=readGraphFile(fileName);
@@ -132,13 +132,14 @@ bool statisticCore::createObject(QDataStream *str, bool remout){
             if(remout){//если машина создается удаленно, то прописываем локальный путь для статистики
                 tmpMashine->setPathForStatistics(QApplication::applicationDirPath()+STAT_PATH);
             }
-            QDir dir(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName());
+            QDir dir(tmpMashine->getPathForStatistics());
             if(!dir.exists()){//если папка машины не существует, то создаем
                 QString path=dir.absolutePath();
                 if(!dir.mkdir(path)){
                     QString error=tr("Не удалось создать папку для машины ")+
                             tmpMashine->getName()+tr("\n по адресу ")+
-                            tmpMashine->getPathForStatistics();
+                            QApplication::applicationDirPath()+"/"+STAT_PATH;
+
                     setLastError(error);
                     emit consoleMessage(error);
                     ok=false;//ошибка не критичная. машина создается, даже если не удалось создать папку
@@ -215,7 +216,7 @@ reportClass *statisticCore::createReport(reportType type, QDate startDate, QDate
 
     //получаем массив файлов статистики по указанным датам
     mashine *tmpPointer=mashinesArray.at(mashineIndex);
-    QString path=tmpPointer->getPathForStatistics()+"/"+tmpPointer->getName();
+    QString path=tmpPointer->getPathForStatistics();
     qint64 count=startDate.daysTo(stopDate)+1;
     QVector<dayGraph*>dayGraphsArray;
     QVector<QString>filesNames;//имена файлов, участвующих в рассчетах
@@ -275,10 +276,8 @@ bool statisticCore::deleteObject(object *ob, bool objectOnly){
                 mashine *tmp=mashinesArray.at(n);
                 if(tmp==m){
                     if(!objectOnly){
-
+                        removeDirRecursively(tmp->getPathForStatistics());
                     }
-
-
                     delete tmp;
                     mashinesArray.remove(n);
                     break;
@@ -323,7 +322,7 @@ bool statisticCore::writeGraphsInFiles(){
     for(int n=0;n!=size;n++){
         mashine *tmpMashine=mashinesArray.at(n);
         if(tmpMashine->isRequestEnable()){
-            QFile file(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"/"+tmpMashine->getName()+"_"+
+            QFile file(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"_"+
                              QDate::currentDate().toString("dd_MM_yyyy")+".stat");
             if(file.open(QIODevice::WriteOnly)){
                 QDataStream str(&file);
@@ -340,7 +339,7 @@ bool statisticCore::writeGraphsInFiles(){
 }
 ////////////////////////////////////////////////////////////////////////////
 void statisticCore::generateTestGraph(mashine *m){
-    QFile file(m->getPathForStatistics()+"/"+m->getName()+"/"+m->getName()+"_"+
+    QFile file(m->getPathForStatistics()+"/"+m->getName()+"_"+
                QDate::currentDate().toString("dd_MM_yyyy")+".stat");
     if(file.open(QIODevice::WriteOnly)){
         QDataStream str(&file);
@@ -361,10 +360,24 @@ bool statisticCore::removeDirRecursively(QString dirPath){
         setLastError(tr("Папка ")+dir.dirName()+tr(" не найдена"));
         return false;
     }
-    uint count=dir.count();
-    for(uint n=0;n!=count;n++){
 
+    QFileInfoList list=dir.entryInfoList(QDir::NoDotAndDotDot|QDir::Dirs|QDir::Files);
+    int count=list.size();
+    for(int n=0;n!=count;n++){
+        QFileInfo info=list.at(n);
+        if(info.isDir()){
+            if(!removeDirRecursively(info.absoluteFilePath())){
+                return false;
+            }
+        }
+        else{
+            if(!dir.remove(info.fileName())){
+                setLastError(tr("Невозможно удалить файл ")+info.fileName()+tr("\n Прервано."));
+                return false;
+            }
+        }
     }
-
+    dir.rmdir(dirPath);
+    return true;
 }
 //////////////////////////////////////////////////////////////////////////////

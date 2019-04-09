@@ -53,13 +53,21 @@ void perfomanceWidget::updateContent(){
             selectMashineSlot(currentRow,0);
         }
         else{
+<<<<<<< HEAD
             ui->tableWidget->setCurrentCell(0,0);
+=======
+            ui->tableWidget->selectRow(0);
+>>>>>>> 2594d9bac83bac13dc39a7a4bc443cb4caec5a34
             selectMashineSlot(0,0);
         }
 
     }
     else{
+<<<<<<< HEAD
         ui->tableWidget->setCurrentCell(0,0);
+=======
+        ui->tableWidget->selectRow(0);
+>>>>>>> 2594d9bac83bac13dc39a7a4bc443cb4caec5a34
         selectMashineSlot(0,0);
     }
     ui->graphicWidget->updateContent();
@@ -168,8 +176,12 @@ void perfomanceWidget::objectDeleteSlot(){
 //////////////////////////////////////////////////////////////////////////////////////////////
 void perfomanceWidget::selectMashineSlot(int row, int column){
     mashine *tmpMashine=statCorePointer->getMashine(row);
-    dayGraph *graph=tmpMashine->getCurrentGraph();
-    if(graph!=NULL){
-        ui->graphicWidget->visualiseGraphFirstTab(graph);
+    if(tmpMashine!=nullptr){
+        dayGraph *graph=tmpMashine->getCurrentGraph();
+        if(graph!=NULL){
+            ui->graphicWidget->visualiseGraphFirstTab(graph);
+            return;
+        }
     }
+    ui->graphicWidget->visualiseGraphFirstTab(nullptr);
 }

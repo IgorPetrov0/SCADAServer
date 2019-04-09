@@ -192,27 +192,22 @@ void netServer::deleteObject(QDataStream *str, int index){
     clientSocket *socket=socketsArray.at(index);
 
     if(statCorePointer!=nullptr){
-        QByteArray array;
-        *str>>array;
-        QDataStream objectStr(&array,QIODevice::ReadOnly);
-
-        //дополнительно проверяем на наличие такого объекта в базе
-        object tmpObject;
-        tmpObject.deserialisation(&objectStr);
+        QString name;
+        *str>>name;
         qint8 all=0;
         *str>>all;//признак удаление всей информации
-        object *existObject=statCorePointer->getObjectForName(tmpObject.getName());
+        object *existObject=statCorePointer->getObjectForName(name);
         if(existObject==nullptr){
-            sendAnswer(tr("Объект с именем ")+tmpObject.getName()+tr(" не существует."),index);
+            sendAnswer(tr("Объект с именем ")+name+tr(" не существует."),index);
             return;
         }
         if(all==0){
-            statCorePointer->deleteObject(existObject,false);
+            statCorePointer->deleteObject(existObject,true);
             sendAnswer(tr("Объект удален"),index);
             emit consoleMessage(tr("Объект удален по запросу клиента ")+socket->peerAddress().toString());
         }
         else{
-            statCorePointer->deleteObject(existObject,true);
+            statCorePointer->deleteObject(existObject,false);
             sendAnswer(tr("Объект и все его данные удалены"),index);
             emit consoleMessage(tr("Объект и все его данные удалены по запросу клиента ")+socket->peerAddress().toString());
         }

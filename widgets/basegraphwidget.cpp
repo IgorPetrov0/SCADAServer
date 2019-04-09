@@ -20,7 +20,12 @@ baseGraphWidget::~baseGraphWidget()
 //////////////////////////////////////////////////////////////////////////
 void baseGraphWidget::visualiseGraphFirstTab(dayGraph *array){
     ui->tabWidget->setCurrentIndex(0);
-    ui->tabWidget->setTabText(0,array->name+tr(" сегодня"));
+    if(array!=nullptr){
+        ui->tabWidget->setTabText(0,array->name+tr(" сегодня"));
+    }
+    else{
+        ui->tabWidget->setTabText(0,tr("Нет графика"));
+    }
     graphWidgetsArray.at(0)->visualiseGraph(array);
 }
 ////////////////////////////////////////////////////////////////////////////////

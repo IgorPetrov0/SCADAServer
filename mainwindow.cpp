@@ -132,7 +132,7 @@ void MainWindow::openGraphSlot(int index){
     else{
         mashine *tmpMashine=statCore.getMashine(index);
         if(tmpMashine!=NULL){
-            dialog.setDirectory(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName());
+            dialog.setDirectory(tmpMashine->getPathForStatistics());
         }
         else{
             dialog.setDirectory(QApplication::applicationDirPath());
