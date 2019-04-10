@@ -270,12 +270,11 @@ void requestCore::requestMashine(requestType request){
         QByteArray array;
         //формируем запрос
         QDataStream str(&array,QIODevice::WriteOnly);
-        unsigned char size=sizeof(unsigned char)*4;//размер пакета
-        str<<size;
+        unsigned char size=3;//размер пакета
         str<<(unsigned char)currentObject->getAddress();//адрес сетевого объекта
+        str<<size;
         str<<(unsigned char)request;//команда
-        str<<(unsigned char)CRC16((unsigned char*)array.data(),array.size());//контрольная сумма
-
+        str<<(unsigned char)CRC16((unsigned char*)array.data()+1,array.size()-1);//контрольная сумма
         currentPort->write(array);
     }
 }
@@ -405,11 +404,14 @@ void requestCore::waitTime(){
 void requestCore::port1DataReadyRead(){
     inputBytesCounter+=sPort1->read((char*)&inputArray[inputBytesCounter],2000);//размер пакета ограничен 2000 байт
     if(inputBytesCounter<2000){//хотя функция QIODevice::read() и не даст забить в массив более 2000 байт, заполнение может происходить за несколько раз
-        if(inputArray[0]==(quint8)inputBytesCounter){//сравниваем размер пакета с его заголовком
+        if(inputBytesCounter<=1){
+            return;
+        }
+        if(inputArray[1]==(quint8)inputBytesCounter){//сравниваем размер пакета с его заголовком
             waitTimer->stop();//если пакет полностью получен, то сбрасываем таймер ожидания
             unsigned char crc=CRC16(inputArray,inputBytesCounter-1);//считаем CRC для всего пакета, кроме последнего байта
             if(crc==(unsigned char)inputArray[inputBytesCounter-1]){
-                if(inputArray[1]==currentObject->getAddress()){//если адрес ответа соответствует адресу запроса
+                if(inputArray[0]==currentObject->getAddress()){//если адрес ответа соответствует адресу запроса
                     switch(inputArray[2]){//читаем ответ объекта
                         case(ANSWER_OK):{//если все в порядке читаем пакет
                             readPacket();

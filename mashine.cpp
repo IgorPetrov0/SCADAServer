@@ -173,7 +173,7 @@ void mashine::readPacket(unsigned char *array, QTime time){
     int lastTimeInMinutes=lastRequestTime.msecsSinceStartOfDay()/60000;
     int currentTimeInMinutes=time.msecsSinceStartOfDay()/60000;
     int period=(currentTimeInMinutes-lastTimeInMinutes);//период со времени последнего запроса в минутах
-    int packetSize=(int)array[0];//размер пакета в байтах
+    int packetSize=(int)array[1];//размер пакета в байтах
     int seconds=time.second();
     switch(array[2]){
         case(ANSWER_OK):{
