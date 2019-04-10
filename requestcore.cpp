@@ -259,6 +259,7 @@ void requestCore::reRequestCurrentObject(){
     if(reCounter==MAX_RE_REQUEST){
         reCounter=0;
         nextDevice();
+        return;
     }
     requestCurrentObject();
     emit consoleMessage(tr("Повторный запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
@@ -408,28 +409,36 @@ void requestCore::port1DataReadyRead(){
             waitTimer->stop();//если пакет полностью получен, то сбрасываем таймер ожидания
             unsigned char crc=CRC16(inputArray,inputBytesCounter-1);//считаем CRC для всего пакета, кроме последнего байта
             if(crc==(unsigned char)inputArray[inputBytesCounter-1]){
-                switch(inputArray[1]){//читаем ответ объекта
-                    case(ANSWER_OK):{//если все в порядке читаем пакет
-                        readPacket();
-                        currentRequest=REQUEST_CLEAR;//и приказываем устройству очистить память
-                        requestCurrentObject();
-                        break;
+                if(inputArray[1]==currentObject->getAddress()){//если адрес ответа соответствует адресу запроса
+                    switch(inputArray[2]){//читаем ответ объекта
+                        case(ANSWER_OK):{//если все в порядке читаем пакет
+                            readPacket();
+                            currentRequest=REQUEST_CLEAR;//и приказываем устройству очистить память
+                            requestCurrentObject();
+                            break;
+                        }
+                        case(ANSWER_ERROR):{//если ошибка CRC, повторно отправляем запрос
+                            currentRequest=REQUEST_GET_DATA;
+                            reRequestCurrentObject();
+                            requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
+                            break;
+                        }
+                        case(ANSWER_NO_DATA):{//если данных нет
+                            requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
+                            break;
+                        }
+                        case(ANSWER_CLEARED):{//если память очищена
+                            readPacket();
+                            requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
+                        }
                     }
-                    case(ANSWER_ERROR):{//если ошибка CRC, повторно отправляем запрос
-                        currentRequest=REQUEST_GET_DATA;
-                        reRequestCurrentObject();
-                        requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                        break;
-                    }
-                    case(ANSWER_NO_DATA):{//если данных нет
-                        requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                        break;
-                    }
-                    case(ANSWER_CLEARED):{//если память очищена
-                        readPacket();
-                        requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                    }
-                } 
+                }
+                else{
+                    emit consoleMessage(tr("Вместо объекта ")+currentObject->getName()+tr(" с адресом")+QString::number(currentObject->getAddress())+
+                                        tr(" ответил объект с адресом ")+QString::number(inputArray[1]));
+                    currentObject->setOnline(false);
+                    reRequestCurrentObject();
+                }
             }
             else{//если СRC Не соответствуют
                 reRequestCurrentObject();//повторный запрос

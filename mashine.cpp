@@ -175,11 +175,11 @@ void mashine::readPacket(unsigned char *array, QTime time){
     int period=(currentTimeInMinutes-lastTimeInMinutes);//период со времени последнего запроса в минутах
     int packetSize=(int)array[0];//размер пакета в байтах
     int seconds=time.second();
-    switch(array[1]){
+    switch(array[2]){
         case(ANSWER_OK):{
-            int packetSizeInMinutes=(int)array[2];//кол-во минут в пакете
+            int packetSizeInMinutes=(int)array[3];//кол-во минут в пакете
             minutePoint tmpPoint;
-            if((packetSizeInMinutes*3!=packetSize-4) || notCleared){//если размер в байтах не соответствует размеру
+            if((packetSizeInMinutes*3!=packetSize-5) || notCleared){//если размер в байтах не соответствует размеру
                 //в минутах, или контроллер не ответил на запрос стирания памяти то ошибка контроллера
                 //и все данные в пакете недостоверны
                 //контроллер уже удалил свои данные и повторный запрос бесполезен
