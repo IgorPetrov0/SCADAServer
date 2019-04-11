@@ -146,6 +146,7 @@ bool statisticCore::createObject(QDataStream *str, bool remout){
                 }
             }
             mashinesArray.append(tmpMashine);
+            connect(tmpMashine,SIGNAL(newDaySygnal(mashine*)),this,SLOT(newDaySlot(mashine*)));
             //generateTestGraph(tmpMashine);//генерация файлов статистики для отладки
             break;
         }
@@ -322,15 +323,9 @@ bool statisticCore::writeGraphsInFiles(){
     for(int n=0;n!=size;n++){
         mashine *tmpMashine=mashinesArray.at(n);
         if(tmpMashine->isRequestEnable()){
-            QFile file(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"_"+
+            if(!writeGraph(tmpMashine)){
+                setLastError(tr("Невозможно открыть файл ")+tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"_"+
                              QDate::currentDate().toString("dd_MM_yyyy")+".stat");
-            if(file.open(QIODevice::WriteOnly)){
-                QDataStream str(&file);
-                tmpMashine->serialiseDayGraph(&str);
-                file.close();
-            }
-            else{
-                setLastError(tr("Невозможно открыть файл ")+file.fileName());
                 return false;
             }
         }
@@ -379,5 +374,26 @@ bool statisticCore::removeDirRecursively(QString dirPath){
     }
     dir.rmdir(dirPath);
     return true;
+}
+////////////////////////////////////////////////////////////////////////////////
+bool statisticCore::writeGraph(mashine *tmpMashine){
+    QFile file(tmpMashine->getPathForStatistics()+"/"+tmpMashine->getName()+"_"+
+                     QDate::currentDate().toString("dd_MM_yyyy")+".stat");
+    if(file.open(QIODevice::WriteOnly)){
+        QDataStream str(&file);
+        tmpMashine->serialiseDayGraph(&str);
+        file.close();
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+///////////////////////////////////////////////////////////////////////////////////
+void statisticCore::newDaySlot(mashine *tmpMashine){
+    if(!writeGraph(tmpMashine)){
+        emit consoleMessage(tr("Не удалось сохранить график за ")+QDate::currentDate().toString("dd_MM_yyyy")+
+                            tr(" для машины <")+tmpMashine->getName()+">");
+    }
 }
 //////////////////////////////////////////////////////////////////////////////

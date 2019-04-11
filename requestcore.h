@@ -10,7 +10,7 @@
 #include "defines.h"
 #include "statisticcore.h"
 
-#define WAIT_TIME 10000
+#define WAIT_TIME 1500
 #define REQUEST_TIME 1000
 #define MAX_RE_REQUEST 5
 

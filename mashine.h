@@ -42,6 +42,10 @@ protected:
     dayGraph *currentDayGraph;
     QTime lastRequestTime;
     bool notCleared;
+    void clearArray();
+
+signals:
+    void newDaySygnal(mashine *pointer);//сигнал срабатывает при заполнении последней минуты суток
 
 };
 

@@ -43,6 +43,11 @@ protected:
     QVector<mashine*> mashinesArray;
     void generateTestGraph(mashine *m);
     bool removeDirRecursively(QString dirPath);
+    bool writeGraph(mashine *tmpMashine);
+
+
+protected slots:
+    void newDaySlot(mashine *tmpMashine);
 
 
 signals:
