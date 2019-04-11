@@ -208,6 +208,7 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 tmpPoint.event=array[offset+2];
                 int g=tmpPoint.event;
                 if(g!=4){
+                    int r=0;
                     break;
                 }
                 currentDayGraph->minutesArray[index]=tmpPoint;
