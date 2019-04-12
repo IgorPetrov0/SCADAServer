@@ -20,6 +20,7 @@ mainTabWidget::~mainTabWidget()
 /////////////////////////////////////////////////////////////////////////
 void mainTabWidget::updateContent(){
     ui->perfWidget->updateContent();
+    ui->managementWidget->updateContent();
 }
 //////////////////////////////////////////////////////////////////////////
 void mainTabWidget::showGraph(dayGraph *array){
@@ -33,18 +34,22 @@ void mainTabWidget::writeToConsole(QString string){
 void mainTabWidget::setStatCorePointer(statisticCore *pointer){
     baseWidget::setStatCorePointer(pointer);
     ui->perfWidget->setStatCorePointer(pointer);
+    ui->managementWidget->setStatCorePointer(pointer);
 }
 /////////////////////////////////////////////////////////////
 void mainTabWidget::resizeEvent(QResizeEvent *event){
     QRect rect=this->geometry();
     rect.setX(0);
     rect.setY(0);
-    rect.setHeight(this->geometry().height()-100);
+    rect.setHeight(this->geometry().height()-this->geometry().y()-100);
     ui->tabWidget->setGeometry(rect);
     ui->perfWidget->setGeometry(ui->tabWidget->currentWidget()->geometry());
+    ui->managementWidget->setGeometry(ui->tabWidget->currentWidget()->geometry());
+
     rect.setX(0);
     rect.setY(this->geometry().height()-this->geometry().y()-100);
     rect.setWidth(ui->tabWidget->currentWidget()->geometry().width());
     rect.setHeight(100);
     ui->consoleTextEdit->setGeometry(rect);
+
 }

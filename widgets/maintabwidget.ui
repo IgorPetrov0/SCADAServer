@@ -22,8 +22,11 @@
      <height>331</height>
     </rect>
    </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tabWidgetPage1">
     <attribute name="title">
@@ -44,6 +47,16 @@
     <attribute name="title">
      <string>Управление</string>
     </attribute>
+    <widget class="logicWidget" name="managementWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>661</width>
+       <height>221</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="consoleTextWidget" name="consoleTextEdit">
@@ -74,6 +87,12 @@
    <class>consoleTextWidget</class>
    <extends>QPlainTextEdit</extends>
    <header>widgets/consoletextwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>logicWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">widgets/logicwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

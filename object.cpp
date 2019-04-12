@@ -40,6 +40,11 @@ void object::serialisation(QDataStream *str){
     *str<<address;
     *str<<description;
     *str<<requestEnable;
+    int size=ports.size();
+    *str<<size;
+    for(int n=0;n!=size;n++){
+        ports.at(n)->serialisation(str);
+    }
 }
 ///////////////////////////////////////////////////////////////////
 void object::deserialisation(QDataStream *str){
@@ -50,6 +55,13 @@ void object::deserialisation(QDataStream *str){
     *str>>address;
     *str>>description;
     *str>>requestEnable;
+    int size;
+    *str>>size;
+    for(int n=0;n!=size;n++){
+        objectPort *tmpPort = new objectPort;
+        tmpPort->deserialisation(str);
+        ports.append(tmpPort);
+    }
 }
 ////////////////////////////////////////////////////////////////////////
 void object::deserialisationContinue(QDataStream *str){
@@ -59,6 +71,13 @@ void object::deserialisationContinue(QDataStream *str){
     type=(objectType)tmp;
     *str>>address;
     *str>>description;
+    int size;
+    *str>>size;
+    for(int n=0;n!=size;n++){
+        objectPort *tmpPort = new objectPort;
+        tmpPort->deserialisation(str);
+        ports.append(tmpPort);
+    }
 }
 ///////////////////////////////////////////////////////////////////////////
 objectType object::getType() const{
@@ -94,6 +113,26 @@ bool object::isRequestEnable(){
 ///////////////////////////////////////////////////////////////////
 void object::setRequestEnable(bool enable){
     requestEnable=enable;
+}
+///////////////////////////////////////////////////////////////////
+int object::getPortsCount(){
+    return ports.size();
+}
+//////////////////////////////////////////////////////////////////
+objectPort *object::getPort(int index){
+    if((index>=0)&&(index<ports.size())){
+        return ports.at(index);
+    }
+    return nullptr;
+}
+/////////////////////////////////////////////////////////////////
+void object::addPort(objectPort *port){
+    if(port!=nullptr){
+        ports.append(port);
+    }
+    else{
+        qDebug("object::addPort port is NULL");
+    }
 }
 ///////////////////////////////////////////////////////////
 object& object::operator=(const object& right){

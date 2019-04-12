@@ -57,7 +57,13 @@ SOURCES += \
     clientsocket.cpp \
     widgets/consoletextwidget.cpp \
     widgets/graphviewwidget.cpp \
-    widgets/logickwidget.cpp
+    widgets/logictablewidget.cpp \
+    widgets/porttablewidget.cpp \
+    widgets/ontablewidget.cpp \
+    widgets/offtablewidget.cpp \
+    widgets/logicwidget.cpp \
+    logic/objectport.cpp \
+    serviceClasses/newportdialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -90,7 +96,13 @@ HEADERS += \
     clientsocket.h \
     widgets/consoletextwidget.h \
     widgets/graphviewwidget.h \
-    widgets/logickwidget.h
+    widgets/logictablewidget.h \
+    widgets/porttablewidget.h \
+    widgets/ontablewidget.h \
+    widgets/offtablewidget.h \
+    widgets/logicwidget.h \
+    logic/objectport.h \
+    serviceClasses/newportdialog.h
 
 FORMS += \
         mainwindow.ui \
@@ -107,4 +119,6 @@ FORMS += \
     serviceClasses/kalendardialog.ui \
     widgets/basegraphwidget.ui \
     serviceClasses/netdialog.ui \
-    widgets/logickwidget.ui
+    widgets/logictablewidget.ui \
+    widgets/logicwidget.ui \
+    serviceClasses/newportdialog.ui

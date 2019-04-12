@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QDataStream>
+#include <QVector>
 #include "defines.h"
+#include "logic/objectport.h"
 
 enum objectType:int{
     objectMashine,
@@ -31,6 +33,10 @@ public:
     void setOnline(bool value);
     bool isRequestEnable();
     void setRequestEnable(bool enable);
+    int getPortsCount();
+    objectPort *getPort(int index);
+    void addPort(objectPort *port);
+
 
     object& operator=(const object& right);
 
@@ -47,6 +53,7 @@ protected:
     objectType type;
     bool requestEnable;
     bool online;
+    QVector<objectPort*>ports;
 
 signals:
 
