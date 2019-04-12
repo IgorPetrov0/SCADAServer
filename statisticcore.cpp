@@ -138,7 +138,7 @@ bool statisticCore::createObject(QDataStream *str, bool remout){
                 if(!dir.mkdir(path)){
                     QString error=tr("Не удалось создать папку для машины ")+
                             tmpMashine->getName()+tr("\n по адресу ")+
-                            QApplication::applicationDirPath()+"/"+STAT_PATH;
+                            QApplication::applicationDirPath()+STAT_PATH;
 
                     setLastError(error);
                     emit consoleMessage(error);
