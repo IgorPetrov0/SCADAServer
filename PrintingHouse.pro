@@ -56,7 +56,8 @@ SOURCES += \
     serviceClasses/netdialog.cpp \
     clientsocket.cpp \
     widgets/consoletextwidget.cpp \
-    widgets/graphviewwidget.cpp
+    widgets/graphviewwidget.cpp \
+    widgets/logickwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -88,7 +89,8 @@ HEADERS += \
     serviceClasses/netdialog.h \
     clientsocket.h \
     widgets/consoletextwidget.h \
-    widgets/graphviewwidget.h
+    widgets/graphviewwidget.h \
+    widgets/logickwidget.h
 
 FORMS += \
         mainwindow.ui \
@@ -104,4 +106,5 @@ FORMS += \
     serviceClasses/reportdialog.ui \
     serviceClasses/kalendardialog.ui \
     widgets/basegraphwidget.ui \
-    serviceClasses/netdialog.ui
+    serviceClasses/netdialog.ui \
+    widgets/logickwidget.ui

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD
 <!-- Written by QtCreator 4.6.1, 2019-04-11T07:00:29. -->
+=======
+<!-- Written by QtCreator 4.6.2, 2019-04-11T17:20:45. -->
+>>>>>>> f01bb7945812f792c0eca891ed5cbc77740bd2a3
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -292,7 +296,11 @@
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">PrintingHouse.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
+<<<<<<< HEAD
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory.default">D:/Projects/build-PrintingHouse-Desktop_Qt_5_11_0_MinGW_32bit-Debug</value>
+=======
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory.default"></value>
+>>>>>>> f01bb7945812f792c0eca891ed5cbc77740bd2a3
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>

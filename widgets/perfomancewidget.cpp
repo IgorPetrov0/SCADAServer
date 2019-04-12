@@ -50,7 +50,6 @@ void perfomanceWidget::updateContent(){
     if(currentRow!=-1){
         if(currentRow<size){
             ui->tableWidget->selectRow(currentRow);
-            selectMashineSlot(currentRow,0);
         }
         else{
             ui->tableWidget->setCurrentCell(0,0);

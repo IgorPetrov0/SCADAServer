@@ -8,12 +8,7 @@ mashine::mashine(){
     currentDayGraph->date=QDate::currentDate();
     currentDayGraph->minutesArray = new minutePoint[1440];
     notCleared=false;
-    for(int n=0;n!=1440;n++){
-        minutePoint point;
-        point.event=EVENT_NOT_READY;
-        point.value=0;
-        currentDayGraph->minutesArray[n]=point;
-    }
+    clearArray();
 }
 ////////////////////////////////////////////////////////////////////
 mashine::~mashine(){
@@ -172,8 +167,13 @@ void mashine::setCurrentGraph(dayGraph *newCurrentGraph){
 void mashine::readPacket(unsigned char *array, QTime time){
     int lastTimeInMinutes=lastRequestTime.msecsSinceStartOfDay()/60000;
     int currentTimeInMinutes=time.msecsSinceStartOfDay()/60000;
+    if(lastTimeInMinutes>currentTimeInMinutes){//если перешли на следующие сутки
+        lastTimeInMinutes=0;
+        emit newDaySygnal(this);
+        clearArray();
+    }
     int period=(currentTimeInMinutes-lastTimeInMinutes);//период со времени последнего запроса в минутах
-    int packetSize=(int)array[1];//размер пакета в байтах
+    int packetSize=(int)array[0];//размер пакета в байтах
     int seconds=time.second();
     switch(array[2]){
         case(ANSWER_OK):{
@@ -191,21 +191,26 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 notCleared=false;
                 return;
             }
+            int minutesOffset=currentTimeInMinutes-packetSizeInMinutes+1;
             for(int n=0;n!=packetSizeInMinutes;n++){
-                int offset=packetSize-n*3;
-                int t=array[offset-3]<<8;
-                int index=currentTimeInMinutes-n;
+                int offset=4+n*3;
+                int t=array[offset+1]<<8;//старший байт значения
+                int value=(int)array[offset]+t;//младший байт значения
+                int index=minutesOffset+n;
                 if(index<0){//индек может быть <0 в начале суток
                     break;//тогда просто отбрасываем все, что <0
                 }
                 //делим значение между текущей минутой и предыдущей
-                int value=(int)array[offset-4]+t;
                 double tmp=(double)value/60*(double)seconds;
                 int currentMinuteValue=round(tmp);
                 int prevMinuteValue=value-currentMinuteValue;
-
                 tmpPoint.value=currentMinuteValue;
-                tmpPoint.event=array[offset-2];
+                tmpPoint.event=array[offset+2];
+                int g=tmpPoint.event;
+                if(g!=4){
+                    int r=0;
+                    break;
+                }
                 currentDayGraph->minutesArray[index]=tmpPoint;
                 int prevIndex=index-1;
                 if(prevIndex<0){
@@ -227,6 +232,15 @@ void mashine::readPacket(unsigned char *array, QTime time){
 ///////////////////////////////////////////////////////////////////////////////////
 void mashine::memoryNotCleared(){
     notCleared=true;
+}
+////////////////////////////////////////////////////////////////////////
+void mashine::clearArray(){
+    for(int n=0;n!=1440;n++){
+        minutePoint point;
+        point.event=EVENT_NOT_READY;
+        point.value=0;
+        currentDayGraph->minutesArray[n]=point;
+    }
 }
 //////////////////////////////////////////////////////////////////////////////////
 
