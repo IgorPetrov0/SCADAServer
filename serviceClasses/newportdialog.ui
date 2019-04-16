@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>268</width>
-    <height>206</height>
+    <height>253</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
    <property name="title">
     <string>Имя порта</string>
    </property>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="nameLineEdit">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -48,7 +48,7 @@
    <property name="title">
     <string>Краткое описание</string>
    </property>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="descriptionLineEdit">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -71,7 +71,7 @@
    <property name="title">
     <string>Номер порта</string>
    </property>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="numberSpinBox">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -82,11 +82,11 @@
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="okButton">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>170</y>
+     <y>220</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -95,11 +95,11 @@
     <string>OK</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>170</y>
+     <y>220</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -107,6 +107,39 @@
    <property name="text">
     <string>Отмена</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>160</y>
+     <width>251</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Тип</string>
+   </property>
+   <widget class="QComboBox" name="typeComboBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>231</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Вход</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Выход</string>
+     </property>
+    </item>
+   </widget>
   </widget>
  </widget>
  <resources/>

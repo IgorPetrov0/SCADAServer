@@ -63,7 +63,9 @@ SOURCES += \
     widgets/offtablewidget.cpp \
     widgets/logicwidget.cpp \
     logic/objectport.cpp \
-    serviceClasses/newportdialog.cpp
+    serviceClasses/newportdialog.cpp \
+    logic/condition.cpp \
+    serviceClasses/newconditiondialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -102,7 +104,9 @@ HEADERS += \
     widgets/offtablewidget.h \
     widgets/logicwidget.h \
     logic/objectport.h \
-    serviceClasses/newportdialog.h
+    serviceClasses/newportdialog.h \
+    logic/condition.h \
+    serviceClasses/newconditiondialog.h
 
 FORMS += \
         mainwindow.ui \
@@ -121,4 +125,5 @@ FORMS += \
     serviceClasses/netdialog.ui \
     widgets/logictablewidget.ui \
     widgets/logicwidget.ui \
-    serviceClasses/newportdialog.ui
+    serviceClasses/newportdialog.ui \
+    serviceClasses/newconditiondialog.ui

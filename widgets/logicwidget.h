@@ -3,6 +3,11 @@
 
 #include <QWidget>
 #include "basewidget.h"
+#include "widgets/logictablewidget.h"
+#include "serviceClasses/newportdialog.h"
+#include "serviceClasses/newconditiondialog.h"
+
+
 
 namespace Ui {
 class logicWidget;
@@ -19,10 +24,15 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event);
+    object *currentObjectPointer;
 
 
 protected slots:
     void selectObjectSlot(int index);
+    void selectPortSlot(int index);
+    void addSlot(tableType type);
+    void editSlot(tableType type,int index);
+    void deleteSlot(tableType type, int index);
 
 private:
     Ui::logicWidget *ui;

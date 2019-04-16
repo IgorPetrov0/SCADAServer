@@ -10,6 +10,14 @@ logicTableWidget::logicTableWidget(QWidget *parent) :
     connect(ui->editButton,SIGNAL(clicked(bool)),this,SLOT(editSlot()));
     connect(ui->deleteButton,SIGNAL(clicked(bool)),this,SLOT(deleteSlot()));
 }
+////////////////////////////////////////////////////////////////////////////////
+void logicTableWidget::setCurrentPort(objectPort *port){
+    currentPort=port;
+}
+///////////////////////////////////////////////////////////////////////////////
+void logicTableWidget::updateContent(){
+
+}
 ////////////////////////////////////////////////////////////////////////////
 logicTableWidget::~logicTableWidget()
 {
@@ -17,15 +25,15 @@ logicTableWidget::~logicTableWidget()
 }
 /////////////////////////////////////////////////////////////////////////
 void logicTableWidget::addSlot(){
-
+    emit addSignal(type);
 }
 //////////////////////////////////////////////////////////////////////
 void logicTableWidget::editSlot(){
-
+    emit editSignal(type,ui->tableWidget->currentRow());
 }
 ///////////////////////////////////////////////////////////////////////
 void logicTableWidget::deleteSlot(){
-
+    emit deleteSignal(type,ui->tableWidget->currentRow());
 }
 //////////////////////////////////////////////////////////////////////////////
 void logicTableWidget::resizeEvent(QResizeEvent *event){

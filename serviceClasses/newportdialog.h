@@ -2,6 +2,8 @@
 #define NEWPORTDIALOG_H
 
 #include <QDialog>
+#include <QMessageBox>
+#include <object.h>
 
 namespace Ui {
 class newPortDialog;
@@ -12,8 +14,18 @@ class newPortDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit newPortDialog(QWidget *parent = 0);
+    explicit newPortDialog(object *currentObject,QWidget *parent = 0);
     ~newPortDialog();
+    void setPort(objectPort *port);
+
+protected:
+    object *currentObject;
+    objectPort *currentPort;
+    void errorMessage(QString message);
+
+protected slots:
+    void okSlot();
+
 
 private:
     Ui::newPortDialog *ui;

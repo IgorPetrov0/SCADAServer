@@ -26,6 +26,16 @@ enum answerType{
     ANSWER_CLEARED   
 };
 
+enum portTypes:int{
+    PORT_INPUT,
+    PORT_OUTPUT
+};
+
+enum objectType:int{
+    objectMashine,
+    objectUnknow
+};
+
 struct minutePoint{
     int value;
     int event;//событие

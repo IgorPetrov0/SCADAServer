@@ -58,7 +58,7 @@ void object::deserialisation(QDataStream *str){
     int size;
     *str>>size;
     for(int n=0;n!=size;n++){
-        objectPort *tmpPort = new objectPort;
+        objectPort *tmpPort = new objectPort();
         tmpPort->deserialisation(str);
         ports.append(tmpPort);
     }
@@ -74,7 +74,7 @@ void object::deserialisationContinue(QDataStream *str){
     int size;
     *str>>size;
     for(int n=0;n!=size;n++){
-        objectPort *tmpPort = new objectPort;
+        objectPort *tmpPort = new objectPort();
         tmpPort->deserialisation(str);
         ports.append(tmpPort);
     }

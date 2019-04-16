@@ -7,6 +7,16 @@ logicWidget::logicWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectSlot(int)));
+    connect(ui->portWidget,SIGNAL(addSignal(tableType)),this,SLOT(addSlot(tableType)));
+    connect(ui->portWidget,SIGNAL(editSignal(tableType,int)),this,SLOT(editSlot(tableType,int)));
+    connect(ui->portWidget,SIGNAL(deleteSignal(tableType,int)),this,SLOT(deleteSlot(tableType,int)));
+    connect(ui->offWidget,SIGNAL(addSignal(tableType)),this,SLOT(addSlot(tableType)));
+    connect(ui->offWidget,SIGNAL(editSignal(tableType,int)),this,SLOT(editSlot(tableType,int)));
+    connect(ui->offWidget,SIGNAL(deleteSignal(tableType,int)),this,SLOT(deleteSlot(tableType,int)));
+    connect(ui->onWidget,SIGNAL(addSignal(tableType)),this,SLOT(addSlot(tableType)));
+    connect(ui->onWidget,SIGNAL(editSignal(tableType,int)),this,SLOT(editSlot(tableType,int)));
+    connect(ui->onWidget,SIGNAL(deleteSignal(tableType,int)),this,SLOT(deleteSlot(tableType,int)));
+    currentObjectPointer=nullptr;
 }
 ////////////////////////////////////////////////////
 logicWidget::~logicWidget()
@@ -43,7 +53,7 @@ void logicWidget::updateContent(){
         ui->comboBox->clear();
         for(int n=0;n!=size;n++){
             object *tmpObject=statCorePointer->getObjectForIndex(n);
-            ui->comboBox->addItem(tmpObject->getName(),QVariant((uint)tmpObject));
+            ui->comboBox->addItem(tmpObject->getName());
         }
         if((currentIndex>=0)&&(currentIndex<ui->comboBox->count())){
             ui->comboBox->setCurrentIndex(currentIndex);
@@ -51,6 +61,7 @@ void logicWidget::updateContent(){
         else{
             ui->comboBox->setCurrentIndex(0);
         }
+        ui->portWidget->updateContent();
     }
     else{
         qDebug("logicWidget::updateContent  statCorePointer is null");
@@ -59,10 +70,69 @@ void logicWidget::updateContent(){
 ///////////////////////////////////////////////////////////////////////////
 void logicWidget::selectObjectSlot(int index){
     if(index!=-1){
-        object *tmpObject=(object*)ui->comboBox->itemData(index).toInt();
-        if(tmpObject!=nullptr){
-            ui->addressLabel->setText(tr("Адрес: ")+QString::number(tmpObject->getAddress()));
-            ui->typeLabel->setText(tr("Тип: ")+tmpObject->getTypeString());
+        currentObjectPointer=statCorePointer->getObjectForIndex(index);
+        if(currentObjectPointer!=nullptr){
+            ui->addressLabel->setText(tr("Адрес: ")+QString::number(currentObjectPointer->getAddress()));
+            ui->typeLabel->setText(tr("Тип: ")+currentObjectPointer->getTypeString());
+            ui->portWidget->setObject(currentObjectPointer);
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void logicWidget::selectPortSlot(int index){
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////
+void logicWidget::addSlot(tableType type){
+    switch(type){
+        case(TABLE_PORTS):{
+            newPortDialog dialog(currentObjectPointer);
+            if(dialog.exec()==QDialog::Accepted){
+                updateContent();
+            }
+            break;
+        }
+        case(TABLE_ON_CONDITIONS):{
+
+            break;
+        }
+        case(TABLE_OFF_CONDITIONS):{
+
+            break;
+        }
+    }
+}
+/////////////////////////////////////////////////////////////////////////
+void logicWidget::editSlot(tableType type, int index){
+    switch(type){
+        case(TABLE_PORTS):{
+
+            break;
+        }
+        case(TABLE_ON_CONDITIONS):{
+
+            break;
+        }
+        case(TABLE_OFF_CONDITIONS):{
+
+            break;
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////
+void logicWidget::deleteSlot(tableType type, int index){
+    switch(type){
+        case(TABLE_PORTS):{
+
+            break;
+        }
+        case(TABLE_ON_CONDITIONS):{
+
+            break;
+        }
+        case(TABLE_OFF_CONDITIONS):{
+
+            break;
         }
     }
 }

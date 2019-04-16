@@ -1,14 +1,71 @@
 #include "newportdialog.h"
 #include "ui_newportdialog.h"
 
-newPortDialog::newPortDialog(QWidget *parent) :
+newPortDialog::newPortDialog(object *currentObject, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::newPortDialog)
 {
     ui->setupUi(this);
+    this->currentObject=currentObject;
+    currentPort=nullptr;
+    connect(ui->okButton,SIGNAL(clicked(bool)),this,SLOT(okSlot()));
+    connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
 }
-
+//////////////////////////////////////////////////////////////
 newPortDialog::~newPortDialog()
 {
     delete ui;
 }
+///////////////////////////////////////////////////////////////////
+void newPortDialog::setPort(objectPort *port){
+    currentPort=port;
+    ui->nameLineEdit->setText(port->getName());
+    ui->descriptionLineEdit->setText(port->getDescription());
+    ui->numberSpinBox->setValue(port->getNumber());
+}
+/////////////////////////////////////////////////////////////////////
+void newPortDialog::errorMessage(QString message){
+    QMessageBox box(this);
+    box.setWindowTitle(tr("Ошибка"));
+    box.setStandardButtons(QMessageBox::Ok);
+    box.setText(message);
+    box.setIcon(QMessageBox::Warning);
+    box.exec();
+}
+////////////////////////////////////////////////////////////////
+void newPortDialog::okSlot(){
+    if(ui->nameLineEdit->text().isEmpty()){
+        errorMessage(tr("Имя порта не может быть пустым"));
+        return;
+    }
+    int value=ui->numberSpinBox->value();
+    int size=currentObject->getPortsCount();
+    for(int n=0;n!=size;n++){
+        objectPort *port=currentObject->getPort(n);
+        if(port->getNumber()==value){
+            errorMessage(tr("Объект ")+currentObject->getName()+tr(" уже использут порт с номером ")+
+                         QString::number(value)+tr(" с именем <")+port->getName()+">");
+            return;
+        }
+    }
+
+    if(currentPort==nullptr){
+        currentPort = new objectPort;
+        currentObject->addPort(currentPort);
+    }
+    currentPort->setNumber(value);
+    currentPort->setName(ui->nameLineEdit->text());
+    currentPort->setDescription(ui->descriptionLineEdit->text());
+    switch(ui->typeComboBox->currentIndex()){
+        case(0):{
+            currentPort->setType(PORT_INPUT);
+            break;
+        }
+        case(1):{
+            currentPort->setType(PORT_OUTPUT);
+            break;
+        }
+    }
+    accept();
+}
+//////////////////////////////////////////////////////////////

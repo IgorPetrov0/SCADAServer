@@ -7,12 +7,6 @@
 #include "defines.h"
 #include "logic/objectport.h"
 
-enum objectType:int{
-    objectMashine,
-    objectUnknow
-};
-
-
 
 class object : public QObject
 {
@@ -36,7 +30,6 @@ public:
     int getPortsCount();
     objectPort *getPort(int index);
     void addPort(objectPort *port);
-
 
     object& operator=(const object& right);
 
