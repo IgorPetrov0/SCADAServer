@@ -13,7 +13,7 @@ class object : public QObject
     Q_OBJECT
 public:
     explicit object(QObject *parent = nullptr);
-
+    ~object();
     int getAddress() const;
     void setAddress(unsigned int value);
     QString getName() const;
@@ -27,8 +27,8 @@ public:
     void setOnline(bool value);
     bool isRequestEnable();
     void setRequestEnable(bool enable);
-    int getPortsCount();
-    objectPort *getPort(int index);
+    int getPortsCount() const;
+    objectPort *getPort(int index) const;
     void addPort(objectPort *port);
 
     object& operator=(const object& right);

@@ -4,6 +4,17 @@ objectPort::objectPort()
 {
     type=PORT_OUTPUT;
 }
+////////////////////////////////////////////////////////////
+objectPort::~objectPort(){
+    int size=onConditions.size();
+    for(int n=0;n!=size;n++){
+        delete onConditions.at(n);
+    }
+    size=offConditions.size();
+    for(int n=0;n!=size;n++){
+        delete offConditions.at(n);
+    }
+}
 ///////////////////////////////////////////////////////////
 int objectPort::getNumber() const{
     return number;
@@ -84,4 +95,19 @@ QString objectPort::getTypeString(){
 //////////////////////////////////////////////////////////////////
 void objectPort::setType(const portTypes &value){
     type = value;
+}
+/////////////////////////////////////////////////////////////////
+objectPort &objectPort::operator=(const objectPort *right){
+    if(right==this){
+        return *this;
+    }
+    number=right->getNumber();
+    name=right->getName();
+    description=right->getDescription();
+    type=right->getType();
+    int size=right->getOnConditionsCount();
+
+    ss
+
+
 }

@@ -10,6 +10,13 @@ object::object(QObject *parent) : QObject(parent)
     online=false;
 }
 //////////////////////////////////////////////////////////
+object::~object(){
+    int size=ports.size();
+    for(int n=0;n!=size;n++){
+        delete ports.at(n);
+    }
+}
+//////////////////////////////////////////////////////////
 int object::getAddress() const{
     return address;
 }
@@ -115,11 +122,11 @@ void object::setRequestEnable(bool enable){
     requestEnable=enable;
 }
 ///////////////////////////////////////////////////////////////////
-int object::getPortsCount(){
+int object::getPortsCount() const{
     return ports.size();
 }
 //////////////////////////////////////////////////////////////////
-objectPort *object::getPort(int index){
+objectPort *object::getPort(int index) const{
     if((index>=0)&&(index<ports.size())){
         return ports.at(index);
     }
@@ -143,5 +150,11 @@ object& object::operator=(const object& right){
     name=right.getName();
     description=right.getDescription();
     type=right.getType();
+    int size=right.getPortsCount();
+    for(int n=0;n!=size;n++){
+        objectPort *tmpPort = new objectPort;
+        tmpPort=right.getPort(n);
+        ports.append(tmpPort);
+    }
     return *this;
 }

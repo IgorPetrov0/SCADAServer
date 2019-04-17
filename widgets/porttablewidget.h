@@ -6,6 +6,8 @@
 
 class portTableWidget : public logicTableWidget
 {
+    Q_OBJECT
+
 public:
     portTableWidget(QWidget *parent);
     virtual void updateContent();

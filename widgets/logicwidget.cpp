@@ -77,6 +77,7 @@ void logicWidget::selectObjectSlot(int index){
             ui->portWidget->setObject(currentObjectPointer);
         }
     }
+    ui->portWidget->updateContent();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void logicWidget::selectPortSlot(int index){

@@ -28,6 +28,7 @@ public:
     portTypes getType() const;
     QString getTypeString();
     void setType(const portTypes &value);
+    objectPort& operator=(const objectPort *right);
 
 protected:
     int number;

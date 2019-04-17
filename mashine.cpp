@@ -93,10 +93,7 @@ mashine &mashine::operator=(const object &right){
     if (this == &right) {
         return *this;
     }
-    address=right.getAddress();
-    name=right.getName();
-    description=right.getDescription();
-    type=right.getType();
+    object::operator =(right);
     return *this;
 }
 ////////////////////////////////////////////////////////////
