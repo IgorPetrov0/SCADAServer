@@ -13,6 +13,7 @@ class objectPort
 {
 public:
     objectPort();
+    ~objectPort();
     int getNumber() const;
     void setNumber(int value);
     QString getDescription() const;
@@ -21,7 +22,7 @@ public:
     void setName(const QString &value);
     void serialisation(QDataStream *str);
     void deserialisation(QDataStream *str);
-    int getOnConditionsCount();
+    int getOnConditionsCount() const;
     int getOffConditionsCount();
     condition *getOnCondition(int index);
     condition *getOffCondition(int index);

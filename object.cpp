@@ -153,7 +153,7 @@ object& object::operator=(const object& right){
     int size=right.getPortsCount();
     for(int n=0;n!=size;n++){
         objectPort *tmpPort = new objectPort;
-        tmpPort=right.getPort(n);
+        *tmpPort=right.getPort(n);
         ports.append(tmpPort);
     }
     return *this;

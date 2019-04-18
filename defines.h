@@ -81,5 +81,10 @@ enum eventType{
     EVENT_OK
 };
 
+enum logicType:int{
+    LOGIC_OR,
+    LOGIC_END,
+    LOGIC_NO
+}
 
 #endif // DEFINES_H

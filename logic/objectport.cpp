@@ -56,7 +56,7 @@ void objectPort::deserialisation(QDataStream *str){
     *str>>description;
 }
 ////////////////////////////////////////////////////////////////////
-int objectPort::getOnConditionsCount(){
+int objectPort::getOnConditionsCount() const{
     return onConditions.size();
 }
 ///////////////////////////////////////////////////////////////////
@@ -106,8 +106,11 @@ objectPort &objectPort::operator=(const objectPort *right){
     description=right->getDescription();
     type=right->getType();
     int size=right->getOnConditionsCount();
+    for(int n=0;n!=size;n++){
+        condition *tmpCondition = new condition;
 
-    ss
+    }
+
 
 
 }
