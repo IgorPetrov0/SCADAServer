@@ -83,8 +83,14 @@ enum eventType{
 
 enum logicType:int{
     LOGIC_OR,
-    LOGIC_END,
+    LOGIC_AND,
     LOGIC_NO
-}
+};
+
+enum tableType:int{
+    TABLE_PORTS=0,
+    TABLE_ON_CONDITIONS,
+    TABLE_OFF_CONDITIONS
+};
 
 #endif // DEFINES_H

@@ -30,6 +30,8 @@ public:
     QString getTypeString();
     void setType(const portTypes &value);
     objectPort& operator=(const objectPort *right);
+    bool getState() const;
+    void setState(bool value);
 
 protected:
     int number;
@@ -38,6 +40,7 @@ protected:
     portTypes type;
     QVector<condition*>onConditions;
     QVector<condition*>offConditions;
+    bool state;
 
 
 

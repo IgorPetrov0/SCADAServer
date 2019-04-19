@@ -20,7 +20,7 @@ mainTabWidget::~mainTabWidget()
 /////////////////////////////////////////////////////////////////////////
 void mainTabWidget::updateContent(){
     ui->perfWidget->updateContent();
-    ui->managementWidget->updateContent();
+    ui->managementWidget->updateContent();//пока не решил, стоит это делать или нет
 }
 //////////////////////////////////////////////////////////////////////////
 void mainTabWidget::showGraph(dayGraph *array){

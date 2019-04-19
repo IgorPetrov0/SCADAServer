@@ -59,13 +59,12 @@ SOURCES += \
     widgets/graphviewwidget.cpp \
     widgets/logictablewidget.cpp \
     widgets/porttablewidget.cpp \
-    widgets/ontablewidget.cpp \
-    widgets/offtablewidget.cpp \
     widgets/logicwidget.cpp \
     logic/objectport.cpp \
     serviceClasses/newportdialog.cpp \
     logic/condition.cpp \
-    serviceClasses/newconditiondialog.cpp
+    serviceClasses/newconditiondialog.cpp \
+    widgets/conditiontablewidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -100,13 +99,12 @@ HEADERS += \
     widgets/graphviewwidget.h \
     widgets/logictablewidget.h \
     widgets/porttablewidget.h \
-    widgets/ontablewidget.h \
-    widgets/offtablewidget.h \
     widgets/logicwidget.h \
     logic/objectport.h \
     serviceClasses/newportdialog.h \
     logic/condition.h \
-    serviceClasses/newconditiondialog.h
+    serviceClasses/newconditiondialog.h \
+    widgets/conditiontablewidget.h
 
 FORMS += \
         mainwindow.ui \

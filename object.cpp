@@ -125,6 +125,19 @@ void object::setRequestEnable(bool enable){
 int object::getPortsCount() const{
     return ports.size();
 }
+//////////////////////////////////////////////////////////////////////
+bool object::isPortExist(int number, objectPort *port){
+    int size=ports.size();
+    for(int n=0;n!=size;n++){
+        objectPort *tmpPort=ports.at(n);
+        if(tmpPort!=port){
+            if(tmpPort->getNumber()==number){
+                return true;
+            }
+        }
+    }
+    return false;
+}
 //////////////////////////////////////////////////////////////////
 objectPort *object::getPort(int index) const{
     if((index>=0)&&(index<ports.size())){
@@ -139,6 +152,13 @@ void object::addPort(objectPort *port){
     }
     else{
         qDebug("object::addPort port is NULL");
+    }
+}
+/////////////////////////////////////////////////////////////////////
+void object::removePort(int index){
+    if((index>=0)||(index<ports.size())){
+        delete ports.at(index);
+        ports.remove(index);
     }
 }
 ///////////////////////////////////////////////////////////

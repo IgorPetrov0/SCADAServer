@@ -3,20 +3,38 @@
 
 #include <QTime>
 #include <QString>
-//#include "object.h"
-//#include "logic/objectport.h"
-//#include "defines.h"
+#include <QObject>
+#include "defines.h"
+
+class object;
+class objectPort;
 
 class condition
 {
 public:
     condition();
 
+    QString getName() const;
+    void setName(const QString &value);
+    QString getDescription() const;
+    void setDescription(const QString &value);
+    object *getTargetObject() const;
+    void setTargetObject(object *value);
+    objectPort *getTargetPort() const;
+    void setTargetPort(objectPort *value);
+    bool getPortState() const;
+    void setPortState(bool value);
+    QTime getTime() const;
+    void setTime(const QTime &value);
+    logicType getLogic() const;
+    QString getLogicString();
+    void setLogic(const logicType &value);
+
 protected:
     QString name;
     QString description;
-    //object *targetObject;
-    //objectPort *targetPort;
+    object *targetObject;
+    objectPort *targetPort;
     bool portState;
     QTime time;
     logicType logic;

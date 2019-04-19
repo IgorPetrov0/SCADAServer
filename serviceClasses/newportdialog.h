@@ -17,6 +17,7 @@ public:
     explicit newPortDialog(object *currentObject,QWidget *parent = 0);
     ~newPortDialog();
     void setPort(objectPort *port);
+    objectPort *getPort();
 
 protected:
     object *currentObject;

@@ -28,8 +28,10 @@ public:
     bool isRequestEnable();
     void setRequestEnable(bool enable);
     int getPortsCount() const;
+    bool isPortExist(int number,objectPort *port=nullptr);
     objectPort *getPort(int index) const;
     void addPort(objectPort *port);
+    void removePort(int index);
 
     object& operator=(const object& right);
 

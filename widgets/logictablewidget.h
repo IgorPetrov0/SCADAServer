@@ -4,12 +4,6 @@
 #include <QWidget>
 #include "logic/objectport.h"
 
-enum tableType:int{
-    TABLE_PORTS=0,
-    TABLE_ON_CONDITIONS,
-    TABLE_OFF_CONDITIONS
-};
-
 namespace Ui {
 class logicTableWidget;
 }
@@ -22,6 +16,7 @@ public:
     explicit logicTableWidget(QWidget *parent = 0);
     void setCurrentPort(objectPort *port);
     virtual void updateContent();
+    void setTableType(tableType type);
     ~logicTableWidget();
 
 

@@ -18,6 +18,10 @@ void logicTableWidget::setCurrentPort(objectPort *port){
 void logicTableWidget::updateContent(){
 
 }
+//////////////////////////////////////////////////////////////////////////
+void logicTableWidget::setTableType(tableType type){
+    this->type=type;
+}
 ////////////////////////////////////////////////////////////////////////////
 logicTableWidget::~logicTableWidget()
 {

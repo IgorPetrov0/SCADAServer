@@ -78,7 +78,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="onTableWidget" name="onWidget" native="true">
+  <widget class="conditionTableWidget" name="onWidget" native="true">
    <property name="geometry">
     <rect>
      <x>160</x>
@@ -91,7 +91,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="offTableWidget" name="offWidget" native="true">
+  <widget class="conditionTableWidget" name="offWidget" native="true">
    <property name="geometry">
     <rect>
      <x>310</x>
@@ -113,15 +113,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>onTableWidget</class>
+   <class>conditionTableWidget</class>
    <extends>QWidget</extends>
-   <header location="global">widgets/ontablewidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>offTableWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">widgets/offtablewidget.h</header>
+   <header location="global">widgets/conditiontablewidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

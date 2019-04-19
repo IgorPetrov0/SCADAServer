@@ -3,6 +3,8 @@
 objectPort::objectPort()
 {
     type=PORT_OUTPUT;
+    state=false;
+    number=0;
 }
 ////////////////////////////////////////////////////////////
 objectPort::~objectPort(){
@@ -113,4 +115,14 @@ objectPort &objectPort::operator=(const objectPort *right){
 
 
 
+}
+
+bool objectPort::getState() const
+{
+    return state;
+}
+
+void objectPort::setState(bool value)
+{
+    state = value;
 }

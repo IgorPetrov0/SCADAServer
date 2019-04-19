@@ -17,11 +17,11 @@ protected:
     object *currentObject;
 
 signals:
-    void selectSignal();
+    void selectSignal(int index);
 
 
 protected slots:
-    void itemSelectSlot(int row, int column);
+    void itemSelectSlot(int row, int column, int prevRow, int prevCol);
 };
 
 #endif // PORTTABLEWIDGET_H

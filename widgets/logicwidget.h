@@ -21,10 +21,12 @@ public:
     explicit logicWidget(QWidget *parent = 0);
     ~logicWidget();
     virtual void updateContent();
+    void clear();
 
 protected:
     void resizeEvent(QResizeEvent *event);
     object *currentObjectPointer;
+    objectPort *currentPortPointer;
 
 
 protected slots:

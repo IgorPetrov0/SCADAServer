@@ -23,6 +23,10 @@ void newPortDialog::setPort(objectPort *port){
     ui->descriptionLineEdit->setText(port->getDescription());
     ui->numberSpinBox->setValue(port->getNumber());
 }
+//////////////////////////////////////////////////////////////////////
+objectPort *newPortDialog::getPort(){
+    return currentPort;
+}
 /////////////////////////////////////////////////////////////////////
 void newPortDialog::errorMessage(QString message){
     QMessageBox box(this);
@@ -39,19 +43,14 @@ void newPortDialog::okSlot(){
         return;
     }
     int value=ui->numberSpinBox->value();
-    int size=currentObject->getPortsCount();
-    for(int n=0;n!=size;n++){
-        objectPort *port=currentObject->getPort(n);
-        if(port->getNumber()==value){
-            errorMessage(tr("Объект ")+currentObject->getName()+tr(" уже использут порт с номером ")+
-                         QString::number(value)+tr(" с именем <")+port->getName()+">");
-            return;
-        }
+    if(currentObject->isPortExist(value,currentPort)){
+        errorMessage(tr("Объект ")+currentObject->getName()+tr(" уже использут порт с номером ")+
+                     QString::number(value)+tr(" с именем <")+currentObject->getPort(value)->getName()+">");
+        return;
     }
 
     if(currentPort==nullptr){
         currentPort = new objectPort;
-        currentObject->addPort(currentPort);
     }
     currentPort->setNumber(value);
     currentPort->setName(ui->nameLineEdit->text());

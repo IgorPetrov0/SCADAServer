@@ -332,6 +332,15 @@ bool statisticCore::writeGraphsInFiles(){
     }
     return true;
 }
+//////////////////////////////////////////////////////////////////////////////////////////
+QStringList statisticCore::getObjectsNamesList(){
+    QStringList list;
+    int size=getObjectsCount();
+    for(int n=0;n!=size;n++){
+        list.append(getObjectForIndex(n)->getName());
+    }
+    return list;
+}
 ////////////////////////////////////////////////////////////////////////////
 void statisticCore::generateTestGraph(mashine *m){
     QFile file(m->getPathForStatistics()+"/"+m->getName()+"_"+

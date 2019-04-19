@@ -38,6 +38,7 @@ public:
     bool deleteObject(object *ob, bool objectOnly=false);
     dayGraph *readGraphFile(QString fullPath);//при использовании не забывать удалять полученные данные
     bool writeGraphsInFiles();//записывает графики всех активных машин в файлы
+    QStringList getObjectsNamesList();
 
 protected:
     QVector<mashine*> mashinesArray;

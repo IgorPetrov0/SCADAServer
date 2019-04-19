@@ -16,7 +16,11 @@ logicWidget::logicWidget(QWidget *parent) :
     connect(ui->onWidget,SIGNAL(addSignal(tableType)),this,SLOT(addSlot(tableType)));
     connect(ui->onWidget,SIGNAL(editSignal(tableType,int)),this,SLOT(editSlot(tableType,int)));
     connect(ui->onWidget,SIGNAL(deleteSignal(tableType,int)),this,SLOT(deleteSlot(tableType,int)));
+    connect(ui->portWidget,SIGNAL(selectSignal(int)),this,SLOT(selectPortSlot(int)));
     currentObjectPointer=nullptr;
+    currentPortPointer=nullptr;
+    ui->onWidget->setTableType(TABLE_ON_CONDITIONS);
+    ui->offWidget->setTableType(TABLE_OFF_CONDITIONS);
 }
 ////////////////////////////////////////////////////
 logicWidget::~logicWidget()
@@ -57,15 +61,22 @@ void logicWidget::updateContent(){
         }
         if((currentIndex>=0)&&(currentIndex<ui->comboBox->count())){
             ui->comboBox->setCurrentIndex(currentIndex);
+            selectObjectSlot(currentIndex);
         }
         else{
             ui->comboBox->setCurrentIndex(0);
         }
-        ui->portWidget->updateContent();
     }
     else{
         qDebug("logicWidget::updateContent  statCorePointer is null");
     }
+}
+////////////////////////////////////////////////////////////////////////////
+void logicWidget::clear(){
+    currentObjectPointer=nullptr;
+    ui->offWidget->setCurrentPort(nullptr);
+    ui->onWidget->setCurrentPort(nullptr);
+    ui->portWidget->setObject(nullptr);
 }
 ///////////////////////////////////////////////////////////////////////////
 void logicWidget::selectObjectSlot(int index){
@@ -76,64 +87,101 @@ void logicWidget::selectObjectSlot(int index){
             ui->typeLabel->setText(tr("Тип: ")+currentObjectPointer->getTypeString());
             ui->portWidget->setObject(currentObjectPointer);
         }
-    }
-    ui->portWidget->updateContent();
+        ui->portWidget->updateContent();
+    } 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void logicWidget::selectPortSlot(int index){
-
+    currentPortPointer=currentObjectPointer->getPort(index);
+    ui->onWidget->setCurrentPort(currentPortPointer);
+    ui->onWidget->updateContent();
+    ui->offWidget->setCurrentPort(currentPortPointer);
+    ui->offWidget->updateContent();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void logicWidget::addSlot(tableType type){
     switch(type){
         case(TABLE_PORTS):{
-            newPortDialog dialog(currentObjectPointer);
+            newPortDialog dialog(currentObjectPointer,this);
             if(dialog.exec()==QDialog::Accepted){
-                updateContent();
+                currentObjectPointer->addPort(dialog.getPort());
             }
             break;
         }
         case(TABLE_ON_CONDITIONS):{
+            if(currentPortPointer!=nullptr){
+                newConditionDialog dialog(currentPortPointer,this);
+                dialog.setWindowTitle(tr("Условие включения"));
+                dialog.setPortName(currentPortPointer->getName());
+                dialog.setStatisticCorePointer(statCorePointer);
+                if(dialog.exec()==QDialog::Accepted){
 
+                }
+            }
             break;
         }
         case(TABLE_OFF_CONDITIONS):{
+            if(currentPortPointer!=nullptr){
+                newConditionDialog dialog(currentPortPointer,this);
+                dialog.setWindowTitle(tr("Условие отключения"));
+                dialog.setPortName(currentPortPointer->getName());
+                dialog.setStatisticCorePointer(statCorePointer);
+                if(dialog.exec()==QDialog::Accepted){
 
+                }
+            }
             break;
         }
     }
+    updateContent();
 }
 /////////////////////////////////////////////////////////////////////////
 void logicWidget::editSlot(tableType type, int index){
-    switch(type){
-        case(TABLE_PORTS):{
+    if(index>=0){
+        switch(type){
+            case(TABLE_PORTS):{
+                newPortDialog dialog(currentObjectPointer,this);
+                dialog.setPort(currentObjectPointer->getPort(index));
+                dialog.exec();
+                break;
+            }
+            case(TABLE_ON_CONDITIONS):{
 
-            break;
-        }
-        case(TABLE_ON_CONDITIONS):{
+                break;
+            }
+            case(TABLE_OFF_CONDITIONS):{
 
-            break;
-        }
-        case(TABLE_OFF_CONDITIONS):{
-
-            break;
+                break;
+            }
         }
     }
+    updateContent();
 }
 ////////////////////////////////////////////////////////////////////////
 void logicWidget::deleteSlot(tableType type, int index){
-    switch(type){
-        case(TABLE_PORTS):{
+    if(index>=0){
+        QMessageBox box;
+        box.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+        box.setIcon(QMessageBox::Question);
+        switch(type){
+            case(TABLE_PORTS):{
+                box.setWindowTitle(tr("Удаление порта."));
+                box.setText(tr("Порт ")+QString::number(currentObjectPointer->getPort(index)->getNumber())+
+                            tr(" объекта ")+currentObjectPointer->getName()+tr(" будет удален. Вы уверены?"));
+                if(box.exec()==QMessageBox::Yes){
+                    currentObjectPointer->removePort(index);
+                }
+                break;
+            }
+            case(TABLE_ON_CONDITIONS):{
 
-            break;
-        }
-        case(TABLE_ON_CONDITIONS):{
+                break;
+            }
+            case(TABLE_OFF_CONDITIONS):{
 
-            break;
+                break;
+            }
         }
-        case(TABLE_OFF_CONDITIONS):{
-
-            break;
-        }
+        updateContent();
     }
 }
