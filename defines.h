@@ -31,6 +31,11 @@ enum portTypes:int{
     PORT_OUTPUT
 };
 
+//enum portState:int{
+//    PORT_ON,
+//    PORT_OFF
+//};
+
 enum objectType:int{
     objectMashine,
     objectUnknow
@@ -85,6 +90,13 @@ enum logicType:int{
     LOGIC_OR,
     LOGIC_AND,
     LOGIC_NO
+};
+
+enum objectState:int{
+    OBJECT_STATE_ON,    //включен - когда отвечает, но не производит продукцию
+    OBJECT_STATE_OFF,   //выключен - когда не отвечает
+    OBJECT_STATE_WORK,   //работает - когда производит продукцию
+    OBJECT_STATE_ANY    //состояние не имеет значения
 };
 
 enum tableType:int{

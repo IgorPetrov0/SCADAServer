@@ -32,6 +32,8 @@ public:
     objectPort& operator=(const objectPort *right);
     bool getState() const;
     void setState(bool value);
+    void addOnCondition(condition *onCondition);
+    void addOffCondition(condition *offCondition);
 
 protected:
     int number;

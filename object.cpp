@@ -86,6 +86,33 @@ void object::deserialisationContinue(QDataStream *str){
         ports.append(tmpPort);
     }
 }
+////////////////////////////////////////////////////////////////
+objectState object::getCurrentState() const{
+    return currentState;
+}
+//////////////////////////////////////////////////////////////////////////
+void object::setCurrentState(const objectState &value){
+    stateSetTime=QTime::currentTime();
+    currentState = value;
+}
+///////////////////////////////////////////////////////////////////////
+QString object::getCurrentStateString(){
+    switch(currentState){
+        case(OBJECT_STATE_OFF):{
+            return tr("Выключен");
+        }
+        case(OBJECT_STATE_ON):{
+            return tr("Включен");
+        }
+        case(OBJECT_STATE_WORK):{
+            return tr("Работает");
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+QTime object::getStateSetTime() const{
+    return stateSetTime;
+}
 ///////////////////////////////////////////////////////////////////////////
 objectType object::getType() const{
     return type;

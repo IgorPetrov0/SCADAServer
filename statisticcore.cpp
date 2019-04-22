@@ -100,7 +100,8 @@ int statisticCore::getObjectsCount(){
 }
 ///////////////////////////////////////////////////////////////////////////////////
 object *statisticCore::getObjectForIndex(int index){
-    if(index<mashinesArray.size()){
+    int t=0;
+    if((index>=0)&&(index<mashinesArray.size())){
         return mashinesArray.at(index);
     }
     //в дальнейшем проверяем на mashinesArray.size+anythingElse.size

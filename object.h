@@ -32,14 +32,16 @@ public:
     objectPort *getPort(int index) const;
     void addPort(objectPort *port);
     void removePort(int index);
+    objectState getCurrentState() const;
+    void setCurrentState(const objectState &value);
+    QString getCurrentStateString();
+    QTime getStateSetTime() const;
 
     object& operator=(const object& right);
 
     virtual void serialisation(QDataStream *str);
     virtual void deserialisation(QDataStream *str);//полная десериализация
     virtual void deserialisationContinue(QDataStream *str);//частичная. только для своих данных без данных родителя
-
-
 
 protected:
     unsigned int address;//сетевой адрес в сети RS485
@@ -49,6 +51,8 @@ protected:
     bool requestEnable;
     bool online;
     QVector<objectPort*>ports;
+    objectState currentState;
+    QTime stateSetTime;
 
 signals:
 

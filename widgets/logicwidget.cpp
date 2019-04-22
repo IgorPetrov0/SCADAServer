@@ -110,24 +110,30 @@ void logicWidget::addSlot(tableType type){
         }
         case(TABLE_ON_CONDITIONS):{
             if(currentPortPointer!=nullptr){
-                newConditionDialog dialog(currentPortPointer,this);
-                dialog.setWindowTitle(tr("Условие включения"));
-                dialog.setPortName(currentPortPointer->getName());
-                dialog.setStatisticCorePointer(statCorePointer);
-                if(dialog.exec()==QDialog::Accepted){
-
+                if(currentPortPointer->getType()==PORT_OUTPUT){//условия только для выходов
+                    newConditionDialog dialog(currentPortPointer,this);
+                    dialog.setWindowTitle(tr("Условие включения"));
+                    dialog.setPortName(currentPortPointer->getName());
+                    dialog.setStatisticCorePointer(statCorePointer);
+                    if(dialog.exec()==QDialog::Accepted){
+                        currentPortPointer->addOnCondition(dialog.getNewCondition());
+                        ui->onWidget->updateContent();
+                    }
                 }
             }
             break;
         }
         case(TABLE_OFF_CONDITIONS):{
             if(currentPortPointer!=nullptr){
-                newConditionDialog dialog(currentPortPointer,this);
-                dialog.setWindowTitle(tr("Условие отключения"));
-                dialog.setPortName(currentPortPointer->getName());
-                dialog.setStatisticCorePointer(statCorePointer);
-                if(dialog.exec()==QDialog::Accepted){
-
+                if(currentPortPointer->getType()==PORT_OUTPUT){//условия только для выходов
+                    newConditionDialog dialog(currentPortPointer,this);
+                    dialog.setWindowTitle(tr("Условие отключения"));
+                    dialog.setPortName(currentPortPointer->getName());
+                    dialog.setStatisticCorePointer(statCorePointer);
+                    if(dialog.exec()==QDialog::Accepted){
+                        currentPortPointer->addOffCondition(dialog.getNewCondition());
+                        ui->offWidget->updateContent();
+                    }
                 }
             }
             break;

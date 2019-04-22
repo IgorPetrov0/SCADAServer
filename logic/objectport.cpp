@@ -47,6 +47,16 @@ void objectPort::serialisation(QDataStream *str){
     *str<<(int)type;
     *str<<name;
     *str<<description;
+    int size=onConditions.size();
+    *str<<size;
+    for(int n=0;n!=size;n++){
+        onConditions.at(n)->serialisation(str);
+    }
+    size=offConditions.size();
+    *str<<size;
+    for(int n=0;n!=size;n++){
+        offConditions.at(n)->serialisation(str);
+    }
 }
 /////////////////////////////////////////////////////////////////////
 void objectPort::deserialisation(QDataStream *str){
@@ -56,6 +66,19 @@ void objectPort::deserialisation(QDataStream *str){
     type=(portTypes)tmp;
     *str>>name;
     *str>>description;
+    int size=0;
+    *str>>size;
+    for(int n=0;n!=size;n++){
+        condition *tmpCond = new condition;
+        tmpCond->deserialisation(str);
+        onConditions.append(tmpCond);
+    }
+    *str>>size;
+    for(int n=0;n!=size;n++){
+        condition *tmpCond = new condition;
+        tmpCond->deserialisation(str);
+        offConditions.append(tmpCond);
+    }
 }
 ////////////////////////////////////////////////////////////////////
 int objectPort::getOnConditionsCount() const{
@@ -116,13 +139,19 @@ objectPort &objectPort::operator=(const objectPort *right){
 
 
 }
-
-bool objectPort::getState() const
-{
+///////////////////////////////////////////////////////////
+bool objectPort::getState() const{
     return state;
 }
-
-void objectPort::setState(bool value)
-{
+//////////////////////////////////////////////////////////////
+void objectPort::setState(bool value){
     state = value;
+}
+//////////////////////////////////////////////////////////////////
+void objectPort::addOnCondition(condition *onCondition){
+    onConditions.append(onCondition);
+}
+////////////////////////////////////////////////////////////////////
+void objectPort::addOffCondition(condition *offCondition){
+    offConditions.append(offCondition);
 }

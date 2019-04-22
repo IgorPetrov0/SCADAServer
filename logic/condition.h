@@ -6,6 +6,7 @@
 #include <QObject>
 #include "defines.h"
 
+
 class object;
 class objectPort;
 
@@ -14,29 +15,33 @@ class condition
 public:
     condition();
 
-    QString getName() const;
-    void setName(const QString &value);
     QString getDescription() const;
     void setDescription(const QString &value);
-    object *getTargetObject() const;
-    void setTargetObject(object *value);
-    objectPort *getTargetPort() const;
-    void setTargetPort(objectPort *value);
+    QString getTargetObjectName() const;
+    void setTargetObjectName(QString name);
+    QString getTargetPortName() const;
+    void setTargetPortName(QString name);
     bool getPortState() const;
+    QString getPortStateString();
     void setPortState(bool value);
-    QTime getTime() const;
-    void setTime(const QTime &value);
+    int getTime() const;
+    void setTime(const int value);
     logicType getLogic() const;
     QString getLogicString();
     void setLogic(const logicType &value);
+    objectState getTargetObjectState() const;
+    QString getTargetObjectStateString();
+    void setTargetObjectState(const objectState &value);
+    void serialisation(QDataStream *str);
+    void deserialisation(QDataStream *str);
 
 protected:
-    QString name;
     QString description;
-    object *targetObject;
-    objectPort *targetPort;
+    QString targetObjectName;
+    QString targetPortName;
     bool portState;
-    QTime time;
+    objectState targetObjectState;
+    int time;
     logicType logic;
 
 };

@@ -19,15 +19,19 @@ public:
     ~newConditionDialog();
     void setPortName(QString name);
     void setStatisticCorePointer(statisticCore *pointer);
+    condition *getNewCondition();
 
 protected:
     objectPort *currentPort;
     statisticCore *statCorePointer;
+    condition *currentCondition;
+    bool conditionGiven;
 
 protected slots:
     void portCheckSlot(int state);
     void stateCheckSlot(int state);
     void selectObject(int index);
+    void okSlot();
 
 
 private:
