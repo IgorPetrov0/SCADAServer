@@ -23,17 +23,18 @@ public:
     void serialisation(QDataStream *str);
     void deserialisation(QDataStream *str);
     int getOnConditionsCount() const;
-    int getOffConditionsCount();
-    condition *getOnCondition(int index);
-    condition *getOffCondition(int index);
+    int getOffConditionsCount() const;
+    condition *getOnCondition(int index) const;
+    condition *getOffCondition(int index) const;
     portTypes getType() const;
     QString getTypeString();
     void setType(const portTypes &value);
-    objectPort& operator=(const objectPort *right);
+    objectPort& operator=(const objectPort &right);
     bool getState() const;
     void setState(bool value);
     void addOnCondition(condition *onCondition);
     void addOffCondition(condition *offCondition);
+
 
 protected:
     int number;

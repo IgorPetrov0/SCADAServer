@@ -11,6 +11,7 @@
 #include "defines.h"
 #include "reports/reportclass.h"
 #include "reports/shiftreport.h"
+#include "logic/objectport.h"
 
 
 
@@ -39,6 +40,10 @@ public:
     dayGraph *readGraphFile(QString fullPath);//при использовании не забывать удалять полученные данные
     bool writeGraphsInFiles();//записывает графики всех активных машин в файлы
     QStringList getObjectsNamesList();
+    void checkConditions();
+    bool checkANDConditions(objectPort *port,bool on_off);
+    bool checkORConditions(objectPort *port, bool on);
+    bool checkNOConditions(objectPort *port,bool on_off);
 
 protected:
     QVector<mashine*> mashinesArray;

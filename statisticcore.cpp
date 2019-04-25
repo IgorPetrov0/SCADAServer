@@ -342,6 +342,63 @@ QStringList statisticCore::getObjectsNamesList(){
     }
     return list;
 }
+///////////////////////////////////////////////////////////////////////////////////
+void statisticCore::checkConditions(){
+    int size=mashinesArray.size();
+    for(int n=0;n!=size;n++){
+        object *tmpObject=mashinesArray.at(n);
+        int portsCount=tmpObject->getPortsCount();
+        for(int m=0;m!=portsCount;m++){
+            objectPort *tmpPort=tmpObject->getPort(n);
+            if(checkORConditions(tmpPort,true)){
+                tmpPort->setState(true);
+            }
+            if(checkORConditions(tmpPort,false)){
+                tmpPort->setState(false);
+            }
+
+
+
+
+        }
+
+
+
+    }
+}
+/////////////////////////////////////////////////////////////////////////////
+bool statisticCore::checkANDConditions(objectPort *port, bool on_off){
+
+}
+////////////////////////////////////////////////////////////////////////////
+bool statisticCore::checkORConditions(objectPort *port,bool on){
+    int condCount=port->getOnConditionsCount();
+    for(int t=0;t!=condCount;t++){
+        if(on){
+            condition *tmpCond=tmpPort->getOnCondition(t);
+        }
+        else{
+            condition *tmpCond=tmpPort->getOffCondition(t);
+        }
+        object *targetObject=getObjectForName(tmpCond->getTargetObjectName());
+        if(targetObject!=nullptr){
+            //порт или состояние
+            QString portName=tmpCond->getTargetPortName().isEmpty();
+            if(!portName.isEmpty()){//если порт
+                objectPort *targetPort=targetObject->getPortByName(tmpCond->getTargetPortName());
+
+            }
+            else{//если состояние
+
+            }
+
+        }
+    }
+}
+///////////////////////////////////////////////////////////////////////////
+bool statisticCore::checkNOConditions(objectPort *port, bool on_off){
+
+}
 ////////////////////////////////////////////////////////////////////////////
 void statisticCore::generateTestGraph(mashine *m){
     QFile file(m->getPathForStatistics()+"/"+m->getName()+"_"+

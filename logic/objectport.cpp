@@ -85,18 +85,18 @@ int objectPort::getOnConditionsCount() const{
     return onConditions.size();
 }
 ///////////////////////////////////////////////////////////////////
-int objectPort::getOffConditionsCount(){
+int objectPort::getOffConditionsCount() const{
     return offConditions.size();
 }
 //////////////////////////////////////////////////////////////////
-condition *objectPort::getOnCondition(int index){
+condition *objectPort::getOnCondition(int index) const{
     if((index>=0)&&(index<onConditions.size())){
         return onConditions.at(index);
     }
     return nullptr;
 }
 /////////////////////////////////////////////////////////////////////
-condition *objectPort::getOffCondition(int index){
+condition *objectPort::getOffCondition(int index) const{
     if((index>=0)&&(index<offConditions.size())){
         return offConditions.at(index);
     }
@@ -122,22 +122,27 @@ void objectPort::setType(const portTypes &value){
     type = value;
 }
 /////////////////////////////////////////////////////////////////
-objectPort &objectPort::operator=(const objectPort *right){
-    if(right==this){
+objectPort &objectPort::operator=(const objectPort &right){
+    if(&right==this){
         return *this;
     }
-    number=right->getNumber();
-    name=right->getName();
-    description=right->getDescription();
-    type=right->getType();
-    int size=right->getOnConditionsCount();
+    number=right.getNumber();
+    name=right.getName();
+    description=right.getDescription();
+    type=right.getType();
+    int size=right.getOnConditionsCount();
     for(int n=0;n!=size;n++){
         condition *tmpCondition = new condition;
-
+        *tmpCondition=*right.getOnCondition(n);
+        onConditions.append(tmpCondition);
     }
-
-
-
+    size=right.getOffConditionsCount();
+    for(int n=0;n!=size;n++){
+        condition *tmpCondition = new condition;
+        *tmpCondition=*right.getOffCondition(n);
+        offConditions.append(tmpCondition);
+    }
+    return *this;
 }
 ///////////////////////////////////////////////////////////
 bool objectPort::getState() const{
@@ -155,3 +160,4 @@ void objectPort::addOnCondition(condition *onCondition){
 void objectPort::addOffCondition(condition *offCondition){
     offConditions.append(offCondition);
 }
+//////////////////////////////////////////////////////////////////////

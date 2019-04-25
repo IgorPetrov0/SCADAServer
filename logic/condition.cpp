@@ -127,3 +127,17 @@ void condition::deserialisation(QDataStream *str){
     *str>>portState;
     *str>>time;
 }
+////////////////////////////////////////////////////////////////////////////
+condition &condition::operator=(const condition *right){
+    if(right==this){
+        return *this;
+    }
+    description=right->getDescription();
+    logic=right->getLogic();
+    targetObjectName=right->getTargetObjectName();
+    targetObjectState=right->getTargetObjectState();
+    targetPortName=right->getTargetPortName();
+    portState=right->getPortState();
+    time=right->getTime();
+    return *this;
+}

@@ -172,6 +172,16 @@ objectPort *object::getPort(int index) const{
     }
     return nullptr;
 }
+///////////////////////////////////////////////////////////////////
+objectPort *object::getPortByName(QString name) const{
+    int count=ports.size();
+    for(int n=0;n!=count;n++){
+        objectPort *tmpPort=ports.at(n);
+        if(tmpPort->getName()==name){
+            return tmpPort;
+        }
+    }
+}
 /////////////////////////////////////////////////////////////////
 void object::addPort(objectPort *port){
     if(port!=nullptr){
@@ -200,7 +210,7 @@ object& object::operator=(const object& right){
     int size=right.getPortsCount();
     for(int n=0;n!=size;n++){
         objectPort *tmpPort = new objectPort;
-        *tmpPort=right.getPort(n);
+        *tmpPort=*right.getPort(n);
         ports.append(tmpPort);
     }
     return *this;
