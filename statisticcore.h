@@ -43,7 +43,7 @@ public:
     void checkConditions();
     bool checkANDConditions(objectPort *port,bool on_off);
     bool checkORConditions(objectPort *port, bool on);
-    bool checkNOConditions(objectPort *port,bool on_off);
+    bool checkNOTConditions(objectPort *port,bool on_off);
 
 protected:
     QVector<mashine*> mashinesArray;

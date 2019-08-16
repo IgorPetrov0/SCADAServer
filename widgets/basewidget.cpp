@@ -2,7 +2,12 @@
 
 baseWidget::baseWidget()
 {
-    statCorePointer=NULL;
+    statCorePointer=nullptr;
+}
+//////////////////////////////////////////
+baseWidget::~baseWidget()
+{
+
 }
 ///////////////////////////////////////////////////////////////////
 void baseWidget::setStatCorePointer(statisticCore *pointer){

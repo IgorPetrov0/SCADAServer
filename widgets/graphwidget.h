@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QMessageBox>
+#include <cmath>
 #include "basewidget.h"
 
 namespace Ui {
@@ -18,7 +19,7 @@ class graphWidget : public QWidget, baseWidget
     Q_OBJECT
 
 public:
-    explicit graphWidget(QWidget *parent = 0);
+    explicit graphWidget(QWidget *parent = nullptr);
     ~graphWidget();
     void visualiseGraph(dayGraph *array);
     virtual void updateContent();

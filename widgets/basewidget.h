@@ -7,6 +7,7 @@ class baseWidget
 {
 public:
     baseWidget();
+    virtual ~baseWidget();
     virtual void setStatCorePointer(statisticCore *pointer);
     virtual void updateContent();
 

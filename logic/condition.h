@@ -35,6 +35,7 @@ public:
     void serialisation(QDataStream *str);
     void deserialisation(QDataStream *str);
     condition &operator=(const condition *right);
+
 protected:
     QString description;
     QString targetObjectName;

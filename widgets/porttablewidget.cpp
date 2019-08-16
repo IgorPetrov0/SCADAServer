@@ -14,7 +14,6 @@ void portTableWidget::updateContent(){
     int currentRow=ui->tableWidget->currentRow();
     disconnect(ui->tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(itemSelectSlot(int,int,int,int)));
     ui->tableWidget->clear();
-    connect(ui->tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(itemSelectSlot(int,int,int,int)));
     QStringList headerList;
     headerList.append(tr("Номер"));
     headerList.append(tr("Название"));
@@ -38,7 +37,10 @@ void portTableWidget::updateContent(){
             ui->tableWidget->setItem(n,2,item);
         }
     }
-    ui->tableWidget->setCurrentCell(currentRow,0);
+    connect(ui->tableWidget,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(itemSelectSlot(int,int,int,int)));
+    if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
+        ui->tableWidget->setCurrentCell(currentRow,0);
+    }
 }
 ////////////////////////////////////////////////////////////////
 void portTableWidget::setObject(object *newObject){

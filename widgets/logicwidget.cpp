@@ -52,6 +52,7 @@ void logicWidget::resizeEvent(QResizeEvent *event){
 //////////////////////////////////////////////////////////////////////
 void logicWidget::updateContent(){
     if(statCorePointer!=nullptr){
+        disconnect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectSlot(int)));
         int size=statCorePointer->getObjectsCount();
         int currentIndex=ui->comboBox->currentIndex();
         ui->comboBox->clear();
@@ -59,9 +60,9 @@ void logicWidget::updateContent(){
             object *tmpObject=statCorePointer->getObjectForIndex(n);
             ui->comboBox->addItem(tmpObject->getName());
         }
+        connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectSlot(int)));
         if((currentIndex>=0)&&(currentIndex<ui->comboBox->count())){
             ui->comboBox->setCurrentIndex(currentIndex);
-            selectObjectSlot(currentIndex);
         }
         else{
             ui->comboBox->setCurrentIndex(0);
@@ -86,17 +87,26 @@ void logicWidget::selectObjectSlot(int index){
             ui->addressLabel->setText(tr("Адрес: ")+QString::number(currentObjectPointer->getAddress()));
             ui->typeLabel->setText(tr("Тип: ")+currentObjectPointer->getTypeString());
             ui->portWidget->setObject(currentObjectPointer);
-        }
-        ui->portWidget->updateContent();
+            ui->portWidget->updateContent();
+            if(currentPortPointer==nullptr){
+                selectPortSlot(0);
+            }
+        }  
     } 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void logicWidget::selectPortSlot(int index){
     currentPortPointer=currentObjectPointer->getPort(index);
-    ui->onWidget->setCurrentPort(currentPortPointer);
-    ui->onWidget->updateContent();
-    ui->offWidget->setCurrentPort(currentPortPointer);
-    ui->offWidget->updateContent();
+    if(currentPortPointer!=nullptr){
+        ui->onWidget->setCurrentPort(currentPortPointer);
+        ui->onWidget->updateContent();
+        ui->offWidget->setCurrentPort(currentPortPointer);
+        ui->offWidget->updateContent();
+    }
+    else{
+        ui->onWidget->clear();
+        ui->offWidget->clear();
+    }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void logicWidget::addSlot(tableType type){
@@ -120,6 +130,16 @@ void logicWidget::addSlot(tableType type){
                         ui->onWidget->updateContent();
                     }
                 }
+                else{//если текущий вход
+                    QMessageBox box(this);
+                    box.setText(tr("Выбранный порт является входом.\n"
+                                   "Нет смысла задавать условие для входа.\n"
+                                   "Выберите выходной порт для задания условий включения/выключения."));
+                    box.setWindowTitle("Ошибка");
+                    box.setIcon(QMessageBox::Critical);
+                    box.setStandardButtons(QMessageBox::Ok);
+                    box.exec();
+                }
             }
             break;
         }
@@ -135,6 +155,14 @@ void logicWidget::addSlot(tableType type){
                         ui->offWidget->updateContent();
                     }
                 }
+                QMessageBox box(this);
+                box.setText(tr("Выбранный порт является входом.\n"
+                               "Нет смысла задавать условие для входа.\n"
+                               "Выберите выходной порт для задания условий включения/выключения."));
+                box.setWindowTitle("Ошибка");
+                box.setIcon(QMessageBox::Critical);
+                box.setStandardButtons(QMessageBox::Ok);
+                box.exec();
             }
             break;
         }
@@ -152,7 +180,8 @@ void logicWidget::editSlot(tableType type, int index){
                 break;
             }
             case(TABLE_ON_CONDITIONS):{
-
+                newConditionDialog dialog(currentPortPointer,this);
+                dialog.
                 break;
             }
             case(TABLE_OFF_CONDITIONS):{

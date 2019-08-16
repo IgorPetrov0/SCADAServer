@@ -17,6 +17,7 @@ class conditionTableWidget : public logicTableWidget
 
 public:
     conditionTableWidget(QWidget *parent);
+    virtual void clear();
     virtual void updateContent();
 
 protected:

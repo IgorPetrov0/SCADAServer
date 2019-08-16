@@ -15,8 +15,9 @@ class logicTableWidget : public QWidget
 public:
     explicit logicTableWidget(QWidget *parent = 0);
     void setCurrentPort(objectPort *port);
-    virtual void updateContent();
     void setTableType(tableType type);
+    virtual void updateContent();
+    virtual void clear();
     ~logicTableWidget();
 
 

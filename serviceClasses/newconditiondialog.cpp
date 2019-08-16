@@ -49,6 +49,10 @@ void newConditionDialog::setStatisticCorePointer(statisticCore *pointer){
         ui->objectComboBox->setCurrentIndex(0);
     }
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+void newConditionDialog::setConditionIndex(int index){
+    currentCondition=currentPort->get
+}
 //////////////////////////////////////////////////////////////////////////////////////
 condition *newConditionDialog::getNewCondition(){
     conditionGiven=true;
@@ -59,16 +63,20 @@ void newConditionDialog::portCheckSlot(int state){
     if(state==Qt::Checked){
         ui->portComboBox->setEnabled(true);
         ui->portStateComboBox->setEnabled(true);
-        ui->stateComboBox->setEnabled(false);
+        ui->portCheckBox->setDisabled(true);
+        ui->stateCheckBox->setEnabled(true);
+        ui->stateComboBox->setDisabled(true);
         ui->stateCheckBox->setCheckState(Qt::Unchecked);
     }
 }
 ////////////////////////////////////////////////////////////////////
 void newConditionDialog::stateCheckSlot(int state){
     if(state==Qt::Checked){
-        ui->portComboBox->setEnabled(false);
-        ui->portStateComboBox->setEnabled(false);
+        ui->portComboBox->setDisabled(true);
+        ui->portStateComboBox->setDisabled(true);
         ui->stateComboBox->setEnabled(true);
+        ui->stateCheckBox->setDisabled(true);
+        ui->portCheckBox->setEnabled(true);
         ui->portCheckBox->setCheckState(Qt::Unchecked);
     }
 }

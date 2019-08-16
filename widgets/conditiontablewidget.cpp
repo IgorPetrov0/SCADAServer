@@ -6,9 +6,9 @@ conditionTableWidget::conditionTableWidget(QWidget *parent):
 {
 
 }
-/////////////////////////////////////////////////////////////////////
-void conditionTableWidget::updateContent(){
-    ui->tableWidget->clear();
+///////////////////////////////////////////////////////////////////////
+void conditionTableWidget::clear(){
+    logicTableWidget::clear();
     ui->tableWidget->setColumnCount(6);
     QStringList headerList;
     headerList.append(tr("Логика"));
@@ -18,7 +18,11 @@ void conditionTableWidget::updateContent(){
     headerList.append(tr("Состояние"));
     headerList.append(tr("Время"));
     ui->tableWidget->setHorizontalHeaderLabels(headerList);
-
+}
+/////////////////////////////////////////////////////////////////////
+void conditionTableWidget::updateContent(){
+    int currentRow=ui->tableWidget->currentRow();
+    clear();
     switch(type){//если условия включения
         case(TABLE_ON_CONDITIONS):{
             ui->groupBox->setTitle(tr("Включить, если: "));
@@ -43,6 +47,9 @@ void conditionTableWidget::updateContent(){
         default:{
             qDebug("conditionTableWidget::updateContent()  wrong table type");
         }
+    }
+    if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
+        ui->tableWidget->setCurrentCell(currentRow,0);
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////

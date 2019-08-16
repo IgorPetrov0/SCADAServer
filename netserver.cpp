@@ -31,6 +31,7 @@ bool netServer::writeConfiguration(QString workingDir){
         return false;
     }
     QDataStream str(&file);
+    str.setVersion(DATA_STREAM_VERSION);
     str<<QString(SIGNATURE);
     str<<(float)CUR_VERSION;
     str<<this->serverPort();
@@ -46,6 +47,7 @@ bool netServer::readConfiguration(QString workingDir){
         return false;
     }
     QDataStream str(&file);
+    str.setVersion(DATA_STREAM_VERSION);
     QString sig;
     str>>sig;
     if(sig!=SIGNATURE){

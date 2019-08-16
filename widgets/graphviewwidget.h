@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <cmath>
 #include "defines.h"
 
 class graphViewWidget : public QWidget
@@ -25,7 +26,7 @@ protected:
     int mousePosX,mousePosY;
     int posY;
     float yFactor;
-    double xFactor;//меняется при whileEvent и ипользуется дл отрисовки
+    double xFactor;//меняется при whileEvent и ипользуется для отрисовки
     double resizeXFactor;//меняется при resizeEvent
     int xOffset;//смещение слайдером по горизонтали
     QString visibleValue;

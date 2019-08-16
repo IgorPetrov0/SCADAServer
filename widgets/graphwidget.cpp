@@ -81,7 +81,7 @@ void graphWidget::resizeEvent(QResizeEvent *event){
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 QMenu *graphWidget::createContextMenu(){
     QMenu *menu = new QMenu;
-    QAction *calculateAll = new QAction(tr("Отчет за сутки"));
+    QAction *calculateAll = new QAction(tr("Отчет за сутки"),this);
     menu->addAction(calculateAll);
     return menu;
 }

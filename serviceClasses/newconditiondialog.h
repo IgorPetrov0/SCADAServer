@@ -19,6 +19,7 @@ public:
     ~newConditionDialog();
     void setPortName(QString name);
     void setStatisticCorePointer(statisticCore *pointer);
+    void setConditionIndex(int index);
     condition *getNewCondition();
 
 protected:

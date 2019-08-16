@@ -23,6 +23,7 @@ bool statisticCore::readConfiguration(QString workingDir){
         return false;
     }
     QDataStream str(&file);
+    str.setVersion(DATA_STREAM_VERSION);
     QString sig;
     str>>sig;
     if(sig!=SIGNATURE){
@@ -61,7 +62,7 @@ bool statisticCore::readConfiguration(QString workingDir){
         file.setFileName(fileName);
         if(file.exists()){
             dayGraph *todayGraph=readGraphFile(fileName);
-            if(todayGraph!=NULL){
+            if(todayGraph!=nullptr){
                 tmpMashine->setCurrentGraph(todayGraph);
             }
             else{
@@ -79,6 +80,7 @@ bool statisticCore::writeConfiguration(QString workingDir){
         return false;
     }
     QDataStream str(&file);
+    str.setVersion(DATA_STREAM_VERSION);
     str<<QString(SIGNATURE);
     str<<(float)CUR_VERSION;
     int objectsCount=mashinesArray.size();
@@ -356,14 +358,19 @@ void statisticCore::checkConditions(){
             if(checkORConditions(tmpPort,false)){
                 tmpPort->setState(false);
             }
-
-
-
-
+            if(checkANDConditions(tmpPort,true)){
+                tmpPort->setState(true);
+            }
+            if(checkANDConditions(tmpPort,false)){
+                tmpPort->setState(false);
+            }
+            if(checkNOTConditions(tmpPort,true)){
+                tmpPort->setState(true);
+            }
+            if(checkNOTConditions(tmpPort,false)){
+                tmpPort->setState(false);
+            }
         }
-
-
-
     }
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -374,29 +381,36 @@ bool statisticCore::checkANDConditions(objectPort *port, bool on_off){
 bool statisticCore::checkORConditions(objectPort *port,bool on){
     int condCount=port->getOnConditionsCount();
     for(int t=0;t!=condCount;t++){
+        condition *tmpCond=nullptr;
         if(on){
-            condition *tmpCond=tmpPort->getOnCondition(t);
+            tmpCond=port->getOnCondition(t);
         }
         else{
-            condition *tmpCond=tmpPort->getOffCondition(t);
+            tmpCond=port->getOffCondition(t);
         }
         object *targetObject=getObjectForName(tmpCond->getTargetObjectName());
         if(targetObject!=nullptr){
             //порт или состояние
-            QString portName=tmpCond->getTargetPortName().isEmpty();
+            QString portName=tmpCond->getTargetPortName();
             if(!portName.isEmpty()){//если порт
                 objectPort *targetPort=targetObject->getPortByName(tmpCond->getTargetPortName());
-
+                if(targetPort!=nullptr){
+                    if(targetPort->getState()==tmpCond->getPortState()){
+                        return true;
+                    }
+                }
             }
             else{//если состояние
-
+                if(targetObject->getCurrentState()==tmpCond->getTargetObjectState()){
+                    return true;
+                }
             }
-
         }
     }
+    return false;
 }
 ///////////////////////////////////////////////////////////////////////////
-bool statisticCore::checkNOConditions(objectPort *port, bool on_off){
+bool statisticCore::checkNOTConditions(objectPort *port, bool on_off){
 
 }
 ////////////////////////////////////////////////////////////////////////////

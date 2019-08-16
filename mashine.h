@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QDateTime>
 #include <QVector>
+#include <cmath>
 #include "object.h"
 
 
