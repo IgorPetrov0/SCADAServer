@@ -15,21 +15,25 @@ class newConditionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit newConditionDialog(objectPort *port, QWidget *parent, int condIndex=-1);
+    explicit newConditionDialog(statisticCore *pointer, objectPort *port, QWidget *parent, bool on, int condIndex=-1);
     ~newConditionDialog();
-    void setPortName(QString name);
-    void setStatisticCorePointer(statisticCore *pointer);
+    void setPortNumber(int number);
     condition *getNewCondition();
 
+
+
 protected:
+    object *currentObject;
     objectPort *currentPort;
     statisticCore *statCorePointer;
     condition *currentCondition;
+    void viewCurrentCondition();
 
 protected slots:
     void portCheckSlot(int state);
     void stateCheckSlot(int state);
     void selectObject(int index);
+    void selectPortSlot(int index);
     void okSlot();
 
 

@@ -96,17 +96,16 @@ bool statisticCore::writeConfiguration(QString workingDir){
 ////////////////////////////////////////////////////////////////////////////
 int statisticCore::getObjectsCount(){
     int count=0;
-    count+=mashinesArray.size();//Общее число объектов состоит из машин и чего-то еще, что придумаем позже
+    count+=mashinesArray.size();//todo Общее число объектов состоит из машин и чего-то еще, что придумаем позже
 
     return count;
 }
 ///////////////////////////////////////////////////////////////////////////////////
 object *statisticCore::getObjectForIndex(int index){
-    int t=0;
     if((index>=0)&&(index<mashinesArray.size())){
         return mashinesArray.at(index);
     }
-    //в дальнейшем проверяем на mashinesArray.size+anythingElse.size
+    //todo в дальнейшем проверяем на mashinesArray.size+anythingElse.size
     return nullptr;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -121,6 +120,24 @@ object *statisticCore::getObjectForName(QString name){
     //todo проверяем по остальным массивам объектов
 
     return nullptr;
+}
+/////////////////////////////////////////////////////////////////////////////////////
+int statisticCore::getObjectIndex(object *targetObject){
+    if(targetObject==nullptr){
+        return -1;
+    }
+
+    int size=mashinesArray.size();//сначала проверяем массив машин
+    int counter=0;
+    for(int n=0;n!=size;n++){
+        if(mashinesArray.at(n)==targetObject){
+            return counter;
+        }
+        counter++;
+    }
+    //todo затем проверяем другие массивы инкрементируя counter
+
+    return -1;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 bool statisticCore::createObject(QDataStream *str, bool remout){
@@ -153,6 +170,7 @@ bool statisticCore::createObject(QDataStream *str, bool remout){
             //generateTestGraph(tmpMashine);//генерация файлов статистики для отладки
             break;
         }
+        //todo
     }
     return ok;
 }
@@ -232,7 +250,7 @@ reportClass *statisticCore::createReport(reportType type, QDate startDate, QDate
         QFileInfo file(fileName);
         if(file.exists()){
             dayGraph *tmpDayGraph = readGraphFile(fileName);
-            if(tmpDayGraph!=NULL){
+            if(tmpDayGraph!=nullptr){
                 dayGraphsArray.append(tmpDayGraph);
                 filesNames.append(fileName);
             }
@@ -245,7 +263,7 @@ reportClass *statisticCore::createReport(reportType type, QDate startDate, QDate
         setLastError(tr("Данные за период с ")+startDate.toString("dd_MM_yyyy")+
                      tr(" по ")+stopDate.toString("dd_MM_yyyy")+tr(" для машины ")+
                      tmpPointer->getName()+tr(" отсутствуют."));
-        return NULL;
+        return nullptr;
     }
 
     switch(type){
@@ -268,10 +286,10 @@ reportClass *statisticCore::createReport(reportType type, QDate startDate, QDate
             break;
         }
     }
-    return NULL;
+    return nullptr;
 }
 ///////////////////////////////////////////////////////////////////
-bool statisticCore::deleteObject(object *ob, bool objectOnly){
+void statisticCore::deleteObject(object *ob, bool objectOnly){
     switch(ob->getType()){
         case(objectMashine):{
             mashine *m=static_cast<mashine*>(ob);
@@ -312,13 +330,13 @@ dayGraph *statisticCore::readGraphFile(QString fullPath){
                 setLastError(tr("Файл ")+fullPath+tr(" поврежден. Данные не прочитаны."));
                 delete[] dayStruct->minutesArray;
                 delete dayStruct;
-                return NULL;
+                return nullptr;
             }
         }
         return dayStruct;
     }
     setLastError(tr("Невозможно открыть файл \n")+fullPath);
-    return NULL;
+    return nullptr;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 bool statisticCore::writeGraphsInFiles(){
@@ -352,23 +370,8 @@ void statisticCore::checkConditions(){
         int portsCount=tmpObject->getPortsCount();
         for(int m=0;m!=portsCount;m++){
             objectPort *tmpPort=tmpObject->getPort(n);
-            if(checkORConditions(tmpPort,true)){
-                tmpPort->setState(true);
-            }
-            if(checkORConditions(tmpPort,false)){
-                tmpPort->setState(false);
-            }
-            if(checkANDConditions(tmpPort,true)){
-                tmpPort->setState(true);
-            }
-            if(checkANDConditions(tmpPort,false)){
-                tmpPort->setState(false);
-            }
-            if(checkNOTConditions(tmpPort,true)){
-                tmpPort->setState(true);
-            }
-            if(checkNOTConditions(tmpPort,false)){
-                tmpPort->setState(false);
+            if(tmpPort->getType()==PORT_OUTPUT){
+
             }
         }
     }
@@ -379,35 +382,7 @@ bool statisticCore::checkANDConditions(objectPort *port, bool on_off){
 }
 ////////////////////////////////////////////////////////////////////////////
 bool statisticCore::checkORConditions(objectPort *port,bool on){
-    int condCount=port->getOnConditionsCount();
-    for(int t=0;t!=condCount;t++){
-        condition *tmpCond=nullptr;
-        if(on){
-            tmpCond=port->getOnCondition(t);
-        }
-        else{
-            tmpCond=port->getOffCondition(t);
-        }
-        object *targetObject=getObjectForName(tmpCond->getTargetObjectName());
-        if(targetObject!=nullptr){
-            //порт или состояние
-            QString portName=tmpCond->getTargetPortName();
-            if(!portName.isEmpty()){//если порт
-                objectPort *targetPort=targetObject->getPortByName(tmpCond->getTargetPortName());
-                if(targetPort!=nullptr){
-                    if(targetPort->getState()==tmpCond->getPortState()){
-                        return true;
-                    }
-                }
-            }
-            else{//если состояние
-                if(targetObject->getCurrentState()==tmpCond->getTargetObjectState()){
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+
 }
 ///////////////////////////////////////////////////////////////////////////
 bool statisticCore::checkNOTConditions(objectPort *port, bool on_off){
@@ -469,6 +444,10 @@ bool statisticCore::writeGraph(mashine *tmpMashine){
     else{
         return false;
     }
+}
+///////////////////////////////////////////////////////////////////////////////////
+bool statisticCore::isCondCompliance(condition *cond){
+
 }
 ///////////////////////////////////////////////////////////////////////////////////
 void statisticCore::newDaySlot(mashine *tmpMashine){

@@ -1,18 +1,39 @@
 #include "newconditiondialog.h"
 #include "ui_newconditiondialog.h"
 
-newConditionDialog::newConditionDialog(objectPort *port, QWidget *parent, int condIndex) :
+newConditionDialog::newConditionDialog(statisticCore *pointer, objectPort *port, QWidget *parent, bool on, int condIndex) :
     QDialog(parent),
     ui(new Ui::newConditionDialog)
 {
     ui->setupUi(this);
     currentPort=port;
+    ui->portNameLabel->setText(QString::number(port->getNumber())+"  "+port->getDescription());
+
+    if(on){
+        setWindowTitle(tr("Условие включения"));
+    }
+    else{
+        setWindowTitle(tr("Условие выключения"));
+    }
+
+    statCorePointer=pointer;
+    if(pointer!=nullptr){
+        int size=pointer->getObjectsCount();
+        ui->objectComboBox->addItem(tr("Нет объекта"));
+        for(int n=0;n!=size;n++){
+            ui->objectComboBox->addItem(pointer->getObjectForIndex(n)->getName());
+        }
+        ui->objectComboBox->setCurrentIndex(-1);
+    }
 
     connect(ui->portCheckBox,SIGNAL(stateChanged(int)),this,SLOT(portCheckSlot(int)));
     connect(ui->stateCheckBox,SIGNAL(stateChanged(int)),this,SLOT(stateCheckSlot(int)));
     connect(ui->objectComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectObject(int)));
+    connect(ui->portNumberComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPortSlot(int)));
     connect(ui->okButton,SIGNAL(clicked(bool)),this,SLOT(okSlot()));
     connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
+
+
     ui->portCheckBox->setCheckState(Qt::Checked);
     ui->stateCheckBox->setCheckState(Qt::Unchecked);
     ui->logicComboBox->addItem(tr("И"),LOGIC_AND);
@@ -23,8 +44,22 @@ newConditionDialog::newConditionDialog(objectPort *port, QWidget *parent, int co
     ui->stateComboBox->addItem(tr("Работает"),OBJECT_STATE_WORK);
     ui->portStateComboBox->addItem(tr("Включен"),true);
     ui->portStateComboBox->addItem(tr("Выключен"),false);
-    statCorePointer=nullptr;
-    currentCondition=nullptr;
+
+    ui->objectComboBox->setCurrentIndex(0);
+
+
+    if(condIndex>=0){
+        if(on){
+            currentCondition=currentPort->getOnCondition(condIndex);
+        }
+        else{
+            currentCondition=currentPort->getOffCondition(condIndex);
+        }
+        viewCurrentCondition();
+    }
+    else{
+        currentCondition=nullptr;
+    }
 }
 ////////////////////////////////////////////////////////////////////////////////
 newConditionDialog::~newConditionDialog(){
@@ -34,28 +69,54 @@ newConditionDialog::~newConditionDialog(){
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////
-void newConditionDialog::setPortName(QString name){
-    ui->portNameLabel->setText(tr("Порт: ")+name);
-}
-///////////////////////////////////////////////////////////////////////////////////
-void newConditionDialog::setStatisticCorePointer(statisticCore *pointer){
-    statCorePointer=pointer;
-    if(pointer!=nullptr){
-        int size=pointer->getObjectsCount();
-        for(int n=0;n!=size;n++){
-            ui->objectComboBox->addItem(pointer->getObjectForIndex(n)->getName());
-        }
-        ui->objectComboBox->setCurrentIndex(0);
-    }
+void newConditionDialog::setPortNumber(int number){
+    ui->portNameLabel->setText(tr("Порт: ")+QString::number(number));
 }
 //////////////////////////////////////////////////////////////////////////////////////
 condition *newConditionDialog::getNewCondition(){
-    return currentCondition;
+    condition *tmpCond=currentCondition;
+    currentCondition=nullptr;
+    return tmpCond;
+}
+///////////////////////////////////////////////////////////////////////////////////
+void newConditionDialog::viewCurrentCondition(){
+    ui->descriptionTextEdit->setText(currentCondition->getDescription());
+
+    //логика
+    switch(currentCondition->getLogic()){
+        case(LOGIC_AND):{
+            ui->logicComboBox->setCurrentIndex(0);
+            break;
+        }
+        case(LOGIC_OR):{
+            ui->logicComboBox->setCurrentIndex(1);
+            break;
+        }
+        case(LOGIC_NO):{
+            ui->logicComboBox->setCurrentIndex(2);
+            break;
+        }
+    }
+
+    //объект
+    int index=statCorePointer->getObjectIndex(currentCondition->getTargetObject());
+    if(index!=-1){
+        ui->objectComboBox->setCurrentIndex(index);
+    }
+    else{
+        ui->objectComboBox->setCurrentIndex(0);
+    }
+
+    //порт или состояние
+    if(currentCondition->getTargetObjectState()==OBJECT_STATE_ANY){//если порт
+
+    }
+
 }
 //////////////////////////////////////////////////////////////////////
 void newConditionDialog::portCheckSlot(int state){
     if(state==Qt::Checked){
-        ui->portComboBox->setEnabled(true);
+        ui->portNumberComboBox->setEnabled(true);
         ui->portStateComboBox->setEnabled(true);
         ui->portCheckBox->setDisabled(true);
         ui->stateCheckBox->setEnabled(true);
@@ -66,7 +127,7 @@ void newConditionDialog::portCheckSlot(int state){
 ////////////////////////////////////////////////////////////////////
 void newConditionDialog::stateCheckSlot(int state){
     if(state==Qt::Checked){
-        ui->portComboBox->setDisabled(true);
+        ui->portNumberComboBox->setDisabled(true);
         ui->portStateComboBox->setDisabled(true);
         ui->stateComboBox->setEnabled(true);
         ui->stateCheckBox->setDisabled(true);
@@ -76,30 +137,49 @@ void newConditionDialog::stateCheckSlot(int state){
 }
 /////////////////////////////////////////////////////////////////////////
 void newConditionDialog::selectObject(int index){
-    ui->portComboBox->clear();
+    disconnect(ui->portNumberComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPortSlot(int)));
+    ui->portNumberComboBox->clear();
     object *tmpObject=statCorePointer->getObjectForIndex(index);
     int size=tmpObject->getPortsCount();
     for(int n=0;n!=size;n++){
-        ui->portComboBox->addItem(tmpObject->getPort(n)->getName());
+        int number=tmpObject->getPort(n)->getNumber();
+        ui->portNumberComboBox->addItem(QString::number(number));
     }
+    ui->portNumberComboBox->setCurrentIndex(-1);
+    connect(ui->portNumberComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPortSlot(int)));
+    ui->portNumberComboBox->setCurrentIndex(0);
+}
+///////////////////////////////////////////////////////////////////////////
+void newConditionDialog::selectPortSlot(int index){
+    object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
+    ui->portDecrLine->setText(tmpObject->getPort(index)->getDescription());
 }
 //////////////////////////////////////////////////////////////////////////
 void newConditionDialog::okSlot(){
-    currentCondition = new condition;
+    bool editMode=true;
+    if(currentCondition==nullptr){
+        currentCondition = new condition;
+        editMode=false;
+    }
     currentCondition->setDescription(ui->descriptionTextEdit->document()->toPlainText());
     currentCondition->setLogic((logicType)ui->logicComboBox->currentData().toInt());
     object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
     currentCondition->setTargetObjectName(tmpObject->getName());
     if(ui->portCheckBox->isChecked()){
-        currentCondition->setTargetPortName(tmpObject->getPort(ui->portComboBox->currentIndex())->getName());
         currentCondition->setPortState(ui->portStateComboBox->currentData().toBool());
         currentCondition->setTargetObjectState(OBJECT_STATE_ANY);
+        object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
+        currentCondition->setTargetPortNumber(tmpObject->getPort(ui->portNumberComboBox->currentIndex())->getNumber());
     }
     else if(ui->stateCheckBox->isChecked()){
-        currentCondition->setTargetPortName("");
+        currentCondition->setTargetPortNumber(-1);
         currentCondition->setPortState(false);
         currentCondition->setTargetObjectState((objectState)ui->stateComboBox->currentData().toInt());
     }
     currentCondition->setTime(ui->timeSpinBox->value());
+
+    if(editMode){//если редактировали существующий объект
+        currentCondition=nullptr;//то зазъименовываем указатель, чтобы деструктор его не убил
+    }
     accept();
 }

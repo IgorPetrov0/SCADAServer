@@ -34,18 +34,9 @@ void objectPort::setDescription(const QString &value){
     description=value;
 }
 ///////////////////////////////////////////////////////////////////
-QString objectPort::getName() const{
-    return name;
-}
-//////////////////////////////////////////////////////////////////
-void objectPort::setName(const QString &value){
-    name=value;
-}
-///////////////////////////////////////////////////////////////////
 void objectPort::serialisation(QDataStream *str){
     *str<<number;
     *str<<(int)type;
-    *str<<name;
     *str<<description;
     int size=onConditions.size();
     *str<<size;
@@ -64,7 +55,6 @@ void objectPort::deserialisation(QDataStream *str){
     int tmp;
     *str>>tmp;
     type=(portTypes)tmp;
-    *str>>name;
     *str>>description;
     int size=0;
     *str>>size;
@@ -127,7 +117,6 @@ objectPort &objectPort::operator=(const objectPort &right){
         return *this;
     }
     number=right.getNumber();
-    name=right.getName();
     description=right.getDescription();
     type=right.getType();
     int size=right.getOnConditionsCount();
@@ -160,4 +149,5 @@ void objectPort::addOnCondition(condition *onCondition){
 void objectPort::addOffCondition(condition *offCondition){
     offConditions.append(offCondition);
 }
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+

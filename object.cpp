@@ -173,14 +173,15 @@ objectPort *object::getPort(int index) const{
     return nullptr;
 }
 ///////////////////////////////////////////////////////////////////
-objectPort *object::getPortByName(QString name) const{
+objectPort *object::getPortByNumber(int number) const{
     int count=ports.size();
     for(int n=0;n!=count;n++){
         objectPort *tmpPort=ports.at(n);
-        if(tmpPort->getName()==name){
+        if(tmpPort->getNumber()==number){
             return tmpPort;
         }
     }
+    return nullptr;
 }
 /////////////////////////////////////////////////////////////////
 void object::addPort(objectPort *port){

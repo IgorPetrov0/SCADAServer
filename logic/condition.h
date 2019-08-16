@@ -19,8 +19,8 @@ public:
     void setDescription(const QString &value);
     QString getTargetObjectName() const;
     void setTargetObjectName(QString name);
-    QString getTargetPortName() const;
-    void setTargetPortName(QString name);
+    int getTargetPortNumber() const;
+    void setTargetPortNumber(int number);
     bool getPortState() const;
     QString getPortStateString();
     void setPortState(bool value);
@@ -35,15 +35,20 @@ public:
     void serialisation(QDataStream *str);
     void deserialisation(QDataStream *str);
     condition &operator=(const condition *right);
+    object *getTargetObject() const;
 
 protected:
     QString description;
     QString targetObjectName;
-    QString targetPortName;
+    object *targetObject;
+    int targetPortNumber;
     bool portState;
     objectState targetObjectState;
     int time;
     logicType logic;
+
+
+
 
 };
 

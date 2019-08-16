@@ -30,7 +30,7 @@ public:
     int getPortsCount() const;
     bool isPortExist(int number,objectPort *port=nullptr);
     objectPort *getPort(int index) const;
-    objectPort *getPortByName(QString name) const;
+    objectPort *getPortByNumber(int number) const;
     void addPort(objectPort *port);
     void removePort(int index);
     objectState getCurrentState() const;

@@ -99,7 +99,7 @@ void MainWindow::deleteObjectSlot(objectType type, int index){
             return;
         }
     }
-    if(tmp!=NULL){
+    if(tmp!=nullptr){
         deleteObjectDialog dialog(this,tmp);
         switch(dialog.exec()){
             case(DELETE_OBJECT_ONLY):{
@@ -112,7 +112,6 @@ void MainWindow::deleteObjectSlot(objectType type, int index){
             }
             case(QDialog::Rejected):{
                 return;
-                break;
             }
         }
         ui->mainTab->updateContent();

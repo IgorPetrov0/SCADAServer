@@ -16,7 +16,7 @@ void portTableWidget::updateContent(){
     ui->tableWidget->clear();
     QStringList headerList;
     headerList.append(tr("Номер"));
-    headerList.append(tr("Название"));
+    headerList.append(tr("Описание"));
     headerList.append(tr("Тип"));
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->setHorizontalHeaderLabels(headerList);
@@ -29,7 +29,7 @@ void portTableWidget::updateContent(){
             QTableWidgetItem *item=new QTableWidgetItem(QString::number(tmpPort->getNumber()));
             item->setToolTip(tmpPort->getDescription());
             ui->tableWidget->setItem(n,0,item);
-            item=new QTableWidgetItem(tmpPort->getName());
+            item=new QTableWidgetItem(tmpPort->getDescription());
             item->setToolTip(tmpPort->getDescription());
             ui->tableWidget->setItem(n,1,item);
             item=new QTableWidgetItem(tmpPort->getTypeString());
