@@ -1,7 +1,7 @@
 #include "newconditiondialog.h"
 #include "ui_newconditiondialog.h"
 
-newConditionDialog::newConditionDialog(objectPort *port, QWidget *parent) :
+newConditionDialog::newConditionDialog(objectPort *port, QWidget *parent, int condIndex) :
     QDialog(parent),
     ui(new Ui::newConditionDialog)
 {
@@ -25,12 +25,11 @@ newConditionDialog::newConditionDialog(objectPort *port, QWidget *parent) :
     ui->portStateComboBox->addItem(tr("Выключен"),false);
     statCorePointer=nullptr;
     currentCondition=nullptr;
-    conditionGiven=false;
 }
 ////////////////////////////////////////////////////////////////////////////////
 newConditionDialog::~newConditionDialog(){
     delete ui;
-    if(!conditionGiven){
+    if(currentCondition!=nullptr){
         delete currentCondition;
     }
 }
@@ -49,13 +48,8 @@ void newConditionDialog::setStatisticCorePointer(statisticCore *pointer){
         ui->objectComboBox->setCurrentIndex(0);
     }
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
-void newConditionDialog::setConditionIndex(int index){
-    currentCondition=currentPort->get
-}
 //////////////////////////////////////////////////////////////////////////////////////
 condition *newConditionDialog::getNewCondition(){
-    conditionGiven=true;
     return currentCondition;
 }
 //////////////////////////////////////////////////////////////////////

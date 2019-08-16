@@ -181,7 +181,6 @@ void logicWidget::editSlot(tableType type, int index){
             }
             case(TABLE_ON_CONDITIONS):{
                 newConditionDialog dialog(currentPortPointer,this);
-                dialog.
                 break;
             }
             case(TABLE_OFF_CONDITIONS):{
