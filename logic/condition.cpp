@@ -7,6 +7,7 @@ condition::condition()
     targetObjectState=OBJECT_STATE_ANY;
     portState=false;
     time=0;
+    targetObject=nullptr;
 }
 //////////////////////////////////////////////////////////////////////
 QString condition::getDescription() const{
@@ -25,12 +26,12 @@ void condition::setTargetObjectName(QString name){
     targetObjectName=name;
 }
 //////////////////////////////////////////////////////////////////////
-QString condition::getTargetPortName() const{
-    return targetPortName;
+int condition::getTargetPortNumber() const{
+    return targetPortNumber;
 }
 //////////////////////////////////////////////////////////////////////
-void condition::setTargetPortName(QString name){
-   targetPortName=name;
+void condition::setTargetPortNumber(int number){
+   targetPortNumber=number;
 }
 //////////////////////////////////////////////////////////////////////
 bool condition::getPortState() const{
@@ -110,7 +111,7 @@ void condition::serialisation(QDataStream *str){
     *str<<(int)logic;
     *str<<targetObjectName;
     *str<<(int)targetObjectState;
-    *str<<targetPortName;
+    *str<<targetPortNumber;
     *str<<(bool)portState;
     *str<<time;
 }
@@ -123,7 +124,7 @@ void condition::deserialisation(QDataStream *str){
     *str>>targetObjectName;
     *str>>tmp;
     targetObjectState=(objectState)tmp;
-    *str>>targetPortName;
+    *str>>targetPortNumber;
     *str>>portState;
     *str>>time;
 }
@@ -136,8 +137,13 @@ condition &condition::operator=(const condition *right){
     logic=right->getLogic();
     targetObjectName=right->getTargetObjectName();
     targetObjectState=right->getTargetObjectState();
-    targetPortName=right->getTargetPortName();
+    targetPortNumber=right->getTargetPortNumber();
     portState=right->getPortState();
     time=right->getTime();
     return *this;
 }
+//////////////////////////////////////////////////////////////////////////////
+object *condition::getTargetObject() const{
+    return targetObject;
+}
+//////////////////////////////////////////////////////////////////////////////

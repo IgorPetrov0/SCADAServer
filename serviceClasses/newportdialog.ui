@@ -7,40 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>268</width>
-    <height>253</height>
+    <height>206</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>60</y>
-     <width>251</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Имя порта</string>
-   </property>
-   <widget class="QLineEdit" name="nameLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>231</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>110</y>
+     <y>60</y>
      <width>251</width>
      <height>51</height>
     </rect>
@@ -86,7 +63,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>220</y>
+     <y>170</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -99,7 +76,7 @@
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>220</y>
+     <y>170</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -111,8 +88,8 @@
   <widget class="QGroupBox" name="groupBox_4">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>160</y>
+     <x>10</x>
+     <y>110</y>
      <width>251</width>
      <height>51</height>
     </rect>

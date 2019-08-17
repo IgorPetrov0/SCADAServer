@@ -12,6 +12,8 @@
 #define CUR_VERSION 0.0f
 #define MAX_TCP_CONNECTIONS 3
 #define DATA_STREAM_VERSION QDataStream::Qt_4_0
+#define ON true
+#define OFF false
 
 //запросы
 enum requestType{

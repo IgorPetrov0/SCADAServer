@@ -60,6 +60,8 @@ void logicWidget::updateContent(){
             object *tmpObject=statCorePointer->getObjectForIndex(n);
             ui->comboBox->addItem(tmpObject->getName());
         }
+        ui->comboBox->setCurrentIndex(-1);//для того, чтобы в любом случае происходило ИЗМЕНЕНИЕ индекса
+                                            //и вызывался слот
         connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectSlot(int)));
         if((currentIndex>=0)&&(currentIndex<ui->comboBox->count())){
             ui->comboBox->setCurrentIndex(currentIndex);
@@ -67,6 +69,7 @@ void logicWidget::updateContent(){
         else{
             ui->comboBox->setCurrentIndex(0);
         }
+
     }
     else{
         qDebug("logicWidget::updateContent  statCorePointer is null");
@@ -121,10 +124,8 @@ void logicWidget::addSlot(tableType type){
         case(TABLE_ON_CONDITIONS):{
             if(currentPortPointer!=nullptr){
                 if(currentPortPointer->getType()==PORT_OUTPUT){//условия только для выходов
-                    newConditionDialog dialog(currentPortPointer,this);
-                    dialog.setWindowTitle(tr("Условие включения"));
-                    dialog.setPortName(currentPortPointer->getName());
-                    dialog.setStatisticCorePointer(statCorePointer);
+                    newConditionDialog dialog(statCorePointer,currentPortPointer,this,true);
+                    dialog.setPortNumber(currentPortPointer->getNumber());
                     if(dialog.exec()==QDialog::Accepted){
                         currentPortPointer->addOnCondition(dialog.getNewCondition());
                         ui->onWidget->updateContent();
@@ -146,10 +147,8 @@ void logicWidget::addSlot(tableType type){
         case(TABLE_OFF_CONDITIONS):{
             if(currentPortPointer!=nullptr){
                 if(currentPortPointer->getType()==PORT_OUTPUT){//условия только для выходов
-                    newConditionDialog dialog(currentPortPointer,this);
-                    dialog.setWindowTitle(tr("Условие отключения"));
-                    dialog.setPortName(currentPortPointer->getName());
-                    dialog.setStatisticCorePointer(statCorePointer);
+                    newConditionDialog dialog(statCorePointer,currentPortPointer,this,false);
+                    dialog.setPortNumber(currentPortPointer->getNumber());
                     if(dialog.exec()==QDialog::Accepted){
                         currentPortPointer->addOffCondition(dialog.getNewCondition());
                         ui->offWidget->updateContent();
@@ -180,11 +179,15 @@ void logicWidget::editSlot(tableType type, int index){
                 break;
             }
             case(TABLE_ON_CONDITIONS):{
-                newConditionDialog dialog(currentPortPointer,this);
+                newConditionDialog dialog(statCorePointer,currentPortPointer,this,true,index);
+                dialog.exec();
+                ui->onWidget->updateContent();
                 break;
             }
             case(TABLE_OFF_CONDITIONS):{
-
+                newConditionDialog dialog(statCorePointer,currentPortPointer,this,false,index);
+                dialog.exec();
+                ui->offWidget->updateContent();
                 break;
             }
         }

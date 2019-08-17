@@ -67,7 +67,7 @@ void conditionTableWidget::fillTableString(condition *tmpCond, int row){
     ui->tableWidget->setItem(row,2,item);
 
     item = new QTableWidgetItem;
-    item->setText(tmpCond->getTargetPortName());
+    item->setText(QString::number(tmpCond->getTargetPortNumber()));
     ui->tableWidget->setItem(row,3,item);
 
     item = new QTableWidgetItem;

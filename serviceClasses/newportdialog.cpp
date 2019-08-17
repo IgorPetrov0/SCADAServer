@@ -19,7 +19,6 @@ newPortDialog::~newPortDialog()
 ///////////////////////////////////////////////////////////////////
 void newPortDialog::setPort(objectPort *port){
     currentPort=port;
-    ui->nameLineEdit->setText(port->getName());
     ui->descriptionLineEdit->setText(port->getDescription());
     ui->numberSpinBox->setValue(port->getNumber());
 }
@@ -38,14 +37,11 @@ void newPortDialog::errorMessage(QString message){
 }
 ////////////////////////////////////////////////////////////////
 void newPortDialog::okSlot(){
-    if(ui->nameLineEdit->text().isEmpty()){
-        errorMessage(tr("Имя порта не может быть пустым"));
-        return;
-    }
+
     int value=ui->numberSpinBox->value();
     if(currentObject->isPortExist(value,currentPort)){
         errorMessage(tr("Объект ")+currentObject->getName()+tr(" уже использут порт с номером ")+
-                     QString::number(value)+tr(" с именем <")+currentObject->getPort(value)->getName()+">");
+                     QString::number(currentObject->getPort(value)->getNumber()));
         return;
     }
 
@@ -53,7 +49,6 @@ void newPortDialog::okSlot(){
         currentPort = new objectPort;
     }
     currentPort->setNumber(value);
-    currentPort->setName(ui->nameLineEdit->text());
     currentPort->setDescription(ui->descriptionLineEdit->text());
     switch(ui->typeComboBox->currentIndex()){
         case(0):{
