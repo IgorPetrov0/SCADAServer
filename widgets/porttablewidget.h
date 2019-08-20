@@ -12,6 +12,7 @@ public:
     portTableWidget(QWidget *parent);
     virtual void updateContent();
     void setObject(object *newObject);
+    objectPort *getCurrentPort();
 
 protected:
     object *currentObject;

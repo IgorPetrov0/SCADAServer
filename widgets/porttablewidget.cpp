@@ -46,6 +46,13 @@ void portTableWidget::updateContent(){
 void portTableWidget::setObject(object *newObject){
     currentObject=newObject;
 }
+/////////////////////////////////////////////////////////////////////
+objectPort *portTableWidget::getCurrentPort(){
+    if(currentObject!=nullptr){
+        return currentObject->getPort(ui->tableWidget->currentRow());
+    }
+    return nullptr;
+}
 /////////////////////////////////////////////////////////////////
 void portTableWidget::itemSelectSlot(int row, int column, int prevRow, int prevCol){
     emit selectSignal(row);

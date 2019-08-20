@@ -9,6 +9,7 @@
 
 class object;
 class objectPort;
+class statisticCore;
 
 class condition
 {
@@ -33,14 +34,15 @@ public:
     QString getTargetObjectStateString();
     void setTargetObjectState(const objectState &value);
     void serialisation(QDataStream *str);
-    void deserialisation(QDataStream *str);
+    bool deserialisation(QDataStream *str);
     condition &operator=(const condition *right);
     object *getTargetObject() const;
-
+    bool findObjectPort(statisticCore *statCorePointer);
 protected:
     QString description;
     QString targetObjectName;
     object *targetObject;
+    objectPort *targetPort;
     int targetPortNumber;
     bool portState;
     objectState targetObjectState;

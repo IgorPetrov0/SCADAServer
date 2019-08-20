@@ -45,13 +45,14 @@ public:
     bool checkANDConditions(objectPort *port,bool on_off);
     bool checkORConditions(objectPort *port, bool on);
     bool checkNOTConditions(objectPort *port,bool on_off);
+    void clearAll();
 
 protected:
     QVector<mashine*> mashinesArray;
     void generateTestGraph(mashine *m);
     bool removeDirRecursively(QString dirPath);
     bool writeGraph(mashine *tmpMashine);
-    bool isCondCompliance(condition *cond);
+    bool findObjectsForConditions();
 
 protected slots:
     void newDaySlot(mashine *tmpMashine);

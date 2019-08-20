@@ -19,7 +19,6 @@ newConditionDialog::newConditionDialog(statisticCore *pointer, objectPort *port,
     statCorePointer=pointer;
     if(pointer!=nullptr){
         int size=pointer->getObjectsCount();
-        ui->objectComboBox->addItem(tr("Нет объекта"));
         for(int n=0;n!=size;n++){
             ui->objectComboBox->addItem(pointer->getObjectForIndex(n)->getName());
         }
@@ -56,16 +55,20 @@ newConditionDialog::newConditionDialog(statisticCore *pointer, objectPort *port,
             currentCondition=currentPort->getOffCondition(condIndex);
         }
         viewCurrentCondition();
+        editMode=true;
     }
     else{
-        currentCondition=nullptr;
+        currentCondition = new condition;
+        editMode=false;
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
 newConditionDialog::~newConditionDialog(){
     delete ui;
-    if(currentCondition!=nullptr){
-        delete currentCondition;
+    if(!editMode){
+        if(currentCondition!=nullptr){
+            delete currentCondition;
+        }
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////
@@ -156,11 +159,6 @@ void newConditionDialog::selectPortSlot(int index){
 }
 //////////////////////////////////////////////////////////////////////////
 void newConditionDialog::okSlot(){
-    bool editMode=true;
-    if(currentCondition==nullptr){
-        currentCondition = new condition;
-        editMode=false;
-    }
     currentCondition->setDescription(ui->descriptionTextEdit->document()->toPlainText());
     currentCondition->setLogic((logicType)ui->logicComboBox->currentData().toInt());
     object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
@@ -168,7 +166,7 @@ void newConditionDialog::okSlot(){
     if(ui->portCheckBox->isChecked()){
         currentCondition->setPortState(ui->portStateComboBox->currentData().toBool());
         currentCondition->setTargetObjectState(OBJECT_STATE_ANY);
-        object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
+        //object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
         currentCondition->setTargetPortNumber(tmpObject->getPort(ui->portNumberComboBox->currentIndex())->getNumber());
     }
     else if(ui->stateCheckBox->isChecked()){
@@ -177,9 +175,9 @@ void newConditionDialog::okSlot(){
         currentCondition->setTargetObjectState((objectState)ui->stateComboBox->currentData().toInt());
     }
     currentCondition->setTime(ui->timeSpinBox->value());
+    currentCondition->findObjectPort(statCorePointer);
 
-    if(editMode){//если редактировали существующий объект
-        currentCondition=nullptr;//то зазъименовываем указатель, чтобы деструктор его не убил
-    }
     accept();
 }
+//////////////////////////////////////////////////////////////////////////////////
+

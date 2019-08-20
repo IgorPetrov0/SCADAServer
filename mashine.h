@@ -17,8 +17,8 @@ public:
     mashine();
     ~mashine();
     virtual void serialisation(QDataStream *str);
-    virtual void deserialisation(QDataStream *str);
-    virtual void deserialisationContinue(QDataStream *str);
+    virtual bool deserialisation(QDataStream *str);
+    virtual bool deserialisationContinue(QDataStream *str);
     void netSerialise(QDataStream *str);//сериализация для передачи по сети
     void netDeserialise(QDataStream *str);//десериализация для передачи по сети
     void serialiseDayGraph(QDataStream *str);

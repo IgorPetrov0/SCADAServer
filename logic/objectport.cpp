@@ -50,25 +50,41 @@ void objectPort::serialisation(QDataStream *str){
     }
 }
 /////////////////////////////////////////////////////////////////////
-void objectPort::deserialisation(QDataStream *str){
+bool objectPort::deserialisation(QDataStream *str){
     *str>>number;
+    if((number<0)||(number>MAX_OBJECT_PORTS)){
+        return false;
+    }
     int tmp;
     *str>>tmp;
     type=(portTypes)tmp;
+    if((type<PORT_INPUT)||(type>PORT_OUTPUT)){
+        return false;
+    }
     *str>>description;
+    if(description.size()>MAX_OBJECT_DESCRIPTION_SYMBOLS){
+        return false;
+    }
     int size=0;
     *str>>size;
+    if((size<0)||(size>MAX_CONDITIONS)){
+        return false;
+    }
     for(int n=0;n!=size;n++){
         condition *tmpCond = new condition;
         tmpCond->deserialisation(str);
         onConditions.append(tmpCond);
     }
     *str>>size;
+    if((size<0)||(size>MAX_CONDITIONS)){
+        return false;
+    }
     for(int n=0;n!=size;n++){
         condition *tmpCond = new condition;
         tmpCond->deserialisation(str);
         offConditions.append(tmpCond);
     }
+    return true;
 }
 ////////////////////////////////////////////////////////////////////
 int objectPort::getOnConditionsCount() const{

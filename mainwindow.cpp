@@ -238,6 +238,7 @@ void MainWindow::initialise(){
         file.close();
     }
     if(!statCore.readConfiguration(appPath)){
+        statCore.clearAll();
         errorMessage(statCore.getLastError());
     }
     if(!rCore.readConfiguration(appPath)){

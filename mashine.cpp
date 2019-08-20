@@ -29,16 +29,24 @@ void mashine::serialisation(QDataStream *str){
 
 }
 ////////////////////////////////////////////////////////////////////
-void mashine::deserialisation(QDataStream *str){
-    object::deserialisation(str);
-    deserialisationContinue(str);
+bool mashine::deserialisation(QDataStream *str){
+    if(!object::deserialisation(str)){
+        return false;
+    }
+    return deserialisationContinue(str);
 }
 ///////////////////////////////////////////////////////////////////////
-void mashine::deserialisationContinue(QDataStream *str){
+bool mashine::deserialisationContinue(QDataStream *str){
     *str>>lineColor;
     *str>>pathForStatistics;
+    if(pathForStatistics>MAX_PATH_LEIGTH){
+        return false;
+    }
     int size;
     *str>>size;
+    if((size<0)||(size>MAX_MASHINES_SHIFTS)){
+        return false;
+    }
     currentDayGraph->name=name;
     for(int n=0;n!=size;n++){
         shift s;

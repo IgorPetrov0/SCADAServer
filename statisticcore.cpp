@@ -38,7 +38,7 @@ bool statisticCore::readConfiguration(QString workingDir){
         file.close();
         return false;
     }
-    int mashinesCount;
+    int mashinesCount;//todo сначала машины, потом добавить другие объекты
     str>>mashinesCount;
     bool ok=true;
     for(int n=0;n!=mashinesCount;n++){
@@ -70,6 +70,13 @@ bool statisticCore::readConfiguration(QString workingDir){
             }
         }
     }
+
+    //загружаем указатели целевых объектов и портов в состояния
+    if(!findObjectsForConditions()){
+        setLastError(tr("Ошибка загрузки логики управления. Управление невозможно."));
+        return false;
+    }
+
     return true;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +150,10 @@ int statisticCore::getObjectIndex(object *targetObject){
 bool statisticCore::createObject(QDataStream *str, bool remout){
     object tmpObject;
     bool ok=true;
-    tmpObject.deserialisation(str);//object десериализовали здесь. Дальше десериализуем потомков
+    if(!tmpObject.deserialisation(str)){//object десериализовали здесь. Дальше десериализуем потомков
+        setLastError(tr("Ошибка чтения объекта. Файл конфигурации поврежден."));
+        return false;
+    }
     switch(tmpObject.getType()){
         case(objectMashine):{
             mashine *tmpMashine = new mashine;
@@ -388,6 +398,14 @@ bool statisticCore::checkORConditions(objectPort *port,bool on){
 bool statisticCore::checkNOTConditions(objectPort *port, bool on_off){
 
 }
+/////////////////////////////////////////////////////////////////////////////
+void statisticCore::clearAll(){
+    int size=mashinesArray.size();
+    for(int n=0;n!=size;n++){
+        delete mashinesArray.at(n);
+    }
+    mashinesArray.clear();
+}
 ////////////////////////////////////////////////////////////////////////////
 void statisticCore::generateTestGraph(mashine *m){
     QFile file(m->getPathForStatistics()+"/"+m->getName()+"_"+
@@ -445,9 +463,31 @@ bool statisticCore::writeGraph(mashine *tmpMashine){
         return false;
     }
 }
-///////////////////////////////////////////////////////////////////////////////////
-bool statisticCore::isCondCompliance(condition *cond){
-
+///////////////////////////////////////////////////////////////////////////////////////
+bool statisticCore::findObjectsForConditions(){
+    int size=getObjectsCount();
+    for(int n=0;n!=size;n++){
+        object *tmpObject=getObjectForIndex(n);
+        int portsCount=tmpObject->getPortsCount();
+        for(int m=0;m!=portsCount;m++){
+            objectPort *tmpPort=tmpObject->getPort(m);
+            int condOnCount=tmpPort->getOnConditionsCount();
+            int condOffCount=tmpPort->getOffConditionsCount();
+            for(int t=0;t!=condOnCount;t++){
+                condition *tmpCondition=tmpPort->getOnCondition(t);
+                if(!tmpCondition->findObjectPort(this)){
+                    return false;
+                }
+            }
+            for(int t=0;t!=condOffCount;t++){
+                condition *tmpCondition=tmpPort->getOffCondition(t);
+                if(!tmpCondition->findObjectPort(this)){
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 ///////////////////////////////////////////////////////////////////////////////////
 void statisticCore::newDaySlot(mashine *tmpMashine){

@@ -1,6 +1,7 @@
 #include "condition.h"
 #include "object.h"
 #include "objectport.h"
+#include "statisticcore.h"
 
 condition::condition()
 {
@@ -8,6 +9,7 @@ condition::condition()
     portState=false;
     time=0;
     targetObject=nullptr;
+    targetPort=nullptr;
 }
 //////////////////////////////////////////////////////////////////////
 QString condition::getDescription() const{
@@ -19,6 +21,9 @@ void condition::setDescription(const QString &value){
 }
 //////////////////////////////////////////////////////////////////////
 QString condition::getTargetObjectName() const{
+    if(targetObjectName.isEmpty()){
+        return targetObject->getName();
+    }
     return targetObjectName;
 }
 //////////////////////////////////////////////////////////////////////
@@ -109,24 +114,40 @@ void condition::setTargetObjectState(const objectState &value){
 void condition::serialisation(QDataStream *str){
     *str<<description;
     *str<<(int)logic;
-    *str<<targetObjectName;
+    *str<<targetObject->getName();
     *str<<(int)targetObjectState;
     *str<<targetPortNumber;
     *str<<(bool)portState;
     *str<<time;
 }
 ////////////////////////////////////////////////////////////////////////
-void condition::deserialisation(QDataStream *str){
+bool condition::deserialisation(QDataStream *str){
     *str>>description;
+    if(description.size()>MAX_OBJECT_DESCRIPTION_SYMBOLS){
+        return false;
+    }
     int tmp=0;
     *str>>tmp;
+    if((tmp<LOGIC_OR)||tmp>LOGIC_NO){
+        return false;
+    }
     logic=(logicType)tmp;
     *str>>targetObjectName;
+    if(targetObjectName.isEmpty()||(targetObjectName.size()>MAX_OBJECT_NAME_SIZE)){
+        return false;
+    }
     *str>>tmp;
+    if((tmp<OBJECT_STATE_ON)||(tmp>OBJECT_STATE_ANY)){
+        return false;
+    }
     targetObjectState=(objectState)tmp;
     *str>>targetPortNumber;
+    if((targetPortNumber<0)||(targetPortNumber>MAX_OBJECT_PORTS)){
+        return false;
+    }
     *str>>portState;
     *str>>time;
+    return true;
 }
 ////////////////////////////////////////////////////////////////////////////
 condition &condition::operator=(const condition *right){
@@ -145,5 +166,18 @@ condition &condition::operator=(const condition *right){
 //////////////////////////////////////////////////////////////////////////////
 object *condition::getTargetObject() const{
     return targetObject;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+bool condition::findObjectPort(statisticCore *statCorePointer){
+    targetObject=statCorePointer->getObjectForName(targetObjectName);
+    if(targetObject==nullptr){
+        return false;
+    }
+    targetObjectName.clear();
+    targetPort=targetObject->getPortByNumber(targetPortNumber);
+    if(targetPort==nullptr){
+        return false;
+    }
+    return true;
 }
 //////////////////////////////////////////////////////////////////////////////

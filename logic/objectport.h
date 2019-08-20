@@ -19,7 +19,7 @@ public:
     QString getDescription() const;
     void setDescription(const QString &value);
     void serialisation(QDataStream *str);
-    void deserialisation(QDataStream *str);
+    bool deserialisation(QDataStream *str);
     int getOnConditionsCount() const;
     int getOffConditionsCount() const;
     condition *getOnCondition(int index) const;

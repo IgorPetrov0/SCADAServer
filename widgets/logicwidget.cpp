@@ -211,7 +211,13 @@ void logicWidget::deleteSlot(tableType type, int index){
                 break;
             }
             case(TABLE_ON_CONDITIONS):{
+                box.setWindowTitle(tr("Удаление состояния."));
+                objectPort *tmpPort=currentObjectPointer->getPort(ui->portWidget->getCurrentPort());
+                box.setText(tr("Состоние ")
 
+                if(box.exec()==QMessageBox::Yes){
+                    currentObjectPointer->removePort(index);
+                }
                 break;
             }
             case(TABLE_OFF_CONDITIONS):{
