@@ -32,6 +32,8 @@ public:
     void setState(bool value);
     void addOnCondition(condition *onCondition);
     void addOffCondition(condition *offCondition);
+    void deleteOnCondition(int index);
+    void deleteOffCondition(int index);
 
 
 

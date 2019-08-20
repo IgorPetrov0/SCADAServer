@@ -16,7 +16,14 @@ void logicTableWidget::setCurrentPort(objectPort *port){
 }
 ///////////////////////////////////////////////////////////////////////////////
 void logicTableWidget::updateContent(){
-    int t=0;
+    if(ui->tableWidget->rowCount()==0){
+        ui->editButton->setDisabled(true);
+        ui->deleteButton->setDisabled(true);
+    }
+    else{
+        ui->editButton->setEnabled(true);
+        ui->deleteButton->setEnabled(true);
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void logicTableWidget::setTableType(tableType type){
@@ -74,4 +81,8 @@ void logicTableWidget::resizeEvent(QResizeEvent *event){
     rect.setWidth(70);
     ui->deleteButton->setGeometry(rect);
 
+}
+/////////////////////////////////////////////////////////////////////
+objectPort *logicTableWidget::getCurrentPort(){
+    return currentPort;
 }

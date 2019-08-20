@@ -112,9 +112,45 @@ void newConditionDialog::viewCurrentCondition(){
 
     //порт или состояние
     if(currentCondition->getTargetObjectState()==OBJECT_STATE_ANY){//если порт
-
+        ui->portCheckBox->setCheckState(Qt::Checked);
+        ui->stateCheckBox->setCheckState(Qt::Unchecked);
+        ui->stateComboBox->setDisabled(true);
+        ui->portNumberComboBox->setEnabled(true);
+        int n=currentCondition->getTargetPortNumber();
+        int portIndex=currentCondition->getTargetObject()->getPortIndex(n);
+        ui->portNumberComboBox->setCurrentIndex(portIndex);
+        ui->portStateComboBox->setEnabled(true);
+        if(currentCondition->getPortState()){
+            ui->portStateComboBox->setCurrentIndex(0);
+        }
+        else{
+            ui->portStateComboBox->setCurrentIndex(1);
+        }
     }
-
+    else{
+        ui->portCheckBox->setCheckState(Qt::Unchecked);
+        ui->stateCheckBox->setCheckState(Qt::Checked);
+        ui->stateComboBox->setEnabled(true);
+        ui->portNumberComboBox->setDisabled(true);
+        ui->portStateComboBox->setDisabled(true);
+        switch(currentCondition->getTargetObjectState()){
+            case(OBJECT_STATE_ON):{
+                ui->stateComboBox->setCurrentIndex(0);
+                break;
+            }
+            case(OBJECT_STATE_OFF):{
+                ui->stateComboBox->setCurrentIndex(1);
+                break;
+            }
+            case(OBJECT_STATE_WORK):{
+                ui->stateComboBox->setCurrentIndex(2);
+                break;
+            }
+            default:{
+                ui->stateComboBox->setCurrentIndex(0);
+            }
+        }
+    }
 }
 //////////////////////////////////////////////////////////////////////
 void newConditionDialog::portCheckSlot(int state){

@@ -475,14 +475,18 @@ bool statisticCore::findObjectsForConditions(){
             int condOffCount=tmpPort->getOffConditionsCount();
             for(int t=0;t!=condOnCount;t++){
                 condition *tmpCondition=tmpPort->getOnCondition(t);
-                if(!tmpCondition->findObjectPort(this)){
-                    return false;
+                if(tmpCondition->getTargetObjectState()==OBJECT_STATE_ANY){
+                    if(!tmpCondition->findObjectPort(this)){
+                        return false;
+                    }
                 }
             }
             for(int t=0;t!=condOffCount;t++){
                 condition *tmpCondition=tmpPort->getOffCondition(t);
-                if(!tmpCondition->findObjectPort(this)){
-                    return false;
+                if(tmpCondition->getTargetObjectState()==OBJECT_STATE_ANY){
+                    if(!tmpCondition->findObjectPort(this)){
+                        return false;
+                    }
                 }
             }
         }

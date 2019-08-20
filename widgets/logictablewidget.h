@@ -13,11 +13,12 @@ class logicTableWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit logicTableWidget(QWidget *parent = 0);
+    explicit logicTableWidget(QWidget *parent = nullptr);
     void setCurrentPort(objectPort *port);
     void setTableType(tableType type);
     virtual void updateContent();
     virtual void clear();
+    objectPort *getCurrentPort();
     ~logicTableWidget();
 
 

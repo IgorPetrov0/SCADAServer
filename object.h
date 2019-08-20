@@ -37,6 +37,7 @@ public:
     void setCurrentState(const objectState &value);
     QString getCurrentStateString();
     QTime getStateSetTime() const;
+    int getPortIndex(int portNumber);
 
     object& operator=(const object& right);
 

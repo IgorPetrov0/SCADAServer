@@ -19,6 +19,7 @@ public:
     conditionTableWidget(QWidget *parent);
     virtual void clear();
     virtual void updateContent();
+    int getCurrentConditionIndex();
 
 protected:
     void fillTableString(condition *tmpCond, int row);

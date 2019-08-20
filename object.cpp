@@ -149,6 +149,16 @@ QString object::getCurrentStateString(){
 QTime object::getStateSetTime() const{
     return stateSetTime;
 }
+//////////////////////////////////////////////////////////////////////////
+int object::getPortIndex(int portNumber){
+    int count=ports.size();
+    for(int n=0;n!=count;n++){
+        if(portNumber==ports.at(n)->getNumber()){
+            return n;
+        }
+    }
+    return -1;
+}
 ///////////////////////////////////////////////////////////////////////////
 objectType object::getType() const{
     return type;

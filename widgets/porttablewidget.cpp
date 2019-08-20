@@ -41,17 +41,11 @@ void portTableWidget::updateContent(){
     if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
         ui->tableWidget->setCurrentCell(currentRow,0);
     }
+    logicTableWidget::updateContent();
 }
 ////////////////////////////////////////////////////////////////
 void portTableWidget::setObject(object *newObject){
     currentObject=newObject;
-}
-/////////////////////////////////////////////////////////////////////
-objectPort *portTableWidget::getCurrentPort(){
-    if(currentObject!=nullptr){
-        return currentObject->getPort(ui->tableWidget->currentRow());
-    }
-    return nullptr;
 }
 /////////////////////////////////////////////////////////////////
 void portTableWidget::itemSelectSlot(int row, int column, int prevRow, int prevCol){

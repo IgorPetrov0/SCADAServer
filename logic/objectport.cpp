@@ -165,5 +165,15 @@ void objectPort::addOnCondition(condition *onCondition){
 void objectPort::addOffCondition(condition *offCondition){
     offConditions.append(offCondition);
 }
+//////////////////////////////////////////////////////////////////////////
+void objectPort::deleteOnCondition(int index){
+    delete onConditions.at(index);
+    onConditions.remove(index);
+}
+//////////////////////////////////////////////////////////////////////////
+void objectPort::deleteOffCondition(int index){
+    delete offConditions.at(index);
+    offConditions.remove(index);
+}
 /////////////////////////////////////////////////////////////////////////
 
