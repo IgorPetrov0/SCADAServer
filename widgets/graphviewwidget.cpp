@@ -60,8 +60,8 @@ void graphViewWidget::paintEvent(QPaintEvent *event){
     painter.drawRect(rect);
     painter.setPen(QPen(Qt::black,2,Qt::SolidLine));
 
-    if(graphArray!=NULL){
-        for(double n=0;n!=1440;n++){
+    if(graphArray!=nullptr){
+        for(double n=0;n!=1440.0;n++){
             minutePoint tmpPoint=graphArray->minutesArray[(int)n];
             int graphValue=graphZero-tmpPoint.value*yFactor;
             switch(tmpPoint.event){
@@ -70,10 +70,10 @@ void graphViewWidget::paintEvent(QPaintEvent *event){
                     break;
                 }
             }
-            if(n==0){
+            if(n==0.0){//если точка первая, то рисуется точка
                 painter.drawPoint((int)round(n*xFactor-(double)xOffset),graphValue);
             }
-            else{
+            else{//в остальных случаях рисуется отрезок
                 int prevValue=graphZero-graphArray->minutesArray[(int)n-1].value*yFactor;
                 painter.drawLine((int)round((n-1)*xFactor-(double)xOffset),prevValue,(int)round(n*xFactor-(double)xOffset),graphValue);
             }
@@ -91,7 +91,7 @@ void graphViewWidget::paintEvent(QPaintEvent *event){
 }
 //////////////////////////////////////////////////////////////////////////////////////
 void graphViewWidget::calculateRails(int posInArray){
-    if(graphArray!=NULL){
+    if(graphArray!=nullptr){
         visibleValue=QString::number(graphArray->minutesArray[posInArray].value);//отображаемое значение
         QTime time=QTime::fromMSecsSinceStartOfDay(posInArray*60000);
         visibleDateTime=graphArray->date.toString("dd_MM_yyyy ")+time.toString("hh:mm");
