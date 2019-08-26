@@ -28,14 +28,16 @@
 enum requestType{
     REQUEST_EMPTY=0,
     REQUEST_GET_DATA,
-    REQUEST_CLEAR
+    REQUEST_CLEAR,
+    REQUEST_CONFIG_PORTS
 };
 //ответы
 enum answerType{
     ANSWER_OK=0,
     ANSWER_ERROR,
     ANSWER_NO_DATA,
-    ANSWER_CLEARED   
+    ANSWER_CLEARED,
+    ANSWER_PORTS_STATE
 };
 
 enum portTypes:int{//todo все следующие перечисления писать между PORT_INPUT и PORT_OUTPUT
@@ -55,7 +57,8 @@ enum objectType:int{
 
 struct minutePoint{
     int value;
-    int event;//событие
+    int event;//событие, определяемое контроллером
+    int objectState;//состояние объекта в момент запроса для отображения на графике
 };
 
 struct dayGraph{
@@ -97,6 +100,9 @@ enum eventType{
     EVENT_NO_RESPONCE,
     EVENT_OK
 };
+
+
+
 
 enum logicType:int{
     LOGIC_OR,

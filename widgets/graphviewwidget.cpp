@@ -30,7 +30,7 @@ void graphViewWidget::visualiseGraph(dayGraph *array){
 void graphViewWidget::mouseMoveEvent(QMouseEvent *event){
     mousePosX=event->x();
     mousePosY=event->y();
-    if(graphArray!=NULL){
+    if(graphArray!=nullptr){
         calculateRails((int)round((double)(mousePosX+xOffset)/xFactor));//позиция в массиве зависит от позиции мыши на экране);
     }
     emit mouseMoveSignal(mousePosX,posY);
@@ -95,29 +95,24 @@ void graphViewWidget::calculateRails(int posInArray){
         visibleValue=QString::number(graphArray->minutesArray[posInArray].value);//отображаемое значение
         QTime time=QTime::fromMSecsSinceStartOfDay(posInArray*60000);
         visibleDateTime=graphArray->date.toString("dd_MM_yyyy ")+time.toString("hh:mm");
-        switch(graphArray->minutesArray[posInArray].event){
-            case(EVENT_OK):{
-                visibleEvent=tr("ОК");
+        switch(graphArray->minutesArray[posInArray].objectState){
+            case(OBJECT_STATE_ON):{
+                visibleEvent=tr("В сети");
                 break;
             }
-            case(EVENT_NO_TYPE):{
-                visibleEvent=tr("Неопределенное");
+            case(OBJECT_STATE_OFF):{
+                visibleEvent=tr("Не отвечает");
                 break;
             }
-            case(EVENT_NO_RESPONCE):{
-                visibleEvent=tr("Нет ответа");
+            case(OBJECT_STATE_WORK):{
+                visibleEvent=tr("Работает");
                 break;
             }
-            case(EVENT_NOT_READY):{
-                visibleEvent=tr("Нет данных");
-                break;
-            }
-            case(EVENT_CONTROLLER_FAULT):{
+            default:{
                 visibleEvent=tr("Ошибка");
                 break;
             }
         }
-
         posY=this->height()-graphArray->minutesArray[posInArray].value*yFactor-40;
     }
 }

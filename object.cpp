@@ -8,6 +8,7 @@ object::object(QObject *parent) : QObject(parent)
     type=objectUnknow;
     requestEnable=true;
     online=false;
+    currentState=OBJECT_STATE_OFF;
 }
 //////////////////////////////////////////////////////////
 object::~object(){
