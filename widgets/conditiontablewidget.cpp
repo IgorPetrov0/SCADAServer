@@ -51,6 +51,11 @@ void conditionTableWidget::updateContent(){
     if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
         ui->tableWidget->setCurrentCell(currentRow,0);
     }
+    logicTableWidget::updateContent();
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+int conditionTableWidget::getCurrentConditionIndex(){
+    return ui->tableWidget->currentRow();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 void conditionTableWidget::fillTableString(condition *tmpCond, int row){

@@ -14,6 +14,15 @@
 #define DATA_STREAM_VERSION QDataStream::Qt_4_0
 #define ON true
 #define OFF false
+#define MAX_OBJECT_PORTS 20 //максимальное количество портов у обного объекта
+#define MAX_RS_ADDRESES 255 //максимальное количество адресов в сети RS485
+#define MAX_OBJECT_DESCRIPTION_SYMBOLS 100 //максимальное количество символов в описании объекта
+#define MAX_PATH_LEIGTH 32767 //максимальная длина пути
+#define MAX_MASHINES_SHIFTS 5 //максимальное количество смен для машины
+#define MAX_CONDITIONS 10 //максимальное количество состояний для порта
+#define MAX_OBJECT_NAME_SIZE 255 //максимальный размер имен объектов
+
+
 
 //запросы
 enum requestType{
@@ -29,7 +38,7 @@ enum answerType{
     ANSWER_CLEARED   
 };
 
-enum portTypes:int{
+enum portTypes:int{//todo все следующие перечисления писать между PORT_INPUT и PORT_OUTPUT
     PORT_INPUT,
     PORT_OUTPUT
 };
@@ -40,7 +49,7 @@ enum portTypes:int{
 //};
 
 enum objectType:int{
-    objectMashine,
+    objectMashine,//todo все следующие перечисления писать между  objectMashine и objectUnknow
     objectUnknow
 };
 
@@ -95,7 +104,7 @@ enum logicType:int{
     LOGIC_NO
 };
 
-enum objectState:int{
+enum objectState:int{//todo все следующие перечисления писать между  OBJECT_STATE_ON и OBJECT_STATE_ANY
     OBJECT_STATE_ON,    //включен - когда отвечает, но не производит продукцию
     OBJECT_STATE_OFF,   //выключен - когда не отвечает
     OBJECT_STATE_WORK,   //работает - когда производит продукцию

@@ -54,37 +54,73 @@ void object::serialisation(QDataStream *str){
     }
 }
 ///////////////////////////////////////////////////////////////////
-void object::deserialisation(QDataStream *str){
+bool object::deserialisation(QDataStream *str){
     *str>>name;
-    int tmp;
+    if(name.isEmpty()||(name.size()>MAX_OBJECT_NAME_SIZE)){
+        return false;
+    }
+    int tmp=0;
     *str>>tmp;
+    if((tmp<objectMashine)||(tmp>objectUnknow)){
+        return false;
+    }
     type=(objectType)tmp;
     *str>>address;
+    if(address>MAX_RS_ADDRESES){
+        return false;
+    }
     *str>>description;
+    if(description.size()>MAX_OBJECT_DESCRIPTION_SYMBOLS){
+        return false;
+    }
     *str>>requestEnable;
-    int size;
+    int size=0;
     *str>>size;
+    if((size<0)||(size>MAX_OBJECT_PORTS)){
+        return false;
+    }
     for(int n=0;n!=size;n++){
         objectPort *tmpPort = new objectPort();
-        tmpPort->deserialisation(str);
+        if(!tmpPort->deserialisation(str)){
+            return false;
+        }
         ports.append(tmpPort);
     }
+    return true;
 }
 ////////////////////////////////////////////////////////////////////////
-void object::deserialisationContinue(QDataStream *str){
+bool object::deserialisationContinue(QDataStream *str){
     *str>>name;
-    int tmp;
+    if(name.isEmpty()||(name.size()>MAX_OBJECT_NAME_SIZE)){
+        return false;
+    }
+    int tmp=0;
     *str>>tmp;
+    if((tmp<objectMashine)||(tmp>objectUnknow)){
+        return false;
+    }
     type=(objectType)tmp;
     *str>>address;
+    if(address>MAX_RS_ADDRESES){
+        return false;
+    }
     *str>>description;
-    int size;
+    if(description.size()>MAX_OBJECT_DESCRIPTION_SYMBOLS){
+        return false;
+    }
+    int size=0;
     *str>>size;
+    if((size<0)||(size>MAX_OBJECT_PORTS)){
+        return false;
+    }
     for(int n=0;n!=size;n++){
         objectPort *tmpPort = new objectPort();
-        tmpPort->deserialisation(str);
+        if(!tmpPort->deserialisation(str)){
+            return false;
+        }
         ports.append(tmpPort);
     }
+    return true;
 }
 ////////////////////////////////////////////////////////////////
 objectState object::getCurrentState() const{
@@ -112,6 +148,16 @@ QString object::getCurrentStateString(){
 //////////////////////////////////////////////////////////////////////////
 QTime object::getStateSetTime() const{
     return stateSetTime;
+}
+//////////////////////////////////////////////////////////////////////////
+int object::getPortIndex(int portNumber){
+    int count=ports.size();
+    for(int n=0;n!=count;n++){
+        if(portNumber==ports.at(n)->getNumber()){
+            return n;
+        }
+    }
+    return -1;
 }
 ///////////////////////////////////////////////////////////////////////////
 objectType object::getType() const{

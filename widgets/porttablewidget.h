@@ -13,6 +13,7 @@ public:
     virtual void updateContent();
     void setObject(object *newObject);
 
+
 protected:
     object *currentObject;
 

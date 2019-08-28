@@ -37,12 +37,13 @@ public:
     void setCurrentState(const objectState &value);
     QString getCurrentStateString();
     QTime getStateSetTime() const;
+    int getPortIndex(int portNumber);
 
     object& operator=(const object& right);
 
     virtual void serialisation(QDataStream *str);
-    virtual void deserialisation(QDataStream *str);//полная десериализация
-    virtual void deserialisationContinue(QDataStream *str);//частичная. только для своих данных без данных родителя
+    virtual bool deserialisation(QDataStream *str);//полная десериализация
+    virtual bool deserialisationContinue(QDataStream *str);//частичная. только для своих данных без данных родителя
 
 protected:
     unsigned int address;//сетевой адрес в сети RS485

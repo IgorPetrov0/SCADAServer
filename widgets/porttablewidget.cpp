@@ -41,6 +41,7 @@ void portTableWidget::updateContent(){
     if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
         ui->tableWidget->setCurrentCell(currentRow,0);
     }
+    logicTableWidget::updateContent();
 }
 ////////////////////////////////////////////////////////////////
 void portTableWidget::setObject(object *newObject){

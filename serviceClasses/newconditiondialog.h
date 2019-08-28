@@ -27,6 +27,7 @@ protected:
     objectPort *currentPort;
     statisticCore *statCorePointer;
     condition *currentCondition;
+    bool editMode;
     void viewCurrentCondition();
 
 protected slots:

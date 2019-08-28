@@ -69,11 +69,12 @@ void logicWidget::updateContent(){
         else{
             ui->comboBox->setCurrentIndex(0);
         }
-
     }
     else{
         qDebug("logicWidget::updateContent  statCorePointer is null");
     }
+    ui->onWidget->updateContent();
+    ui->offWidget->updateContent();
 }
 ////////////////////////////////////////////////////////////////////////////
 void logicWidget::clear(){
@@ -154,14 +155,16 @@ void logicWidget::addSlot(tableType type){
                         ui->offWidget->updateContent();
                     }
                 }
-                QMessageBox box(this);
-                box.setText(tr("Выбранный порт является входом.\n"
-                               "Нет смысла задавать условие для входа.\n"
-                               "Выберите выходной порт для задания условий включения/выключения."));
-                box.setWindowTitle("Ошибка");
-                box.setIcon(QMessageBox::Critical);
-                box.setStandardButtons(QMessageBox::Ok);
-                box.exec();
+                else{
+                    QMessageBox box(this);
+                    box.setText(tr("Выбранный порт является входом.\n"
+                                   "Нет смысла задавать условие для входа.\n"
+                                   "Выберите выходной порт для задания условий включения/выключения."));
+                    box.setWindowTitle("Ошибка");
+                    box.setIcon(QMessageBox::Critical);
+                    box.setStandardButtons(QMessageBox::Ok);
+                    box.exec();
+                }
             }
             break;
         }
@@ -211,11 +214,27 @@ void logicWidget::deleteSlot(tableType type, int index){
                 break;
             }
             case(TABLE_ON_CONDITIONS):{
-
+                box.setWindowTitle(tr("Удаление состояния."));
+                int currentIndex=ui->onWidget->getCurrentConditionIndex();
+                objectPort *tmpPort=ui->onWidget->getCurrentPort();
+                condition *tmpCondition=tmpPort->getOnCondition(currentIndex);
+                box.setText(tr("Состоние включения")+tr("<")+tmpCondition->getDescription()+tr(">")+
+                               tr(" порта ")+QString::number(tmpPort->getNumber())+tr(" будет удалено. Продолжить?"));
+                if(box.exec()==QMessageBox::Yes){
+                    tmpPort->deleteOnCondition(currentIndex);
+                }
                 break;
             }
             case(TABLE_OFF_CONDITIONS):{
-
+                box.setWindowTitle(tr("Удаление состояния."));
+                int currentIndex=ui->offWidget->getCurrentConditionIndex();
+                objectPort *tmpPort=ui->offWidget->getCurrentPort();
+                condition *tmpCondition=tmpPort->getOffCondition(currentIndex);
+                box.setText(tr("Состоние отключения")+tr("<")+tmpCondition->getDescription()+tr(">")+
+                            tr(" порта ")+QString::number(tmpPort->getNumber())+tr(" будет удалено. Продолжить?"));
+                if(box.exec()==QMessageBox::Yes){
+                    tmpPort->deleteOffCondition(currentIndex);
+                }
                 break;
             }
         }
