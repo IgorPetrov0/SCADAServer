@@ -341,6 +341,7 @@ dayGraph *statisticCore::readGraphFile(QString fullPath){
             minutePoint point;
             str>>point.value;
             str>>point.event;
+            str>>point.objectState;
             dayStruct->minutesArray[n]=point;
             if(str.atEnd() && n!=1439){
                 setLastError(tr("Файл ")+fullPath+tr(" поврежден. Данные не прочитаны."));

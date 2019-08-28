@@ -232,26 +232,42 @@ void requestCore::setStatisticCorePointer(statisticCore *pointer){
     waitTimer->stop();
     statCorePointer=pointer;
     counter=0;
-    currentObject=NULL;
+    currentObject=nullptr;
 }
 ///////////////////////////////////////////////////////////////////////////////////
 void requestCore::requestCurrentObject(){
     if(currentRequest==REQUEST_EMPTY){
         return;
     }
-    inputBytesCounter=0;
-    currentPort->clear();
-    switch(currentObject->getType()){
-        case(objectMashine):{
-            requestMashine(currentRequest);
+    switch(currentRequest){
+        case(REQUEST_CONFIG_PORTS):{
+            inputBytesCounter=0;
+            currentPort->clear();
+
+            break;
+        }
+        case(REQUEST_GET_DATA):{
+            inputBytesCounter=0;
+            currentPort->clear();
+            switch(currentObject->getType()){
+                case(objectMashine):{
+                    requestMashine(currentRequest);
+                    break;
+                }
+                default:{
+                    qDebug("requestCore::requestCurrentObject Wrong object type. ");
+                    return;
+                }
+            }
+            waitTimer->start(WAIT_TIME);
             break;
         }
         default:{
-            qDebug("requestCore::requestCurrentObject Wrong object type. ");
             return;
         }
+
     }
-    waitTimer->start(WAIT_TIME);
+
 }
 /////////////////////////////////////////////////////////////////////////////////
 void requestCore::reRequestCurrentObject(){
@@ -274,7 +290,6 @@ void requestCore::requestMashine(requestType request){
         str<<size;
         str<<(unsigned char)currentObject->getAddress();//адрес сетевого объекта
         str<<(unsigned char)request;//команда
-        char *q=array.data();
         str<<(unsigned char)CRC16((unsigned char*)array.data(),array.size());//контрольная сумма
         currentPort->write(array);
     }
@@ -328,18 +343,17 @@ void requestCore::readPacket(){
 }
 ////////////////////////////////////////////////////////////////////////////
 void requestCore::nextDevice(){
-    //функция должна гарантировать, что или currentObject!=NULL или опрос остановлен
+    //функция должна гарантировать, что или currentObject!=nullptr или опрос остановлен
     inputBytesCounter=0;
     currentPort->clear();
     currentObject=statCorePointer->getObjectForIndex(counter);//пробуем получить объект
-    if(currentObject!=NULL){//если объект не нулевой
-        currentRequest=REQUEST_GET_DATA;
-        int add=currentObject->getAddress();
+    if(currentObject!=nullptr){//если объект не нулевой
+        currentRequest=REQUEST_CONFIG_PORTS;
         requestCurrentObject();//то делаем запрос в штатном режиме
         emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
         counter++;//инкремент счетчика
     }
-    else if((currentObject==NULL)&&(counter==0)){//если объект нулевой по нулевому индексу
+    else if((currentObject==nullptr)&&(counter==0)){//если объект нулевой по нулевому индексу
         counter=0;//то ловить нечего- база пуста. останавливаем опрос
         consoleMessage(tr("В базе данных нет ни одного объекта. Опрос остановлен."));
         return;
@@ -352,12 +366,12 @@ void requestCore::nextDevice(){
 //////////////////////////////////////////////////////////////////////////
 void requestCore::requestTime(){ 
     lastRequestTime=QTime::currentTime();
-    currentPort=NULL;
+    currentPort=nullptr;
     if(pass){//если первый проход
-        if(sPort1!=NULL){//в идеале работаем через первый порт
+        if(sPort1!=nullptr){//в идеале работаем через первый порт
             currentPort=sPort1;
         }
-        else if(sPort2!=NULL){//но на худой конец через второй
+        else if(sPort2!=nullptr){//но на худой конец через второй
             currentPort=sPort2;
         }
         else{//если ни одного живого порта
@@ -366,10 +380,10 @@ void requestCore::requestTime(){
         }
     }
     else{//если второй проход
-        if(sPort2!=NULL){//в идеале работаем через второй порт
+        if(sPort2!=nullptr){//в идеале работаем через второй порт
             currentPort=sPort2;
         }
-        else if(sPort1!=NULL){//но на худой конец через второй
+        else if(sPort1!=nullptr){//но на худой конец через второй
             currentPort=sPort1;
         }
         else{//если ни одного живого порта
@@ -433,6 +447,13 @@ void requestCore::port1DataReadyRead(){
                         case(ANSWER_CLEARED):{//если память очищена
                             readPacket();
                             requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
+                            break;
+                        }
+                        case(ANSWER_PORTS_STATE):{
+                            currentRequest=REQUEST_GET_DATA;
+                            requestCurrentObject();
+                            requestTimer->start(REQUEST_TIME);
+                            break;
                         }
                     }
                 }
@@ -516,6 +537,8 @@ void requestCore::waitTimeMashine(){
             minutePoint point;
             point.event=EVENT_NO_RESPONCE;
             point.value=0;
+            point.objectState=OBJECT_STATE_OFF;
+            tmpMashine->setCurrentState(OBJECT_STATE_OFF);
             tmpMashine->addTimePoint(point,QTime::currentTime());
         }
     }

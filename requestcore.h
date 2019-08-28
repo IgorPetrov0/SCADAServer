@@ -20,7 +20,7 @@ class requestCore : public QObject, public errorProcessor
 {
     Q_OBJECT
 public:
-    requestCore(QObject *parent=NULL);
+    requestCore(QObject *parent=nullptr);
     ~requestCore();
     QList<QSerialPortInfo> getSerialPortsList();
     QSerialPort *getPort(int number);

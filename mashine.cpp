@@ -94,6 +94,7 @@ void mashine::serialiseDayGraph(QDataStream *str){
     for(int n=0;n!=1440;n++){
         *str<<currentDayGraph->minutesArray[n].value;
         *str<<currentDayGraph->minutesArray[n].event;
+        *str<<currentDayGraph->minutesArray[n].objectState;
     }
 }
 ////////////////////////////////////////////////////////////////////
@@ -184,13 +185,15 @@ void mashine::readPacket(unsigned char *array, QTime time){
         case(ANSWER_OK):{
             int packetSizeInMinutes=(int)array[3];//кол-во минут в пакете
             minutePoint tmpPoint;
-            if((packetSizeInMinutes*3!=packetSize-5) || notCleared){//если размер в байтах не соответствует размеру
+            if((packetSizeInMinutes*2!=packetSize-5) || notCleared){//если размер в байтах не соответствует размеру
                 //в минутах, или контроллер не ответил на запрос стирания памяти то ошибка контроллера
                 //и все данные в пакете недостоверны
                 //контроллер уже удалил свои данные и повторный запрос бесполезен
                 for(int n=0;n!=period;n++){
                     tmpPoint.event=EVENT_CONTROLLER_FAULT;
                     tmpPoint.value=0;
+                    tmpPoint.objectState=OBJECT_STATE_OFF;
+                    this->setCurrentState(OBJECT_STATE_OFF);
                     currentDayGraph->minutesArray[lastTimeInMinutes]=tmpPoint;
                 }
                 notCleared=false;
@@ -198,7 +201,7 @@ void mashine::readPacket(unsigned char *array, QTime time){
             }
             int minutesOffset=currentTimeInMinutes-packetSizeInMinutes+1;
             for(int n=0;n!=packetSizeInMinutes;n++){
-                int offset=4+n*3;
+                int offset=4+n*2;
                 int t=array[offset+1]<<8;//старший байт значения
                 int value=(int)array[offset]+t;//младший байт значения
                 int index=minutesOffset+n;
@@ -210,10 +213,14 @@ void mashine::readPacket(unsigned char *array, QTime time){
                 int currentMinuteValue=round(tmp);
                 int prevMinuteValue=value-currentMinuteValue;
                 tmpPoint.value=currentMinuteValue;
-                tmpPoint.event=array[offset+2];
-                int g=tmpPoint.event;
-                if(g!=4){
-                    break;
+                //tmpPoint.event=array[offset+2];
+                if(currentMinuteValue==0){
+                    tmpPoint.objectState=OBJECT_STATE_ON;
+                    this->setCurrentState(OBJECT_STATE_ON);
+                }
+                else{
+                    tmpPoint.objectState=OBJECT_STATE_WORK;
+                    this->setCurrentState(OBJECT_STATE_WORK);
                 }
                 currentDayGraph->minutesArray[index]=tmpPoint;
                 int prevIndex=index-1;
@@ -243,6 +250,7 @@ void mashine::clearArray(){
         minutePoint point;
         point.event=EVENT_NOT_READY;
         point.value=0;
+        point.objectState=OBJECT_STATE_OFF;
         currentDayGraph->minutesArray[n]=point;
     }
 }
