@@ -167,6 +167,29 @@ condition &condition::operator=(const condition *right){
 object *condition::getTargetObject() const{
     return targetObject;
 }
+<<<<<<< HEAD
+////////////////////////////////////////////////////////////////////////////////
+objectPort *condition::getTargetPort() const{
+    return targetPort;
+}
+///////////////////////////////////////////////////////////////////////////////////
+bool condition::generateTargetPointers(statisticCore *statCorePointer){
+    if(statCorePointer!=nullptr){
+        targetObject=statCorePointer->getObjectForName(targetObjectName);
+        if(targetObject==nullptr){
+            qDebug("condition::generateTargetPointers targetObject not found. The configuration file may not be fully read.");
+            return false;
+        }
+        targetPort=targetObject->getPortByNumber(targetPortNumber);
+        if(targetPort==nullptr){
+            qDebug("condition::generateTargetPointers targetPort not found. The configuration file may not be fully read.");
+            return false;
+        }
+        targetObjectName.clear();
+        return true;
+    }
+    return false;
+=======
 ////////////////////////////////////////////////////////////////////////////////////////
 bool condition::findObjectPort(statisticCore *statCorePointer){
     targetObject=statCorePointer->getObjectForName(targetObjectName);
@@ -179,5 +202,6 @@ bool condition::findObjectPort(statisticCore *statCorePointer){
         return false;
     }
     return true;
+>>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
 }
 //////////////////////////////////////////////////////////////////////////////

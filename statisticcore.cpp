@@ -51,7 +51,7 @@ bool statisticCore::readConfiguration(QString workingDir){
         return false;//то выходим с ошибкой(ошибка прописалась в функции createObject)
     }
     file.close();
-    emit consoleMessage(tr("Конфигурация статистики прочитана из файла ")+workingDir+"/"+CONFIG_FILE_NAME);
+    emit consoleMessage(tr("Конфигурация статистики прочитана из файла ")+workingDir+"/"+CONFIG_FILE_NAME);    
 
     //проверяем наличие сегодняшних файлов и если есть загружаем
     int size=mashinesArray.size();
@@ -71,9 +71,15 @@ bool statisticCore::readConfiguration(QString workingDir){
         }
     }
 
+<<<<<<< HEAD
+    //генерируем указатели на объекты у всех состояний всех портов
+    if(!generatePointersForConditions()){
+        setLastError(tr("Ошибка чтения логики управления."));
+=======
     //загружаем указатели целевых объектов и портов в состояния
     if(!findObjectsForConditions()){
         setLastError(tr("Ошибка загрузки логики управления. Управление невозможно."));
+>>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
         return false;
     }
 
@@ -464,6 +470,25 @@ bool statisticCore::writeGraph(mashine *tmpMashine){
         return false;
     }
 }
+<<<<<<< HEAD
+////////////////////////////////////////////////////////////////////////////////////////////
+bool statisticCore::generatePointersForConditions(){
+    int size=mashinesArray.size();//todo проходим по массиву машин. Потом добавить другие массивы
+    for(int n=0;n!=size;n++){
+        object *tmpObject=mashinesArray.at(n);
+        int portsCount=tmpObject->getPortsCount();
+        for(int m=0;m!=portsCount;m++){
+            objectPort *tmpPort=tmpObject->getPort(m);
+            int onCount=tmpPort->getOnConditionsCount();
+            int offCount=tmpPort->getOffConditionsCount();
+            for(int onN=0;onN!=onCount;onN++){//проходим по состояниям включения
+                if(!tmpPort->getOnCondition(onN)->generateTargetPointers(this)){//если споткнулись - дальше продолжать нет смысла. база повреждена
+                    return false;
+                }
+            }
+            for(int offN=0;offN!=offCount;offN++){//проходим по состояниям выключения
+
+=======
 ///////////////////////////////////////////////////////////////////////////////////////
 bool statisticCore::findObjectsForConditions(){
     int size=getObjectsCount();
@@ -489,6 +514,7 @@ bool statisticCore::findObjectsForConditions(){
                         return false;
                     }
                 }
+>>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
             }
         }
     }

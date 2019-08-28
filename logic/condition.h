@@ -13,6 +13,7 @@ class statisticCore;
 
 class condition
 {
+
 public:
     condition();
 
@@ -37,7 +38,13 @@ public:
     bool deserialisation(QDataStream *str);
     condition &operator=(const condition *right);
     object *getTargetObject() const;
+<<<<<<< HEAD
+    objectPort *getTargetPort() const;
+    bool generateTargetPointers(statisticCore *statCorePointer);//использовать после полной загрузки файла CONFIG_FILE_NAME
+
+=======
     bool findObjectPort(statisticCore *statCorePointer);
+>>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
 protected:
     QString description;
     QString targetObjectName;
