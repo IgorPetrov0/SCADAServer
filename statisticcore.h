@@ -51,7 +51,7 @@ protected:
     void generateTestGraph(mashine *m);
     bool removeDirRecursively(QString dirPath);
     bool writeGraph(mashine *tmpMashine);
-    bool isCondCompliance(condition *cond);
+    bool generatePointersForConditions();
 
 protected slots:
     void newDaySlot(mashine *tmpMashine);

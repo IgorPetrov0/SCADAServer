@@ -1,6 +1,7 @@
 #include "condition.h"
 #include "object.h"
 #include "objectport.h"
+#include "statisticcore.h"
 
 condition::condition()
 {
@@ -8,6 +9,7 @@ condition::condition()
     portState=false;
     time=0;
     targetObject=nullptr;
+    targetPort=nullptr;
 }
 //////////////////////////////////////////////////////////////////////
 QString condition::getDescription() const{
@@ -145,5 +147,27 @@ condition &condition::operator=(const condition *right){
 //////////////////////////////////////////////////////////////////////////////
 object *condition::getTargetObject() const{
     return targetObject;
+}
+////////////////////////////////////////////////////////////////////////////////
+objectPort *condition::getTargetPort() const{
+    return targetPort;
+}
+///////////////////////////////////////////////////////////////////////////////////
+bool condition::generateTargetPointers(statisticCore *statCorePointer){
+    if(statCorePointer!=nullptr){
+        targetObject=statCorePointer->getObjectForName(targetObjectName);
+        if(targetObject==nullptr){
+            qDebug("condition::generateTargetPointers targetObject not found. The configuration file may not be fully read.");
+            return false;
+        }
+        targetPort=targetObject->getPortByNumber(targetPortNumber);
+        if(targetPort==nullptr){
+            qDebug("condition::generateTargetPointers targetPort not found. The configuration file may not be fully read.");
+            return false;
+        }
+        targetObjectName.clear();
+        return true;
+    }
+    return false;
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -9,9 +9,11 @@
 
 class object;
 class objectPort;
+class statisticCore;
 
 class condition
 {
+
 public:
     condition();
 
@@ -36,11 +38,14 @@ public:
     void deserialisation(QDataStream *str);
     condition &operator=(const condition *right);
     object *getTargetObject() const;
+    objectPort *getTargetPort() const;
+    bool generateTargetPointers(statisticCore *statCorePointer);//использовать после полной загрузки файла CONFIG_FILE_NAME
 
 protected:
     QString description;
     QString targetObjectName;
     object *targetObject;
+    objectPort *targetPort;
     int targetPortNumber;
     bool portState;
     objectState targetObjectState;
