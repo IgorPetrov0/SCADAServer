@@ -23,33 +23,35 @@ void conditionTableWidget::clear(){
 void conditionTableWidget::updateContent(){
     int currentRow=ui->tableWidget->currentRow();
     clear();
-    switch(type){//если условия включения
-        case(TABLE_ON_CONDITIONS):{
-            ui->groupBox->setTitle(tr("Включить, если: "));
-            int size=currentPort->getOnConditionsCount();
-            ui->tableWidget->setRowCount(size);
-            for(int n=0;n!=size;n++){
-                condition *tmpCond=currentPort->getOnCondition(n);
-                fillTableString(tmpCond,n);
+    if(currentPort!=nullptr){
+        switch(type){//если условия включения
+            case(TABLE_ON_CONDITIONS):{
+                ui->groupBox->setTitle(tr("Включить, если: "));
+                int size=currentPort->getOnConditionsCount();
+                ui->tableWidget->setRowCount(size);
+                for(int n=0;n!=size;n++){
+                    condition *tmpCond=currentPort->getOnCondition(n);
+                    fillTableString(tmpCond,n);
+                }
+                break;
             }
-            break;
-        }
-        case(TABLE_OFF_CONDITIONS):{
-            ui->groupBox->setTitle(tr("Выключить, если: "));
-            int size=currentPort->getOffConditionsCount();
-            ui->tableWidget->setRowCount(size);
-            for(int n=0;n!=size;n++){
-                condition *tmpCond=currentPort->getOffCondition(n);
-                fillTableString(tmpCond,n);
+            case(TABLE_OFF_CONDITIONS):{
+                ui->groupBox->setTitle(tr("Выключить, если: "));
+                int size=currentPort->getOffConditionsCount();
+                ui->tableWidget->setRowCount(size);
+                for(int n=0;n!=size;n++){
+                    condition *tmpCond=currentPort->getOffCondition(n);
+                    fillTableString(tmpCond,n);
+                }
+                break;
             }
-            break;
+            default:{
+                qDebug("conditionTableWidget::updateContent()  wrong table type");
+            }
         }
-        default:{
-            qDebug("conditionTableWidget::updateContent()  wrong table type");
+        if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
+            ui->tableWidget->setCurrentCell(currentRow,0);
         }
-    }
-    if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
-        ui->tableWidget->setCurrentCell(currentRow,0);
     }
     logicTableWidget::updateContent();
 }
@@ -68,11 +70,22 @@ void conditionTableWidget::fillTableString(condition *tmpCond, int row){
     ui->tableWidget->setItem(row,1,item);
 
     item = new QTableWidgetItem;
-    item->setText(tmpCond->getTargetObjectStateString());
+    if(tmpCond->getTargetObjectState()!=OBJECT_STATE_ANY){
+        item->setText(tmpCond->getTargetObjectStateString());
+    }
+    else{
+        item->setText(tr("Не задано"));
+    }
     ui->tableWidget->setItem(row,2,item);
 
     item = new QTableWidgetItem;
-    item->setText(QString::number(tmpCond->getTargetPortNumber()));
+    int portNumber=tmpCond->getTargetPortNumber();
+    if(portNumber!=-1){
+        item->setText(QString::number(portNumber));
+    }
+    else{
+        item->setText(tr("Не задан"));
+    }
     ui->tableWidget->setItem(row,3,item);
 
     item = new QTableWidgetItem;

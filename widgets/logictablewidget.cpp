@@ -9,6 +9,7 @@ logicTableWidget::logicTableWidget(QWidget *parent) :
     connect(ui->addButton,SIGNAL(clicked(bool)),this,SLOT(addSlot()));
     connect(ui->editButton,SIGNAL(clicked(bool)),this,SLOT(editSlot()));
     connect(ui->deleteButton,SIGNAL(clicked(bool)),this,SLOT(deleteSlot()));
+    currentPort=nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////
 void logicTableWidget::setCurrentPort(objectPort *port){

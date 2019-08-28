@@ -17,13 +17,16 @@ newConditionDialog::newConditionDialog(statisticCore *pointer, objectPort *port,
     }
 
     statCorePointer=pointer;
-    if(pointer!=nullptr){
-        int size=pointer->getObjectsCount();
-        for(int n=0;n!=size;n++){
-            ui->objectComboBox->addItem(pointer->getObjectForIndex(n)->getName());
-        }
-        ui->objectComboBox->setCurrentIndex(-1);
+    if(pointer==nullptr){
+        qDebug("newConditionDialog::newConditionDialog statisticCore pointer in nullptr");
+        return;
     }
+    int size=pointer->getObjectsCount();
+    for(int n=0;n!=size;n++){
+        ui->objectComboBox->addItem(pointer->getObjectForIndex(n)->getName());
+    }
+    ui->objectComboBox->setCurrentIndex(-1);
+
 
     connect(ui->portCheckBox,SIGNAL(stateChanged(int)),this,SLOT(portCheckSlot(int)));
     connect(ui->stateCheckBox,SIGNAL(stateChanged(int)),this,SLOT(stateCheckSlot(int)));
@@ -157,8 +160,6 @@ void newConditionDialog::portCheckSlot(int state){
     if(state==Qt::Checked){
         ui->portNumberComboBox->setEnabled(true);
         ui->portStateComboBox->setEnabled(true);
-        ui->portCheckBox->setDisabled(true);
-        ui->stateCheckBox->setEnabled(true);
         ui->stateComboBox->setDisabled(true);
         ui->stateCheckBox->setCheckState(Qt::Unchecked);
     }
@@ -169,8 +170,6 @@ void newConditionDialog::stateCheckSlot(int state){
         ui->portNumberComboBox->setDisabled(true);
         ui->portStateComboBox->setDisabled(true);
         ui->stateComboBox->setEnabled(true);
-        ui->stateCheckBox->setDisabled(true);
-        ui->portCheckBox->setEnabled(true);
         ui->portCheckBox->setCheckState(Qt::Unchecked);
     }
 }
@@ -178,6 +177,7 @@ void newConditionDialog::stateCheckSlot(int state){
 void newConditionDialog::selectObject(int index){
     disconnect(ui->portNumberComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPortSlot(int)));
     ui->portNumberComboBox->clear();
+    ui->portDecrLine->clear();
     object *tmpObject=statCorePointer->getObjectForIndex(index);
     int size=tmpObject->getPortsCount();
     for(int n=0;n!=size;n++){
@@ -198,12 +198,11 @@ void newConditionDialog::okSlot(){
     currentCondition->setDescription(ui->descriptionTextEdit->document()->toPlainText());
     currentCondition->setLogic((logicType)ui->logicComboBox->currentData().toInt());
     object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
-    currentCondition->setTargetObjectName(tmpObject->getName());
+    currentCondition->setTargetObject(tmpObject);
     if(ui->portCheckBox->isChecked()){
         currentCondition->setPortState(ui->portStateComboBox->currentData().toBool());
         currentCondition->setTargetObjectState(OBJECT_STATE_ANY);
-        //object *tmpObject=statCorePointer->getObjectForIndex(ui->objectComboBox->currentIndex());
-        currentCondition->setTargetPortNumber(tmpObject->getPort(ui->portNumberComboBox->currentIndex())->getNumber());
+        currentCondition->setTargetPort(tmpObject->getPort(ui->portNumberComboBox->currentIndex()));
     }
     else if(ui->stateCheckBox->isChecked()){
         currentCondition->setTargetPortNumber(-1);
@@ -211,7 +210,6 @@ void newConditionDialog::okSlot(){
         currentCondition->setTargetObjectState((objectState)ui->stateComboBox->currentData().toInt());
     }
     currentCondition->setTime(ui->timeSpinBox->value());
-    currentCondition->findObjectPort(statCorePointer);
 
     accept();
 }

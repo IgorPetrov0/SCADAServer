@@ -21,14 +21,24 @@ void condition::setDescription(const QString &value){
 }
 //////////////////////////////////////////////////////////////////////
 QString condition::getTargetObjectName() const{
-    if(targetObjectName.isEmpty()){
-        return targetObject->getName();
+    if(targetObject==nullptr){
+        return targetObjectName;
     }
-    return targetObjectName;
+    return targetObject->getName();
 }
 //////////////////////////////////////////////////////////////////////
 void condition::setTargetObjectName(QString name){
     targetObjectName=name;
+}
+///////////////////////////////////////////////////////////////////////
+void condition::setTargetObject(object *tObject){
+    if(tObject!=nullptr){
+        targetObject=tObject;
+        targetObjectName.clear();
+    }
+    else{
+        qDebug("condition::setTargetObject object pointer is nullptr");
+    }
 }
 //////////////////////////////////////////////////////////////////////
 int condition::getTargetPortNumber() const{
@@ -36,7 +46,17 @@ int condition::getTargetPortNumber() const{
 }
 //////////////////////////////////////////////////////////////////////
 void condition::setTargetPortNumber(int number){
-   targetPortNumber=number;
+    targetPortNumber=number;
+}
+/////////////////////////////////////////////////////////////////////////
+void condition::setTargetPort(objectPort *tPort){
+    if(tPort!=nullptr){
+        targetPort=tPort;
+        targetPortNumber=tPort->getNumber();
+    }
+    else{
+        qDebug("condition::setTargetPort port pointer is nullptr");
+    }
 }
 //////////////////////////////////////////////////////////////////////
 bool condition::getPortState() const{
@@ -142,7 +162,7 @@ bool condition::deserialisation(QDataStream *str){
     }
     targetObjectState=(objectState)tmp;
     *str>>targetPortNumber;
-    if((targetPortNumber<0)||(targetPortNumber>MAX_OBJECT_PORTS)){
+    if((targetPortNumber<-1)||(targetPortNumber>MAX_OBJECT_PORTS)){//порт = -1 если он не задан
         return false;
     }
     *str>>portState;
@@ -167,7 +187,6 @@ condition &condition::operator=(const condition *right){
 object *condition::getTargetObject() const{
     return targetObject;
 }
-<<<<<<< HEAD
 ////////////////////////////////////////////////////////////////////////////////
 objectPort *condition::getTargetPort() const{
     return targetPort;
@@ -189,19 +208,5 @@ bool condition::generateTargetPointers(statisticCore *statCorePointer){
         return true;
     }
     return false;
-=======
-////////////////////////////////////////////////////////////////////////////////////////
-bool condition::findObjectPort(statisticCore *statCorePointer){
-    targetObject=statCorePointer->getObjectForName(targetObjectName);
-    if(targetObject==nullptr){
-        return false;
-    }
-    targetObjectName.clear();
-    targetPort=targetObject->getPortByNumber(targetPortNumber);
-    if(targetPort==nullptr){
-        return false;
-    }
-    return true;
->>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
 }
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////

@@ -46,17 +46,14 @@ public:
     bool checkORConditions(objectPort *port, bool on);
     bool checkNOTConditions(objectPort *port,bool on_off);
     void clearAll();
+    bool generatePointersForConditions();
 
 protected:
     QVector<mashine*> mashinesArray;
     void generateTestGraph(mashine *m);
     bool removeDirRecursively(QString dirPath);
     bool writeGraph(mashine *tmpMashine);
-<<<<<<< HEAD
-    bool generatePointersForConditions();
-=======
-    bool findObjectsForConditions();
->>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
+
 
 protected slots:
     void newDaySlot(mashine *tmpMashine);

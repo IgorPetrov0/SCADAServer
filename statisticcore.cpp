@@ -70,16 +70,9 @@ bool statisticCore::readConfiguration(QString workingDir){
             }
         }
     }
-
-<<<<<<< HEAD
     //генерируем указатели на объекты у всех состояний всех портов
     if(!generatePointersForConditions()){
         setLastError(tr("Ошибка чтения логики управления."));
-=======
-    //загружаем указатели целевых объектов и портов в состояния
-    if(!findObjectsForConditions()){
-        setLastError(tr("Ошибка загрузки логики управления. Управление невозможно."));
->>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
         return false;
     }
 
@@ -470,7 +463,6 @@ bool statisticCore::writeGraph(mashine *tmpMashine){
         return false;
     }
 }
-<<<<<<< HEAD
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool statisticCore::generatePointersForConditions(){
     int size=mashinesArray.size();//todo проходим по массиву машин. Потом добавить другие массивы
@@ -487,34 +479,9 @@ bool statisticCore::generatePointersForConditions(){
                 }
             }
             for(int offN=0;offN!=offCount;offN++){//проходим по состояниям выключения
-
-=======
-///////////////////////////////////////////////////////////////////////////////////////
-bool statisticCore::findObjectsForConditions(){
-    int size=getObjectsCount();
-    for(int n=0;n!=size;n++){
-        object *tmpObject=getObjectForIndex(n);
-        int portsCount=tmpObject->getPortsCount();
-        for(int m=0;m!=portsCount;m++){
-            objectPort *tmpPort=tmpObject->getPort(m);
-            int condOnCount=tmpPort->getOnConditionsCount();
-            int condOffCount=tmpPort->getOffConditionsCount();
-            for(int t=0;t!=condOnCount;t++){
-                condition *tmpCondition=tmpPort->getOnCondition(t);
-                if(tmpCondition->getTargetObjectState()==OBJECT_STATE_ANY){
-                    if(!tmpCondition->findObjectPort(this)){
-                        return false;
-                    }
+                if(!tmpPort->getOnCondition(offN)->generateTargetPointers(this)){//если споткнулись - дальше продолжать нет смысла. база повреждена
+                    return false;
                 }
-            }
-            for(int t=0;t!=condOffCount;t++){
-                condition *tmpCondition=tmpPort->getOffCondition(t);
-                if(tmpCondition->getTargetObjectState()==OBJECT_STATE_ANY){
-                    if(!tmpCondition->findObjectPort(this)){
-                        return false;
-                    }
-                }
->>>>>>> 9ee40cecae714103b6e03b277bd65aa2a1014df2
             }
         }
     }

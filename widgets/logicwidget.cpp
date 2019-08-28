@@ -128,6 +128,7 @@ void logicWidget::addSlot(tableType type){
                     newConditionDialog dialog(statCorePointer,currentPortPointer,this,true);
                     dialog.setPortNumber(currentPortPointer->getNumber());
                     if(dialog.exec()==QDialog::Accepted){
+                        //диалоговое окно само генерирует указатели для целевых объектов и портов нового состояния
                         currentPortPointer->addOnCondition(dialog.getNewCondition());
                         ui->onWidget->updateContent();
                     }
@@ -151,7 +152,9 @@ void logicWidget::addSlot(tableType type){
                     newConditionDialog dialog(statCorePointer,currentPortPointer,this,false);
                     dialog.setPortNumber(currentPortPointer->getNumber());
                     if(dialog.exec()==QDialog::Accepted){
+                        //диалоговое окно само генерирует указатели для целевых объектов и портов нового состояния
                         currentPortPointer->addOffCondition(dialog.getNewCondition());
+                        statCorePointer->generatePointersForConditions();
                         ui->offWidget->updateContent();
                     }
                 }
