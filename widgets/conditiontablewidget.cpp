@@ -52,6 +52,10 @@ void conditionTableWidget::updateContent(){
         if((currentRow<ui->tableWidget->rowCount())&&(currentRow>=0)){//количество портов могло измениться и currentRow может не попасть в диаппазон
             ui->tableWidget->setCurrentCell(currentRow,0);
         }
+        ui->addButton->setEnabled(true);
+    }
+    else{
+        ui->addButton->setDisabled(true);
     }
     logicTableWidget::updateContent();
 }
