@@ -8,7 +8,7 @@ netServer::netServer()
 netServer::~netServer(){
     int size=socketsArray.size();
     for(int n=0;n!=size;n++){
-        if(socketsArray.at(n)!=NULL){
+        if(socketsArray.at(n)!=nullptr){
             delete socketsArray.at(n);
         }
     }
@@ -88,7 +88,7 @@ void netServer::sendStatistic(int index){
         QDataStream str(&array,QIODevice::WriteOnly);
         str<<qint64(0);//место для размера
         str<<(uchar)TCP_PACKET_STATISTIC;
-        int mashinesArraySize=statCorePointer->getMashinsCount();
+        int mashinesArraySize=statCorePointer->getMashinsCount();//todo машины, потом остальные объекты
         str<<mashinesArraySize;
         for(int n=0;n!=mashinesArraySize;n++){
             statCorePointer->getMashine(n)->netSerialise(&str);

@@ -54,6 +54,7 @@ bool mashine::deserialisationContinue(QDataStream *str){
         *str>>s.stopTime;
         shiftsArray.append(s);
     }
+    return true;
 }
 ////////////////////////////////////////////////////////////////////////////
 void mashine::netSerialise(QDataStream *str){
