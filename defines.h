@@ -29,7 +29,9 @@ enum requestType{
     REQUEST_EMPTY=0,
     REQUEST_GET_DATA,
     REQUEST_CLEAR,
-    REQUEST_CONFIG_PORTS
+    REQUEST_CONFIG_PORTS,
+    REQUEST_READ_PORTS,
+    REQUEST_SET_PORTS
 };
 //ответы
 enum answerType{

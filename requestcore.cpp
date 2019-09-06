@@ -3,8 +3,8 @@
 requestCore::requestCore(QObject *parent):
     QObject(parent)
 {
-    sPort1=NULL;
-    sPort2=NULL;
+    sPort1=nullptr;
+    sPort2=nullptr;
     requestTimer = new QTimer(this);
     requestTimer->setSingleShot(true);
     waitTimer = new QTimer(this);
@@ -19,10 +19,10 @@ requestCore::requestCore(QObject *parent):
 ///////////////////////////////////////////////////////////////////////////
 requestCore::~requestCore()
 {
-    if(sPort1!=NULL){
+    if(sPort1!=nullptr){
         delete sPort1;
     }
-    if(sPort2!=NULL){
+    if(sPort2!=nullptr){
         delete sPort2;
     }
     delete requestTimer;
@@ -42,7 +42,7 @@ QSerialPort *requestCore::getPort(int number){
         }
         default:{
             qDebug("requestCore::getPort : Argument <number> may be 1 or 2");
-            return NULL;
+            return nullptr;
         }
     }
 }
@@ -50,12 +50,12 @@ QSerialPort *requestCore::getPort(int number){
 bool requestCore::setPort(QString name, int number){
     switch(number){
         case(1):{
-            if(sPort1!=NULL){
+            if(sPort1!=nullptr){
                 sPort1->close();
                 disconnect(sPort1,SIGNAL(readyRead()),this,SLOT(port1DataReadyRead()));
                 disconnect(sPort1,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(port1ErrorSlot(QSerialPort::SerialPortError)));
                 delete sPort1;
-                sPort1=NULL;
+                sPort1=nullptr;
             }
             if((name!="None") & (!name.isEmpty())){
                 sPort1 = new QSerialPort(name);
@@ -72,12 +72,12 @@ bool requestCore::setPort(QString name, int number){
             break;
         }
         case(2):{
-            if(sPort2!=NULL){
+            if(sPort2!=nullptr){
                 sPort2->close();
                 disconnect(sPort2,SIGNAL(readyRead()),this,SLOT(port2DataReadyRead()));
                 disconnect(sPort2,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(port2ErrorSlot(QSerialPort::SerialPortError)));
                 delete sPort2;
-                sPort2=NULL;
+                sPort2=nullptr;
             }
             if((name!="None") & (!name.isEmpty())){
                 sPort2 = new QSerialPort(name);
@@ -200,7 +200,7 @@ bool requestCore::writeConfiguration(QString workingDir){
     QDataStream str(&file);
     str<<QString(SPSIGNATURE);
     str<<(float)CUR_VERSION;
-    if(sPort1!=NULL){
+    if(sPort1!=nullptr){
         str<<sPort1->portName();
         str<<(qint32)sPort1->baudRate();
         str<<(int)sPort1->dataBits();
@@ -211,7 +211,7 @@ bool requestCore::writeConfiguration(QString workingDir){
     else{
         str<<QString("None");
     }
-    if(sPort2!=NULL){
+    if(sPort2!=nullptr){
         str<<sPort2->portName();
         str<<(qint32)sPort2->baudRate();
         str<<(int)sPort2->dataBits();
@@ -244,6 +244,22 @@ void requestCore::requestCurrentObject(){
             inputBytesCounter=0;
             currentPort->clear();
 
+            break;
+        }
+        case(REQUEST_CLEAR):{
+            inputBytesCounter=0;
+            currentPort->clear();
+            switch(currentObject->getType()){
+                case(objectMashine):{
+                    requestMashine(currentRequest);
+                    break;
+                }
+                default:{
+                    qDebug("requestCore::requestCurrentObject Wrong object type. ");
+                    return;
+                }
+            }
+            waitTimer->start(WAIT_TIME);
             break;
         }
         case(REQUEST_GET_DATA):{
@@ -343,12 +359,15 @@ void requestCore::readPacket(){
 }
 ////////////////////////////////////////////////////////////////////////////
 void requestCore::nextDevice(){
+    inputBytesCounter=0;
+    currentPort->clear();
+
     //функция должна гарантировать, что или currentObject!=nullptr или опрос остановлен
     inputBytesCounter=0;
     currentPort->clear();
     currentObject=statCorePointer->getObjectForIndex(counter);//пробуем получить объект
     if(currentObject!=nullptr){//если объект не нулевой
-        currentRequest=REQUEST_CONFIG_PORTS;
+        currentRequest=REQUEST_GET_DATA;
         requestCurrentObject();//то делаем запрос в штатном режиме
         emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
         counter++;//инкремент счетчика
@@ -491,8 +510,8 @@ void requestCore::port1ErrorSlot(QSerialPort::SerialPortError error){
             currentPort->close();
             emit consoleMessage(tr("Последовательный порт ")+currentPort->portName()+tr(" отключен."));
             delete sPort1;
-            sPort1=NULL;
-            currentPort=NULL;
+            sPort1=nullptr;
+            currentPort=nullptr;
             requestTimer->start(REQUEST_TIME);
             break;
         }

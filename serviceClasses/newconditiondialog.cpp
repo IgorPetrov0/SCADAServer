@@ -157,8 +157,6 @@ void newConditionDialog::portCheckSlot(int state){
     if(state==Qt::Checked){
         ui->portNumberComboBox->setEnabled(true);
         ui->portStateComboBox->setEnabled(true);
-        ui->portCheckBox->setDisabled(true);
-        ui->stateCheckBox->setEnabled(true);
         ui->stateComboBox->setDisabled(true);
         ui->stateCheckBox->setCheckState(Qt::Unchecked);
     }
@@ -169,8 +167,6 @@ void newConditionDialog::stateCheckSlot(int state){
         ui->portNumberComboBox->setDisabled(true);
         ui->portStateComboBox->setDisabled(true);
         ui->stateComboBox->setEnabled(true);
-        ui->stateCheckBox->setDisabled(true);
-        ui->portCheckBox->setEnabled(true);
         ui->portCheckBox->setCheckState(Qt::Unchecked);
     }
 }
