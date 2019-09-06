@@ -10,9 +10,7 @@
 #include "defines.h"
 #include "statisticcore.h"
 
-#define WAIT_TIME 1500
-#define REQUEST_TIME 1000
-#define MAX_RE_REQUEST 5
+
 
 
 
@@ -29,6 +27,7 @@ public:
     bool writeConfiguration(QString workingDir);
     void setStatisticCorePointer(statisticCore *pointer);
 
+
 protected:
     QSerialPort *sPort1;
     QSerialPort *sPort2;
@@ -38,23 +37,24 @@ protected:
     int counter;//счетчик объектов
     qint64 inputBytesCounter;
     object *currentObject;
-    int reCounter;
+    int reCounter;//счетчик повторных запросов
     bool pass;//два прохода для кольцевого опроса линии
     QTime lastRequestTime;
-    //QVector<unsigned char>inputArray;
-    void requestCurrentObject();
-    void reRequestCurrentObject();
-    void requestMashine(requestType request);
     unsigned char CRC8(unsigned char *block, unsigned char len);
     unsigned char CRC16(unsigned char *pcBlock, unsigned short len);
     void readPacket();
-    void nextDevice();//переход к следующему устройству при опросе
     unsigned char *generateArray();//для отладки. Массив уничтожает вызывающий
     unsigned char inputArray[1000];//1000 quint16  - это 2000 байт
     QSerialPort *currentPort;
     requestType currentRequest;//текущий запрос
     void waitTimeMashine();//обработка превышенного интервала для машины
-
+    void nextObject();//переключение на опрос следующего объекта
+    void requestCurrentObject();
+    void reRequestCurrentObject();
+    void requestMashine();
+    void rGetData();
+    void rClear();
+    void rSetPorts();
 
 protected slots:
     void requestTime();

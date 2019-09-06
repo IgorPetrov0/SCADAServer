@@ -234,82 +234,6 @@ void requestCore::setStatisticCorePointer(statisticCore *pointer){
     counter=0;
     currentObject=nullptr;
 }
-///////////////////////////////////////////////////////////////////////////////////
-void requestCore::requestCurrentObject(){
-    if(currentRequest==REQUEST_EMPTY){
-        return;
-    }
-    switch(currentRequest){
-        case(REQUEST_CONFIG_PORTS):{
-            inputBytesCounter=0;
-            currentPort->clear();
-
-            break;
-        }
-        case(REQUEST_CLEAR):{
-            inputBytesCounter=0;
-            currentPort->clear();
-            switch(currentObject->getType()){
-                case(objectMashine):{
-                    requestMashine(currentRequest);
-                    break;
-                }
-                default:{
-                    qDebug("requestCore::requestCurrentObject Wrong object type. ");
-                    return;
-                }
-            }
-            waitTimer->start(WAIT_TIME);
-            break;
-        }
-        case(REQUEST_GET_DATA):{
-            inputBytesCounter=0;
-            currentPort->clear();
-            switch(currentObject->getType()){
-                case(objectMashine):{
-                    requestMashine(currentRequest);
-                    break;
-                }
-                default:{
-                    qDebug("requestCore::requestCurrentObject Wrong object type. ");
-                    return;
-                }
-            }
-            waitTimer->start(WAIT_TIME);
-            break;
-        }
-        default:{
-            return;
-        }
-
-    }
-
-}
-/////////////////////////////////////////////////////////////////////////////////
-void requestCore::reRequestCurrentObject(){
-    reCounter++;
-    if(reCounter==MAX_RE_REQUEST){
-        reCounter=0;
-        nextDevice();
-        return;
-    }
-    requestCurrentObject();
-    emit consoleMessage(tr("Повторный запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
-}
-//////////////////////////////////////////////////////////////////////////////
-void requestCore::requestMashine(requestType request){
-    if(currentPort->isOpen()){
-        QByteArray array;
-        //формируем запрос
-        QDataStream str(&array,QIODevice::WriteOnly);
-        unsigned char size=4;//размер пакета
-        str<<size;
-        str<<(unsigned char)currentObject->getAddress();//адрес сетевого объекта
-        str<<(unsigned char)request;//команда
-        str<<(unsigned char)CRC16((unsigned char*)array.data(),array.size());//контрольная сумма
-        currentPort->write(array);
-    }
-}
 /////////////////////////////////////////////////////////////////////////////
 unsigned char requestCore::CRC8(unsigned char *block, unsigned char len){
     unsigned char crc = 0xFF;
@@ -357,31 +281,6 @@ void requestCore::readPacket(){
         }
     }
 }
-////////////////////////////////////////////////////////////////////////////
-void requestCore::nextDevice(){
-    inputBytesCounter=0;
-    currentPort->clear();
-
-    //функция должна гарантировать, что или currentObject!=nullptr или опрос остановлен
-    inputBytesCounter=0;
-    currentPort->clear();
-    currentObject=statCorePointer->getObjectForIndex(counter);//пробуем получить объект
-    if(currentObject!=nullptr){//если объект не нулевой
-        currentRequest=REQUEST_GET_DATA;
-        requestCurrentObject();//то делаем запрос в штатном режиме
-        emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
-        counter++;//инкремент счетчика
-    }
-    else if((currentObject==nullptr)&&(counter==0)){//если объект нулевой по нулевому индексу
-        counter=0;//то ловить нечего- база пуста. останавливаем опрос
-        consoleMessage(tr("В базе данных нет ни одного объекта. Опрос остановлен."));
-        return;
-    }
-    else{//если объект просто нулевой, то
-        counter=0;//рекурсивно пробуем нулевой индекс
-        nextDevice();//или сделает запрос или остановит опрос
-    }
-}
 //////////////////////////////////////////////////////////////////////////
 void requestCore::requestTime(){ 
     lastRequestTime=QTime::currentTime();
@@ -413,7 +312,7 @@ void requestCore::requestTime(){
     if(counter==0){//меняем проход только при переходе через 0 индекс
         pass^=true;
     }
-    nextDevice();
+    nextObject();
 }
 ///////////////////////////////////////////////////////////////////////////////
 void requestCore::waitTime(){
@@ -432,66 +331,63 @@ void requestCore::waitTime(){
     currentRequest=REQUEST_EMPTY;
     emit consoleMessage(tr("Превышено время ожидания ответа от ")+currentObject->getName()+tr(". Адрес ")+
                         QString::number(currentObject->getAddress())+tr(". Порт ")+currentPort->portName());
-    nextDevice();//переходим к следующему устройству
+    nextObject();
 }
 /////////////////////////////////////////////////////////////////////////
 void requestCore::port1DataReadyRead(){
     inputBytesCounter+=sPort1->read((char*)&inputArray[inputBytesCounter],2000);//размер пакета ограничен 2000 байт
-    if(inputBytesCounter<2000){//хотя функция QIODevice::read() и не даст забить в массив более 2000 байт, заполнение может происходить за несколько раз
-        if(inputBytesCounter<=1){
-            return;
-        }
-        if(inputArray[0]==(quint8)inputBytesCounter){//сравниваем размер пакета с его заголовком
-            waitTimer->stop();//если пакет полностью получен, то сбрасываем таймер ожидания
-            unsigned char crc=CRC16(inputArray,inputBytesCounter-1);//считаем CRC для всего пакета, кроме последнего байта
-            if(crc==(unsigned char)inputArray[inputBytesCounter-1]){
-                if(inputArray[1]==currentObject->getAddress()){//если адрес ответа соответствует адресу запроса
-                    switch(inputArray[2]){//читаем ответ объекта
-                        case(ANSWER_OK):{//если все в порядке читаем пакет
-                            readPacket();
-                            currentRequest=REQUEST_CLEAR;//и приказываем устройству очистить память
-                            requestCurrentObject();
-                            break;
-                        }
-                        case(ANSWER_ERROR):{//если ошибка CRC, повторно отправляем запрос
-                            currentRequest=REQUEST_GET_DATA;
-                            reRequestCurrentObject();
-                            requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                            break;
-                        }
-                        case(ANSWER_NO_DATA):{//если данных нет
-                            requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                            break;
-                        }
-                        case(ANSWER_CLEARED):{//если память очищена
-                            readPacket();
-                            requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
-                            break;
-                        }
-                        case(ANSWER_PORTS_STATE):{
-                            currentRequest=REQUEST_GET_DATA;
-                            requestCurrentObject();
-                            requestTimer->start(REQUEST_TIME);
-                            break;
+        if(inputBytesCounter<2000){//хотя функция QIODevice::read() и не даст забить в массив более 2000 байт, заполнение может происходить за несколько раз
+            if(inputBytesCounter<=1){
+                return;
+            }
+            if(inputArray[0]==(quint8)inputBytesCounter){//сравниваем размер пакета с его заголовком
+                waitTimer->stop();//если пакет полностью получен, то сбрасываем таймер ожидания
+                unsigned char crc=CRC16(inputArray,inputBytesCounter-1);//считаем CRC для всего пакета, кроме последнего байта
+                if(crc==(unsigned char)inputArray[inputBytesCounter-1]){
+                    if(inputArray[1]==currentObject->getAddress()){//если адрес ответа соответствует адресу запроса
+                        switch(inputArray[2]){//читаем ответ объекта
+                            case(ANSWER_OK):{//если все в порядке читаем пакет
+                                readPacket();
+                                requestCurrentObject();
+                                break;
+                            }
+                            case(ANSWER_ERROR):{//если ошибка CRC, повторно отправляем запрос
+                                reRequestCurrentObject();
+                                break;
+                            }
+                            case(ANSWER_NO_DATA):{//если данных нет
+                                requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
+                                break;
+                            }
+                            case(ANSWER_CLEARED):{//если память очищена
+                                readPacket();
+                                requestTimer->start(REQUEST_TIME);//переходим к следующему устройству
+                                break;
+                            }
+                            case(ANSWER_PORTS_STATE):{
+                                currentObject->setPortsSate(inputArray[3]);
+                                requestCurrentObject();
+                                requestTimer->start(REQUEST_TIME);
+                                break;
+                            }
                         }
                     }
+                    else{
+                        emit consoleMessage(tr("Вместо объекта ")+currentObject->getName()+tr(" с адресом")+QString::number(currentObject->getAddress())+
+                                            tr(" ответил объект с адресом ")+QString::number(inputArray[1]));
+                        currentObject->setOnline(false);
+                        reRequestCurrentObject();
+                    }
                 }
-                else{
-                    emit consoleMessage(tr("Вместо объекта ")+currentObject->getName()+tr(" с адресом")+QString::number(currentObject->getAddress())+
-                                        tr(" ответил объект с адресом ")+QString::number(inputArray[1]));
-                    currentObject->setOnline(false);
-                    reRequestCurrentObject();
+                else{//если СRC Не соответствуют
+                    reRequestCurrentObject();//повторный запрос
                 }
-            }
-            else{//если СRC Не соответствуют
-                reRequestCurrentObject();//повторный запрос
             }
         }
-    }
-    else{//если данных больше, чем 2000 байт, то это ошибка
-        reRequestCurrentObject();//повторяем запрос
-    }
-    currentObject->setOnline(true);
+        else{//если данных больше, чем 2000 байт, то это ошибка
+            reRequestCurrentObject();//повторяем запрос
+        }
+        currentObject->setOnline(true);
 }
 ///////////////////////////////////////////////////////////////////////////
 void requestCore::port2DataReadyRead(){
@@ -530,8 +426,8 @@ void requestCore::port2ErrorSlot(QSerialPort::SerialPortError error){
             currentPort->close();
             emit consoleMessage(tr("Последовательный порт ")+currentPort->portName()+tr(" отключен."));
             delete sPort2;
-            sPort2=NULL;
-            currentPort=NULL;
+            sPort2=nullptr;
+            currentPort=nullptr;
             requestTimer->start(REQUEST_TIME);
             break;
         }
@@ -562,4 +458,133 @@ void requestCore::waitTimeMashine(){
         }
     }
 }
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+void requestCore::nextObject(){
+    currentObject=statCorePointer->getObjectForIndex(counter);
+    currentRequest=REQUEST_EMPTY;
+    if(currentObject!=nullptr){
+        requestCurrentObject();
+        emit consoleMessage(tr("Запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
+        counter++;
+    }
+    else{
+        if(counter==0){
+            emit consoleMessage(tr("В базе нет ни одного объекта. Опрос остановлен."));
+        }
+        else{
+            counter=0;
+            requestTimer->start(REQUEST_TIME);
+        }
+    }
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void requestCore::requestCurrentObject(){
+    inputBytesCounter=0;
+    switch(currentObject->getType()){
+        case(objectMashine):{
+            requestMashine();
+            break;
+        }
+        default:{
+            qDebug("requestCore::requestCurrentObject Uncknow object type");
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////
+void requestCore::reRequestCurrentObject(){
+    if(reCounter==MAX_RE_REQUEST){
+        reCounter=0;
+        nextObject();
+        return;
+    }
+    emit consoleMessage(tr("Повторный запрос данных через ")+currentPort->portName()+tr(" по адресу ")+QString::number(currentObject->getAddress()));
+    switch(currentRequest){///здесь должны быть все возможные типы запросов для всех классов устройств
+        //просто повторяем текущий запрос
+        case(REQUEST_GET_DATA):{
+            rGetData();
+            break;
+        }
+        case(REQUEST_CLEAR):{
+            rClear();
+            break;
+        }
+        case(REQUEST_EMPTY):{
+            break;
+        }
+        case(REQUEST_SET_PORTS):{
+            rSetPorts();
+            break;
+        }
+    }
+    reCounter++;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void requestCore::requestMashine(){
+
+    switch(currentRequest){
+        case(REQUEST_GET_DATA):{
+            currentRequest=REQUEST_CLEAR;
+            rClear();
+            break;
+        }
+        case(REQUEST_CLEAR):{
+            nextObject();
+            break;
+        }
+        case(REQUEST_EMPTY):{
+            currentRequest=REQUEST_SET_PORTS;
+            rSetPorts();
+            break;
+        }
+        case(REQUEST_SET_PORTS):{
+            currentRequest=REQUEST_GET_DATA;
+            rGetData();
+            break;
+        }
+    }
+}
+/////////////////////////////////////////////////////////////////////////////
+void requestCore::rGetData(){
+    if(currentPort!=nullptr){
+        QByteArray array;
+        QDataStream str(&array,QIODevice::WriteOnly);
+        unsigned char size=4;
+        str<<size;
+        str<<static_cast<unsigned char>(currentObject->getAddress());
+        str<<static_cast<unsigned char>(REQUEST_GET_DATA);
+        str<<static_cast<unsigned char>(CRC16((unsigned char*)array.data(),array.size()));//контрольная сумма
+        currentPort->write(array);
+        waitTimer->start(WAIT_TIME);
+    }
+}
+///////////////////////////////////////////////////////////////////////////////
+void requestCore::rClear(){
+    if(currentPort!=nullptr){
+        QByteArray array;
+        QDataStream str(&array,QIODevice::WriteOnly);
+        unsigned char size=4;
+        str<<size;
+        str<<static_cast<unsigned char>(currentObject->getAddress());
+        str<<static_cast<unsigned char>(REQUEST_CLEAR);
+        str<<static_cast<unsigned char>(CRC16((unsigned char*)array.data(),array.size()));//контрольная сумма
+        currentPort->write(array);
+        waitTimer->start(WAIT_TIME);
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void requestCore::rSetPorts(){
+    if(currentPort!=nullptr){
+        QByteArray array;
+        QDataStream str(&array,QIODevice::WriteOnly);
+        unsigned char size=6;
+        str<<size;
+        str<<static_cast<unsigned char>(currentObject->getAddress());
+        str<<static_cast<unsigned char>(REQUEST_SET_PORTS);
+        str<<currentObject->getPortsMask();
+        str<<currentObject->getPortsStateMask();
+        str<<static_cast<unsigned char>(CRC16((unsigned char*)array.data(),array.size()));//контрольная сумма
+        currentPort->write(array);
+        waitTimer->start(WAIT_TIME);
+    }
+}
+

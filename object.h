@@ -38,6 +38,9 @@ public:
     QString getCurrentStateString();
     QTime getStateSetTime() const;
     int getPortIndex(int portNumber);
+    unsigned char getPortsMask();
+    unsigned char getPortsStateMask();
+    void setPortsSate(unsigned char mask);
 
     object& operator=(const object& right);
 

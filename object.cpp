@@ -160,6 +160,42 @@ int object::getPortIndex(int portNumber){
     }
     return -1;
 }
+////////////////////////////////////////////////////////////////////////////////////////////
+unsigned char object::getPortsMask(){
+    int size=ports.size();
+    unsigned char mask=0;
+    for(int n=0;n!=size;n++){
+        objectPort *tmpPort=ports.at(n);
+        mask|=(1<<tmpPort->getNumber());
+    }
+    return mask;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////
+unsigned char object::getPortsStateMask(){
+    int size=ports.size();
+    unsigned char mask=0;
+    for(int n=0;n!=size;n++){
+        objectPort *tmpPort=ports.at(n);
+        if(tmpPort->getState()){
+            mask|=(1<<tmpPort->getNumber());
+        }
+    }
+    return mask;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+void object::setPortsSate(unsigned char mask){
+    for(int n=0;n!=MAX_OBJECT_PORTS;n++){
+        objectPort *tmpPort=getPortByNumber(n);
+        if(tmpPort!=nullptr){
+            if((mask&(1<<n))!=0){
+                tmpPort->setState(true);
+            }
+            else{
+                tmpPort->setState(false);
+            }
+        }
+    }
+}
 ///////////////////////////////////////////////////////////////////////////
 objectType object::getType() const{
     return type;

@@ -14,13 +14,16 @@
 #define DATA_STREAM_VERSION QDataStream::Qt_4_0
 #define ON true
 #define OFF false
-#define MAX_OBJECT_PORTS 20 //максимальное количество портов у обного объекта
+#define MAX_OBJECT_PORTS 7 //максимальное количество портов у обного объекта
 #define MAX_RS_ADDRESES 255 //максимальное количество адресов в сети RS485
 #define MAX_OBJECT_DESCRIPTION_SYMBOLS 100 //максимальное количество символов в описании объекта
 #define MAX_PATH_LEIGTH 32767 //максимальная длина пути
 #define MAX_MASHINES_SHIFTS 5 //максимальное количество смен для машины
 #define MAX_CONDITIONS 10 //максимальное количество состояний для порта
 #define MAX_OBJECT_NAME_SIZE 255 //максимальный размер имен объектов
+#define WAIT_TIME 1500 //времф ожидания ответа по сети RS485
+#define REQUEST_TIME 1000 //интервал опроса по RS485
+#define MAX_RE_REQUEST 5 //мааксимальное количество повторных запросов по RS485
 
 
 
@@ -29,8 +32,6 @@ enum requestType{
     REQUEST_EMPTY=0,
     REQUEST_GET_DATA,
     REQUEST_CLEAR,
-    REQUEST_CONFIG_PORTS,
-    REQUEST_READ_PORTS,
     REQUEST_SET_PORTS
 };
 //ответы

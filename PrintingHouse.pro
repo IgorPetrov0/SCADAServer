@@ -30,6 +30,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
+    serviceClasses/portsmanualdialog.cpp \
     widgets/perfomancewidget.cpp \
     widgets/maintabwidget.cpp \
     widgets/graphwidget.cpp \
@@ -69,6 +70,7 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
+    serviceClasses/portsmanualdialog.h \
     widgets/perfomancewidget.h \
     widgets/maintabwidget.h \
     widgets/graphwidget.h \
@@ -109,6 +111,7 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui \
+    serviceClasses/portsmanualdialog.ui \
     widgets/perfomancewidget.ui \
     widgets/maintabwidget.ui \
     widgets/graphwidget.ui \
