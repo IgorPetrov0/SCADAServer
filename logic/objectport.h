@@ -34,7 +34,8 @@ public:
     void addOffCondition(condition *offCondition);
     void deleteOnCondition(int index);
     void deleteOffCondition(int index);
-
+    void checkOnConditions();
+    void checkOffConditions();
 
 
 
@@ -45,6 +46,7 @@ protected:
     QVector<condition*>onConditions;
     QVector<condition*>offConditions;
     bool state;
+
 
 
 

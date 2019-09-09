@@ -23,10 +23,12 @@ protected slots:
     void shiftReportSlot();
     void dayReportSlot();
     void enotherDaySlot();
+    void manualPortsSlot();
 
 signals:
     void createReport(reportType type, int mashineIndex);
     void enotherDaySignal(int mashineIndex);
+    void manualPorts(int mashineIndex);
 
 
 

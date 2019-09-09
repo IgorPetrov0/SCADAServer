@@ -21,6 +21,16 @@ void newPortDialog::setPort(objectPort *port){
     currentPort=port;
     ui->descriptionLineEdit->setText(port->getDescription());
     ui->numberSpinBox->setValue(port->getNumber());
+    switch(currentPort->getType()){
+        case(PORT_INPUT):{
+            ui->typeComboBox->setCurrentIndex(0);
+            break;
+        }
+        case(PORT_OUTPUT):{
+            ui->typeComboBox->setCurrentIndex(1);
+            break;
+        }
+    }
 }
 //////////////////////////////////////////////////////////////////////
 objectPort *newPortDialog::getPort(){

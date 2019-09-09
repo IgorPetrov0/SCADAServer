@@ -375,31 +375,18 @@ QStringList statisticCore::getObjectsNamesList(){
 }
 ///////////////////////////////////////////////////////////////////////////////////
 void statisticCore::checkConditions(){
-    int size=mashinesArray.size();
+    int size=this->getObjectsCount();
     for(int n=0;n!=size;n++){
-        object *tmpObject=mashinesArray.at(n);
+        object *tmpObject=this->getObjectForIndex(n);
         int portsCount=tmpObject->getPortsCount();
         for(int m=0;m!=portsCount;m++){
-            objectPort *tmpPort=tmpObject->getPort(n);
-            if(tmpPort->getType()==PORT_OUTPUT){
-
-            }
+            objectPort *tmpPort=tmpObject->getPort(m);
+            tmpPort->checkOnConditions();
+            tmpPort->checkOffConditions();
         }
     }
 }
-/////////////////////////////////////////////////////////////////////////////
-bool statisticCore::checkANDConditions(objectPort *port, bool on_off){
-
-}
-////////////////////////////////////////////////////////////////////////////
-bool statisticCore::checkORConditions(objectPort *port,bool on){
-
-}
-///////////////////////////////////////////////////////////////////////////
-bool statisticCore::checkNOTConditions(objectPort *port, bool on_off){
-
-}
-/////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 void statisticCore::clearAll(){
     int size=mashinesArray.size();
     for(int n=0;n!=size;n++){

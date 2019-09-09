@@ -17,6 +17,7 @@ perfomanceWidget::perfomanceWidget(QWidget *parent) :
     connect(ui->tableWidget,SIGNAL(createReport(reportType,int)),this,SIGNAL(createReportSygnal(reportType,int)));
     connect(ui->tableWidget,SIGNAL(cellClicked(int,int)),this,SLOT(selectMashineSlot(int,int)));
     connect(ui->tableWidget,SIGNAL(enotherDaySignal(int)),this,SIGNAL(enotherDaySignal(int)));
+    connect(ui->tableWidget,SIGNAL(manualPorts(int)),this,SLOT(manualPortsSlot(int)));
 }
 //////////////////////////////////////////////////////////////////////
 perfomanceWidget::~perfomanceWidget()
@@ -25,7 +26,7 @@ perfomanceWidget::~perfomanceWidget()
 }
 /////////////////////////////////////////////////////////////////////////
 void perfomanceWidget::updateContent(){
-    if(statCorePointer==NULL){
+    if(statCorePointer==nullptr){
         qDebug("perfomanceWidget::updateContent() : statCorePointer is NULL");
         return;
     }
@@ -129,7 +130,7 @@ void perfomanceWidget::resizeEvent(QResizeEvent *event){
 void perfomanceWidget::objectUpSlot(){
     if(ui->tableWidget->currentColumn()==0){//если выбрана ячейка с именем машины
         QTableWidgetItem *curItem=ui->tableWidget->currentItem();
-        if(curItem!=NULL){
+        if(curItem!=nullptr){
             if(statCorePointer->mashineUp(curItem->data(Qt::UserRole).toInt())){
                 updateContent();
             }
@@ -140,7 +141,7 @@ void perfomanceWidget::objectUpSlot(){
 void perfomanceWidget::objectDownSlot(){
     if(ui->tableWidget->currentColumn()==0){//если выбрана ячейка с именем машины
         QTableWidgetItem *curItem=ui->tableWidget->currentItem();
-        if(curItem!=NULL){
+        if(curItem!=nullptr){
             if(statCorePointer->mashineDown(curItem->data(Qt::UserRole).toInt())){
                 updateContent();
             }
@@ -151,7 +152,7 @@ void perfomanceWidget::objectDownSlot(){
 void perfomanceWidget::objectEditSlot(){
     if(ui->tableWidget->currentColumn()==0){//если выбрана ячейка с именем машины
         QTableWidgetItem *curItem=ui->tableWidget->currentItem();
-        if(curItem!=NULL){
+        if(curItem!=nullptr){
             emit objectEditSignal(objectMashine, curItem->data(Qt::UserRole).toInt());
         }
     }
@@ -160,7 +161,7 @@ void perfomanceWidget::objectEditSlot(){
 void perfomanceWidget::objectDeleteSlot(){
     if(ui->tableWidget->currentColumn()==0){//если выбрана ячейка с именем машины
         QTableWidgetItem *curItem=ui->tableWidget->currentItem();
-        if(curItem!=NULL){
+        if(curItem!=nullptr){
             emit objectDeleteSignal(objectMashine, curItem->data(Qt::UserRole).toInt());
         }
     }
@@ -170,10 +171,15 @@ void perfomanceWidget::selectMashineSlot(int row, int column){
     mashine *tmpMashine=statCorePointer->getMashine(row);
     if(tmpMashine!=nullptr){
         dayGraph *graph=tmpMashine->getCurrentGraph();
-        if(graph!=NULL){
+        if(graph!=nullptr){
             ui->graphicWidget->visualiseGraphFirstTab(graph);
             return;
         }
     }
     ui->graphicWidget->visualiseGraphFirstTab(nullptr);
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void perfomanceWidget::manualPortsSlot(int index){
+    portsManualDialog dialog(statCorePointer->getObjectForIndex(index),this);
+    dialog.exec();
 }

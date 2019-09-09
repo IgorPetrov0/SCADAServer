@@ -39,6 +39,7 @@ public:
     condition &operator=(const condition *right);
     object *getTargetObject() const;
     bool findObjectPort(statisticCore *statCorePointer);
+    bool checkCondition();
 
 protected:
     QString description;

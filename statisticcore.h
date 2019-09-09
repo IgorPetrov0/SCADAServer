@@ -42,9 +42,6 @@ public:
     bool writeGraphsInFiles();//записывает графики всех активных машин в файлы
     QStringList getObjectsNamesList();
     void checkConditions();
-    bool checkANDConditions(objectPort *port,bool on_off);
-    bool checkORConditions(objectPort *port, bool on);
-    bool checkNOTConditions(objectPort *port,bool on_off);
     void clearAll();
 
 protected:

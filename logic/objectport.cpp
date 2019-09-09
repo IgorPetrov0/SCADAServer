@@ -176,4 +176,123 @@ void objectPort::deleteOffCondition(int index){
     offConditions.remove(index);
 }
 /////////////////////////////////////////////////////////////////////////
+void objectPort::checkOnConditions(){
+    QVector<condition*> andConditions;
+    QVector<condition*> orConditions;
+    QVector<condition*> noConditions;
+
+    int size=onConditions.size();
+    if(size!=0){
+        for(int n=0;n!=size;n++){
+            condition *tmpCondition=onConditions.at(n);
+            if(tmpCondition->getLogic()==LOGIC_NO){
+                noConditions.append(tmpCondition);
+            }
+            else if(tmpCondition->getLogic()==LOGIC_OR){
+                orConditions.append(tmpCondition);
+            }
+            else if(tmpCondition->getLogic()==LOGIC_AND){
+                andConditions.append(tmpCondition);
+            }
+        }
+
+        size=orConditions.size();
+        if(size!=0){
+            for(int n=0;n!=size;n++){
+                if(orConditions.at(n)->checkCondition()){//если хотябы одно условие соответствует
+                    this->setState(true);//то включаем порт
+                    return;
+                }
+            }
+        }
+
+        size=andConditions.size();
+        if(size!=0){
+            int n=0;
+            for(;n!=size;n++){
+                if(!andConditions.at(n)->checkCondition()){//если хотябы одно условие не соответствует
+                    break;//останавливаемся
+                }
+            }
+            if(n==size){//если прошли все условия и все соответствуют
+                this->setState(true);//то включаем порт
+                return;
+            }
+        }
+
+        size=noConditions.size();
+        if(size!=0){
+            int n=0;
+            for(;n!=size;n++){
+                if(noConditions.at(n)->checkCondition()){
+                    break;
+                }
+            }
+            if(n==size){//если прошли все условия и все не соответствуют
+                this->setState(true);//то включаем порт
+                return;
+            }
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+void objectPort::checkOffConditions(){
+    QVector<condition*> andConditions;
+    QVector<condition*> orConditions;
+    QVector<condition*> noConditions;
+
+    int size=onConditions.size();
+    if(size!=0){
+        for(int n=0;n!=size;n++){
+            condition *tmpCondition=onConditions.at(n);
+            if(tmpCondition->getLogic()==LOGIC_NO){
+                noConditions.append(tmpCondition);
+            }
+            else if(tmpCondition->getLogic()==LOGIC_OR){
+                orConditions.append(tmpCondition);
+            }
+            else if(tmpCondition->getLogic()==LOGIC_AND){
+                andConditions.append(tmpCondition);
+            }
+        }
+        size=orConditions.size();
+        if(size!=0){
+            for(int n=0;n!=size;n++){
+                if(orConditions.at(n)->checkCondition()){//если хотябы одно условие соответствует
+                    this->setState(false);//то выключаем порт
+                    return;
+                }
+            }
+        }
+
+        size=andConditions.size();
+        if(size!=0){
+            int n=0;
+            for(;n!=size;n++){
+                if(!andConditions.at(n)->checkCondition()){//если хотябы одно условие не соответствует
+                    break;//останавливаемся
+                }
+            }
+            if(n==size){//если прошли все условия и все соответствуют
+                this->setState(false);//то выключаем порт
+                return;
+            }
+        }
+
+        size=noConditions.size();
+        if(size!=0){
+            int n=0;
+            for(;n!=size;n++){
+                if(noConditions.at(n)->checkCondition()){
+                    break;
+                }
+            }
+            if(n==size){//если прошли все условия и все не соответствуют
+                this->setState(false);//то выключаем порт
+                return;
+            }
+        }
+    }
+}
+
 

@@ -14,7 +14,7 @@ class newPortDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit newPortDialog(object *currentObject,QWidget *parent = 0);
+    explicit newPortDialog(object *currentObject,QWidget *parent = nullptr);
     ~newPortDialog();
     void setPort(objectPort *port);
     objectPort *getPort();

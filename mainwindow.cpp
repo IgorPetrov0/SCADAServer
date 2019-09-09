@@ -63,7 +63,7 @@ void MainWindow::createNewObjectSlot(){
 ///////////////////////////////////////////////////////////////////////////////////
 void MainWindow::editObjectSlot(objectType type, int index){
     newObjectMasterBase master;
-    object *tmp=NULL;
+    object *tmp=nullptr;
     switch(type){
         case(objectMashine):{
             tmp=statCore.getMashine(index);
@@ -74,7 +74,7 @@ void MainWindow::editObjectSlot(objectType type, int index){
             return;
         }
     }
-    if(tmp==NULL){
+    if(tmp==nullptr){
         errorMessage(tr("Внутренняя ошибка. Указанного объекта не существует."));
         return;
     }
@@ -189,6 +189,7 @@ void MainWindow::createReport(reportType type, int index){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::updateTimeSlot(){
     ui->mainTab->updateContent();
+    statCore.checkConditions();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::saveTimeSlot(){

@@ -28,9 +28,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
+    logic/logiccore.cpp \
         main.cpp \
         mainwindow.cpp \
     serviceClasses/portsmanualdialog.cpp \
+    serviceClasses/tablepushbutton.cpp \
     widgets/perfomancewidget.cpp \
     widgets/maintabwidget.cpp \
     widgets/graphwidget.cpp \
@@ -69,8 +71,10 @@ SOURCES += \
     widgets/conditiontablewidget.cpp
 
 HEADERS += \
+    logic/logiccore.h \
         mainwindow.h \
     serviceClasses/portsmanualdialog.h \
+    serviceClasses/tablepushbutton.h \
     widgets/perfomancewidget.h \
     widgets/maintabwidget.h \
     widgets/graphwidget.h \

@@ -180,4 +180,23 @@ bool condition::findObjectPort(statisticCore *statCorePointer){
     }
     return true;
 }
+///////////////////////////////////////////////////////////////////////////////////////
+bool condition::checkCondition(){
+    if(targetPortNumber==-1){//если проверка по состоянию объекта
+        if(targetObject->getCurrentState()==this->targetObjectState){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else{//если проверка по состоянию порта
+        if(targetPort->getState()==portState){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}
 //////////////////////////////////////////////////////////////////////////////
