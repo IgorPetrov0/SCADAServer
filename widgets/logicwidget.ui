@@ -21,7 +21,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>551</width>
+     <width>611</width>
      <height>51</height>
     </rect>
    </property>
@@ -56,12 +56,25 @@
      <rect>
       <x>380</x>
       <y>20</y>
-      <width>141</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
      <string>Адрес:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="manualButton">
+    <property name="geometry">
+     <rect>
+      <x>484</x>
+      <y>20</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ручное управление</string>
     </property>
    </widget>
   </widget>

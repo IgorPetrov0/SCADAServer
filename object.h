@@ -58,6 +58,7 @@ protected:
     QVector<objectPort*>ports;
     objectState currentState;
     QTime stateSetTime;
+    void checkConditions();
 
 signals:
 

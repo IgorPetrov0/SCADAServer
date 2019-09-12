@@ -41,7 +41,6 @@ public:
     dayGraph *readGraphFile(QString fullPath);//при использовании не забывать удалять полученные данные
     bool writeGraphsInFiles();//записывает графики всех активных машин в файлы
     QStringList getObjectsNamesList();
-    void checkConditions();
     void clearAll();
 
 protected:

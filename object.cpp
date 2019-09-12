@@ -123,6 +123,15 @@ bool object::deserialisationContinue(QDataStream *str){
     }
     return true;
 }
+////////////////////////////////////////////////////////////////////////
+void object::checkConditions(){
+    int portsCount=this->getPortsCount();
+    for(int m=0;m!=portsCount;m++){
+        objectPort *tmpPort=this->getPort(m);
+        tmpPort->checkOnConditions();
+        tmpPort->checkOffConditions();
+    }
+}
 ////////////////////////////////////////////////////////////////
 objectState object::getCurrentState() const{
     return currentState;
@@ -166,7 +175,9 @@ unsigned char object::getPortsMask(){
     unsigned char mask=0;
     for(int n=0;n!=size;n++){
         objectPort *tmpPort=ports.at(n);
-        mask|=(1<<tmpPort->getNumber());
+        if(tmpPort->getType()==PORT_OUTPUT){
+           mask|=(1<<tmpPort->getNumber());
+        }
     }
     return mask;
 }
@@ -195,6 +206,8 @@ void object::setPortsSate(unsigned char mask){
             }
         }
     }
+    checkConditions();
+    int t=0;
 }
 ///////////////////////////////////////////////////////////////////////////
 objectType object::getType() const{

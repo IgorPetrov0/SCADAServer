@@ -16,7 +16,7 @@ portsManualDialog::portsManualDialog(object *currentObject, QWidget *parent) :
     ui->tableWidget->setHorizontalHeaderLabels(headerList);
     ui->objectNameLabel->setText(currentObject->getName());
     this->setWindowTitle(tr("Ручное управление портами"));
-    connect(ui->exitButton,SIGNAL(clicked(bool)),this,SLOT(rejeced()));
+    connect(ui->exitButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
     connect(ui->updateButton,SIGNAL(clicked(bool)),this,SLOT(updateSlot()));
     updateContent();
 }

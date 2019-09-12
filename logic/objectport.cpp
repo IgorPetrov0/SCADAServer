@@ -203,6 +203,9 @@ void objectPort::checkOnConditions(){
                     this->setState(true);//то включаем порт
                     return;
                 }
+                else{
+                    this->setState(false);//иначе гасим
+                }
             }
         }
 
@@ -218,6 +221,9 @@ void objectPort::checkOnConditions(){
                 this->setState(true);//то включаем порт
                 return;
             }
+            else{
+                this->setState(false);//иначе гасим
+            }
         }
 
         size=noConditions.size();
@@ -232,6 +238,9 @@ void objectPort::checkOnConditions(){
                 this->setState(true);//то включаем порт
                 return;
             }
+            else{
+                this->setState(false);//иначе гасим
+            }
         }
     }
 }
@@ -241,10 +250,10 @@ void objectPort::checkOffConditions(){
     QVector<condition*> orConditions;
     QVector<condition*> noConditions;
 
-    int size=onConditions.size();
+    int size=offConditions.size();
     if(size!=0){
         for(int n=0;n!=size;n++){
-            condition *tmpCondition=onConditions.at(n);
+            condition *tmpCondition=offConditions.at(n);
             if(tmpCondition->getLogic()==LOGIC_NO){
                 noConditions.append(tmpCondition);
             }

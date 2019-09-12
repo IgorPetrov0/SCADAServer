@@ -17,6 +17,8 @@ logicWidget::logicWidget(QWidget *parent) :
     connect(ui->onWidget,SIGNAL(editSignal(tableType,int)),this,SLOT(editSlot(tableType,int)));
     connect(ui->onWidget,SIGNAL(deleteSignal(tableType,int)),this,SLOT(deleteSlot(tableType,int)));
     connect(ui->portWidget,SIGNAL(selectSignal(int)),this,SLOT(selectPortSlot(int)));
+    connect(ui->manualButton,SIGNAL(clicked(bool)),this,SLOT(maualManage()));
+
     currentObjectPointer=nullptr;
     currentPortPointer=nullptr;
     ui->onWidget->setTableType(TABLE_ON_CONDITIONS);
@@ -240,4 +242,9 @@ void logicWidget::deleteSlot(tableType type, int index){
         }
         updateContent();
     }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+void logicWidget::maualManage(){
+    portsManualDialog dialog(currentObjectPointer,this);
+    dialog.exec();
 }

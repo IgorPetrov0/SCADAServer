@@ -6,6 +6,7 @@
 #include "widgets/logictablewidget.h"
 #include "serviceClasses/newportdialog.h"
 #include "serviceClasses/newconditiondialog.h"
+#include "serviceClasses/portsmanualdialog.h"
 
 
 
@@ -35,6 +36,7 @@ protected slots:
     void addSlot(tableType type);
     void editSlot(tableType type,int index);
     void deleteSlot(tableType type, int index);
+    void maualManage();
 
 private:
     Ui::logicWidget *ui;
